@@ -1,5 +1,5 @@
 import { readFile } from 'fs/promises'
-import { runFromInterpreted } from './src/misc/utils.js'
+import { compilePlainJs, runFromInterpreted } from './src/misc/utils.js'
 import { encodeBase64, compress } from './src/misc/compression.js'
 const logBoldMessage = (msg) => console.log('\x1b[1m', msg, '\x1b[0m')
 const logErrorMessage = (msg) =>
@@ -22,6 +22,11 @@ const encode = async (file) => {
   const link = `https://at-290690.github.io/HLP?s=`
   logSuccessMessage(link + encoded)
 }
+const compile = async (file) => {
+  logWarningMessage(
+    compilePlainJs(await readFile(`./examples/${file}`, 'utf-8'))
+  )
+}
 const mangle = async (file) => {
   const compressed = compress(await readFile(`./examples/${file}`, 'utf-8'))
   logSuccessMessage(compressed)
@@ -35,6 +40,9 @@ switch (flag) {
   case 'mangle':
   case 'M':
     mangle(filename)
+    break
+  case 'JS':
+    compile(filename)
     break
   case 'run':
   case 'R':

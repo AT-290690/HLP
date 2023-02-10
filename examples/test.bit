@@ -1,0 +1,8 @@
+<- [DOM; EVENT] [LIBRARY];
+<- [make_button; make_container; set_text_content] [DOM];
+<- [on_mouse_click] [EVENT];
+:= [counter; 0];
+make_container[|> [
+  make_button [];
+  set_text_content [counter];
+  on_mouse_click [-> [button; set_text_content[button; = [counter; + [counter; 1]]]]]]];

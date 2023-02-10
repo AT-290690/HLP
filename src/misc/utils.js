@@ -413,6 +413,12 @@ ${languageUtilsString}
 ${lib};
 ${top}${program}`
 }
+export const compilePlainJs = (source) => {
+  const inlined = wrapInBody(removeNoCode(source))
+  const { top, program } = compileToJs(parse(inlined))
+  return `const VOID = 0;
+${top}${program}`
+}
 export const compileBuild = (source) => {
   const inlined = wrapInBody(removeNoCode(source))
   const { top, program, modules } = compileToJs(parse(inlined))
