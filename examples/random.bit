@@ -1,0 +1,4 @@
+<- ["MATH"] [LIBRARY];
+<- ["random_int"] [MATH];
+
+:= [x; random_int[0; 10]]
