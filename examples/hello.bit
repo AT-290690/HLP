@@ -1,5 +1,5 @@
-<- ["CONSOLE"] [LIBRARY];
-<- ["console_log"] [CONSOLE];
+<- [CONSOLE] [LIBRARY];
+<- [console_log] [CONSOLE];
 
 := [HELLO; "Hello world"];
 

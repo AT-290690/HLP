@@ -36,8 +36,8 @@ describe('compilation should work as expected', () => {
   })
   it('max sub array sum rec', () => {
     const source = `;; max_sub_array_recursive
-      <- ["MATH"] [LIBRARY];
-      <- ["max"; "infinity"] [MATH];
+      <- [MATH] [LIBRARY];
+      <- [max; infinity] [MATH];
       ~= [loop; -> [i; nums; maxGlobal; maxSoFar;
           ? [< [i; .:? [nums]]; .. [
           = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; :. [nums; i]]]]]];
@@ -48,9 +48,9 @@ describe('compilation should work as expected', () => {
   })
   it('sum median', () => {
     const source = `
-      <- ["MATH"; "ARRAY"] [LIBRARY];
-      <- ["sum"] [MATH];
-      <- ["range"] [ARRAY];
+      <- [MATH; ARRAY] [LIBRARY];
+      <- [sum] [MATH];
+      <- [range] [ARRAY];
       := [NUMBERS; range [1; 100]];
       := [first; :. [NUMBERS; 0]];
       := [last; :. [NUMBERS; - [.:? [NUMBERS]; 1]]];
@@ -94,8 +94,8 @@ describe('compilation should work as expected', () => {
     equal(runFromInterpreted(source), runFromCompiled(source))
   })
   it('import should work', () => {
-    const source = `<- ["MATH"; "ARRAY"] [LIBRARY];
-      <- ["floor"] [MATH];
+    const source = `<- [MATH; ARRAY] [LIBRARY];
+      <- [floor] [MATH];
       >>. [.: [1.123; 3.14; 4.9]; floor];
       `
     deepEqual(runFromInterpreted(source), runFromCompiled(source))

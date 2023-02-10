@@ -1,6 +1,6 @@
-<- ["MATH"; "SKETCH"] [LIBRARY];
-<- ["make_scene"; "make_line"; "update"; "width"; "height"] [SKETCH];
-<- ["sin"; "cos"; "PI"] [MATH];
+<- [MATH; SKETCH] [LIBRARY];
+<- [make_scene; make_line; update; width; height] [SKETCH];
+<- [sin; cos; PI] [MATH];
 
 make_scene [:= [WIDTH; 500]; := [HEIGHT; 500]; -> [..[
   := [theta; 0.8];
