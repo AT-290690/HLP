@@ -13,7 +13,6 @@ if (encoding) {
   const inlined = wrapInBody(
     removeNoCode(decodeBase64(decodeURIComponent(encoding)))
   )
-
   const { top, program, modules } = compileToJs(parse(inlined))
   const lib = treeShake(modules)
   const s = `${Brrr.toString()}
@@ -22,7 +21,11 @@ const VOID = null;
 const LOGGER = () => () => {}
 ${languageUtilsString}
 ${lib}
-;(() => { ${top}${program} })()`
+;(() => { 
+  ${top}
+  ;document.getElementById("output").textContent = (
+  ${program}
+  )})()`
   const script = document.createElement('script')
 
   script.innerHTML = s

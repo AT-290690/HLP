@@ -332,7 +332,11 @@ export const LIBRARY = {
     get_element_by_id: (id) => document.getElementById(id),
     get_elements_by_class_name: (tag) => document.getElementsByClassName(tag),
     get_elements_by_tag_name: (tag) => document.getElementsByTagName(tag),
-    make_user_interface: () => {
+    make_user_interface: (output = 0) => {
+      if (!output) {
+        document.getElementById('output').style.display = 'none'
+      }
+      document.getElementById('placeholder').style.display = 'none'
       let container = document.getElementById('application-container')
       if (!container) {
         container = document.createElement('div')
@@ -837,6 +841,7 @@ export const LIBRARY = {
     },
 
     make_scene: (width = 100, height = 100, callback, type) => {
+      document.getElementById('placeholder').style.display = 'none'
       LIBRARY.SKETCH.engine?.removeEventListener('update')
       let container = document.getElementById('canvas-container')
       if (!container) {
@@ -852,7 +857,7 @@ export const LIBRARY = {
         autostart: true,
       }).appendTo(LIBRARY.SKETCH.CANVAS_CONTAINER)
       callback()
-      return 'Scene created!'
+      return ''
     },
     insert_into_group: (group, ...items) => {
       group.add(...items)
@@ -946,11 +951,11 @@ export const LIBRARY = {
     off: (...args) => LIBRARY.SKETCH.engine.off(...args),
     pause: (...args) => {
       LIBRARY.SKETCH.engine.pause(...args)
-      return 'Paused!'
+      return ''
     },
     play: (...args) => {
       LIBRARY.SKETCH.engine.play(...args)
-      return 'Playing!'
+      return ''
     },
     sprite_play: (sprite, firstFrame, lastFrame, onLastFrame) => {
       sprite.play(firstFrame, lastFrame, onLastFrame)
@@ -970,7 +975,7 @@ export const LIBRARY = {
     trigger: (...args) => LIBRARY.SKETCH.engine.trigger(...args),
     update: (...args) => {
       LIBRARY.SKETCH.engine.update(...args)
-      return 'Updated!'
+      return ''
     },
     no_fill: (entity) => {
       entity.noFill()
