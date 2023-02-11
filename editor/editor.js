@@ -65,6 +65,7 @@ const droneIntel = (icon) => {
   setTimeout(() => (icon.style.visibility = 'hidden'), 500)
 }
 const exe = async (source) => {
+  consoleElement.style.fontFamily = 'Fantastic'
   try {
     const result = chipRun(source, extensions)
     droneButton.classList.remove('shake')
@@ -95,11 +96,10 @@ droneButton.addEventListener('click', () => {
       })
     )
   }
+  const isEndingWithSemi = selection[selection.length - 1] === ';'
   const out = `__debug_log[${
-    selection[selection.length - 1] === ';'
-      ? selection.substring(0, selection.length - 1)
-      : selection
-  }; ""]`
+    isEndingWithSemi ? selection.substring(0, selection.length - 1) : selection
+  }; ""]${isEndingWithSemi ? ';' : ''}`
   editor.replaceSelection(out)
 
   exe(`:=[__debug_log; LOGGER[0]]; ${editor.getValue().trim()}`)
@@ -113,21 +113,18 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault()
     e.stopPropagation()
     popupContainer.style.display = 'none'
-    consoleElement.value = ''
     exe(editor.getValue().trim())
     const encoded = encodeURIComponent(encodeBase64(editor.getValue()))
-    popupContainer.style.display = 'block'
-    const bouds = document.body.getBoundingClientRect()
-    const width = bouds.width
-    const height = bouds.height
-    consoleEditor.setSize(width - 2, height / CONSOLE_HEIGHT_FACTOR)
-    consoleEditor.setValue(encoded)
-    if (encoded)
+
+    if (encoded) {
+      consoleElement.style.fontFamily = 'Drifter'
+      consoleElement.value = encoded
       window.open(
         `https://at-290690.github.io/HLP/?s=` + encoded,
         'Bit',
         `menubar=no,directories=no,toolbar=no,status=no,scrollbars=no,resize=no,width=600,height=600,left=600,top=150`
       )
+    }
   } else if (e.key === 'Escape') {
     e.preventDefault()
     e.stopPropagation()

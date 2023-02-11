@@ -12,7 +12,6 @@
   --success: #6de46d;
   --icons: #6b84b0;
   --progress: #42c6ff;
-  --font-family: 'Fantastic';
   --font-primary: 'Fantastic';
   --drone1: #646159;
   --drone2: #f1b442;
@@ -38,7 +37,7 @@ text,
 input,
 button,
 textarea {
-  font-family: var(--font-family);
+  font-family: var(--font-primary);
   font-size: 12pt;
 }
 
@@ -52,7 +51,11 @@ input::selection {
   src: url(./assets/fonts/FantasqueSansMono-Regular.ttf) format('truetype');
   font-display: swap;
 }
-
+@font-face {
+  font-family: 'Drifter';
+  src: url(./assets/fonts/DrifterMono.ttf) format('truetype');
+  font-display: swap;
+}
 html,
 body {
   background-color: var(--background-primary);
@@ -69,6 +72,7 @@ body {
   border: none;
   resize: none;
   width: 90%;
+  font-family: var(--font-primary);
   /* position: fixed; */
   /* bottom: 0; */
 }
@@ -78,7 +82,7 @@ body {
 .warn_line {
   resize: vertical;
   z-index: 5;
-  font-family: var(--font-family);
+  font-family: var(--font-primary);
   font-style: normal;
   letter-spacing: -0.05em;
   background-color: var(--background-primary);
@@ -235,7 +239,7 @@ input:focus {
 .cm-completionLabel,
 .cm-completionMatchedText,
 .cm-completionDetail {
-  font-family: var(--font-family);
+  font-family: var(--font-primary);
 }
 .cm-searchMatch {
   background-color: #686971be !important;
