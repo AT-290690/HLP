@@ -1,41 +1,48 @@
 import { equal, deepEqual } from 'assert'
 import { runFromInterpreted, runFromCompiled } from '../src/misc/utils.js'
 describe('compilation should work as expected', () => {
-  it('definitions', () => {
-    const source1 = `:= [x; 10]; := [y; 3]; := [temp; x]; = [x; y]; = [y; temp]; :: ["x"; x; "y"; y]`
-    deepEqual(runFromInterpreted(source1), runFromCompiled(source1))
-    const source2 = `:= [x; 10; y; 23]; .: [x; y]`
-    deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
-  })
-  it('simple math', () => {
-    const source = `:= [x; 30]; := [result; + [: [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`
-    equal(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('if', () => {
-    const source1 = `:= [age; 18];
+  it('definitions', () =>
+    [
+      `:= [x; 10]; := [y; 3]; := [temp; x]; = [x; y]; = [y; temp]; :: ["x"; x; "y"; y]`,
+      `:= [x; 10; y; 23]; .: [x; y]`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('simple math', () =>
+    [
+      `:= [x; 30]; := [result; + [: [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('if', () =>
+    [
+      `:= [age; 18];
       ? [>= [age; 18]; "Can work!"; "Can't work"];
-         `
-    equal(runFromInterpreted(source1), runFromCompiled(source1))
-    const source2 = `
-      := [validate age; -> [age; ? [>= [age; 18]; ~ ["Can work"; ? [>=[age; 21]; " and can drink"; ""]]; "Can't work and can't drink"]]];
-      .: [validate age [18]; validate age [21]; validate age [12]];
-  `
-    deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
-  })
+         `,
+      `
+         := [validate age; -> [age; ? [>= [age; 18]; ~ ["Can work"; ? [>=[age; 21]; " and can drink"; ""]]; "Can't work and can't drink"]]];
+         .: [validate age [18]; validate age [21]; validate age [12]];
+     `,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
 
-  it('fib sum', () => {
-    const source = `;; calculating fib sequance
+  it('fib sum', () =>
+    [
+      `;; calculating fib sequance
       := [fib; -> [n; ? [
         > [n; 0];
            ? [== [n; 1]; 1;
             ? [== [n; 2]; 1;
               + [fib [- [n; 1]]; fib [- [n; 2]]]]]; n]]];
             fib[10]
-              `
-    equal(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('max sub array sum rec', () => {
-    const source = `;; max_sub_array_recursive
+              `,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('max sub array sum rec', () =>
+    [
+      `;; max_sub_array_recursive
       <- [MATH] [LIBRARY];
       <- [max; infinity] [MATH];
       ~= [loop; -> [i; nums; maxGlobal; maxSoFar;
@@ -43,11 +50,13 @@ describe('compilation should work as expected', () => {
           = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; :. [nums; i]]]]]];
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
-        [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; * [infinity; -1]; * [infinity; -1]]`
-    equal(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('sum median', () => {
-    const source = `
+        [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; * [infinity; -1]; * [infinity; -1]]`,
+    ].forEach((source) =>
+      equal(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('sum median', () =>
+    [
+      `
       <- [MATH; ARRAY] [LIBRARY];
       <- [sum] [MATH];
       <- [range] [ARRAY];
@@ -58,11 +67,13 @@ describe('compilation should work as expected', () => {
       - [* [last; * [+ [1; last]; 0.5]];
           * [first; * [+ [1; first]; 0.5]]]]];
       == [sum [NUMBERS]; median]
-          `
-    equal(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('sum tree nodes', () => {
-    const source = `;; sum_tree_nodes
+          `,
+    ].forEach((source) =>
+      equal(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('sum tree nodes', () =>
+    [
+      `;; sum_tree_nodes
       := [node; -> [value; left; right;
         :: ["value"; value;
             "left"; left;
@@ -82,157 +93,166 @@ describe('compilation should work as expected', () => {
           node [5; 0; 0];
           node [7; 0; 0]]]];
           sum [myTree]
-      `
-    equal(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('length of string', () => {
-    const source = `.:? [.-: ["01010"; ""]];`
-    equal(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('split and join', () => {
-    const source = `.+:[.-: ["01010"; ""]; "-"];`
-    equal(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('import should work', () => {
-    const source = `<- [MATH; ARRAY] [LIBRARY];
+      `,
+    ].forEach((source) =>
+      equal(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('length of string', () =>
+    [`.:? [.-: ["01010"; ""]];`].forEach((source) =>
+      equal(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('split and join', () =>
+    [`.+:[.-: ["01010"; ""]; "-"];`].forEach((source) =>
+      equal(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('import should work', () =>
+    [
+      `<- [MATH; ARRAY] [LIBRARY];
       <- [floor] [MATH];
       >>. [.: [1.123; 3.14; 4.9]; floor];
-      `
-    deepEqual(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('nested pipes should work', () => {
-    const source = `|> [
+      `,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('nested pipes should work', () =>
+    [
+      `|> [
         10;
         ^ [-> [x; * [x; 3]]];
         ^ [-> [x; * [x; 10]]]
-      ]`
-    equal(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('>> and << should work', () => {
-    const source1 = `
+      ]`,
+    ].forEach((source) =>
+      equal(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('>> and << should work', () =>
+    [
+      `
     := [out; .: []];
     >> [.: [1; 2; 3; 4]; -> [x; i; a; .:= [out; * [x; 10]]]];
     << [.: [10; 20; 30]; -> [x; i; a; .:= [out; - [:. [out; i]; * [x; 0.1]]]]];
     >> [out; -> [x; i; a; ^= [out; i; + [x; i]]]];
     out;
-    `
-    deepEqual(runFromInterpreted(source1), runFromCompiled(source1))
-    const source2 = `
-      |> [
-        .: [1; 2; 3; 4];
-        >> [-> [x; i; a; ^= [a; i; * [x; 10]]]];
-        << [-> [x; i; a; ^= [a; i; - [:. [a; i]; * [x; 0.1]]]]];
-        >> [-> [x; i; a; ^= [a; i; + [x; i]]]];
-        << [-> [x; i; a; ^= [a; i; + [:. [a; i]; i; 1]]]];
-      ]
+    `,
       `
-    deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
-
-    const source3 = `
-      |> [
-        .: [1; 2; 3; 4];
-        >>. [-> [x; i; a; * [x; 10]]];
-        >- [-> [x; i; a; % [x; 2]]]
-      ]
+    |> [
+      .: [1; 2; 3; 4];
+      >> [-> [x; i; a; ^= [a; i; * [x; 10]]]];
+      << [-> [x; i; a; ^= [a; i; - [:. [a; i]; * [x; 0.1]]]]];
+      >> [-> [x; i; a; ^= [a; i; + [x; i]]]];
+      << [-> [x; i; a; ^= [a; i; + [:. [a; i]; i; 1]]]];
+    ]
+    `,
       `
-    deepEqual(runFromInterpreted(source3), runFromCompiled(source3))
-  })
-  it('><> should work', () => {
-    const source1 = `><> [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`
-    equal(runFromInterpreted(source1), runFromCompiled(source1))
-    const source2 = `<>< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`
-    equal(runFromInterpreted(source2), runFromCompiled(source2))
-    const source3 = `>.: [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`
-    equal(runFromInterpreted(source3), runFromCompiled(source3))
-    const source4 = `.:< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`
-    equal(runFromInterpreted(source4), runFromCompiled(source4))
-  })
-  it('>>. and .<< should work', () => {
-    const source1 = `>>. [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`
-    deepEqual(runFromInterpreted(source1), runFromCompiled(source1))
-    // findLast doesn't exist in node still
-    // const source2 = `.<< [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`
-    // deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
-  })
+    |> [
+      .: [1; 2; 3; 4];
+      >>. [-> [x; i; a; * [x; 10]]];
+      >- [-> [x; i; a; % [x; 2]]]
+    ]
+    `,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
 
-  it('@ should work', () => {
-    const source = `:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`
-    deepEqual(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('|. should work', () => {
-    const source = `|> [
+  it('><> should work', () =>
+    [
+      `><> [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
+      `<>< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
+      `>.: [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
+      `.:< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
+    ].forEach((source) =>
+      equal(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('>>. and .<< should work', () =>
+    [`>>. [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+
+  it('@ should work', () =>
+    [`:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('|. should work', () =>
+    [
+      `|> [
       .: [1; 2; 3];
      |. [];
-     + [100]]`
-    equal(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('.| should work', () => {
-    const source = `|> [
+     + [100]]`,
+    ].forEach((source) =>
+      equal(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('.| should work', () =>
+    [
+      `|> [
       .: [1; 2; 3];
      |. [];
-     + [100]]`
-    equal(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('... shoud work', () => {
-    const source = `.: [
+     + [100]]`,
+    ].forEach((source) =>
+      equal(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('... shoud work', () =>
+    [
+      `.: [
       ... [.: [1; 2; 3]; .: [4; 5; 6]];
-      ]`
-    deepEqual(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('*:: and ~:: should work', () => {
-    const source1 = ` |> [
+      ]`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('*:: and ~:: should work', () =>
+    [
+      ` |> [
       .: [3; 4; 2; 1; 2; 3];
       *:: [-> [a; b; ? [> [a; b]; -1; 1]]]
     ];
-    `
-    const source2 = ` |> [
+    `,
+      ` |> [
       .: [3; 4; 2; 1; 2; 3];
       ~:: [-1]
     ];
-    `
-    deepEqual(runFromInterpreted(source1), runFromCompiled(source2))
-    deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
-  })
-  it(':: ::. ::: ::* .? ::? should work', () => {
-    const source1 = `::: [:: ["x"; 10; "y"; 23; "z"; 4]]`
-    const source2 = `::. [:: ["x"; 10; "y"; 23; "z"; 4]]`
-    const source3 = `::* [:: ["x"; 10; "y"; 23; "z"; 4]]`
-    deepEqual(runFromInterpreted(source1), runFromCompiled(source1))
-    deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
-    deepEqual(runFromInterpreted(source3), runFromCompiled(source3))
-  })
-  it(':+: should work', () => {
-    const source1 = `|> [
+    `,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it(':: ::. ::: ::* .? ::? should work', () =>
+    [
+      `::: [:: ["x"; 10; "y"; 23; "z"; 4]]`,
+      `::. [:: ["x"; 10; "y"; 23; "z"; 4]]`,
+      `::* [:: ["x"; 10; "y"; 23; "z"; 4]]`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it(':+: should work', () =>
+    [
+      `|> [
       .: [3; 4; 2; 1; 2; 3];
       :+: [3]
-    ];`
-    deepEqual(runFromInterpreted(source1), runFromCompiled(source1))
-    const source2 = `:+: [.: [3; 4; 2; 1; 2; 3]; 2];`
-    deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
-  })
-  it(':+ and :- should work', () => {
-    const source1 = `|> [
+    ];`,
+      `:+: [.: [3; 4; 2; 1; 2; 3]; 2];`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it(':+ and :- should work', () =>
+    [
+      `|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
       :+ [4; "x"; "y"; "z"];
       :- [0; 4];
       :- [3; 4]
-    ]`
-    const source2 = `|> [
+    ]`,
+      `|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
       :+ [2; "x"; "y"; "z"];
-    ]`
-    const source3 = `|> [
+    ]`,
+      `|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
       :- [2; 4];
-    ]`
-    const source4 = `:= [obj; :: ["x"; 3; "y"; 4]]; .: [.? [obj; "z"]; .? [obj; "x"]; ::? [obj]]`
-    deepEqual(runFromInterpreted(source1), runFromCompiled(source1))
-    deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
-    deepEqual(runFromInterpreted(source3), runFromCompiled(source3))
-    deepEqual(runFromInterpreted(source4), runFromCompiled(source4))
-  })
-  it('~= should work', () => {
-    const source = `:= [arr; .: []];
+    ]`,
+      `:= [obj; :: ["x"; 3; "y"; 4]]; .: [.? [obj; "z"]; .? [obj; "x"]; ::? [obj]]`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('~= should work', () =>
+    [
+      `:= [arr; .: []];
     ~= [loop1; -> [i;  .. [
       =.: [arr; .:[]];
       := [current; .> [arr]];
@@ -240,16 +260,20 @@ describe('compilation should work as expected', () => {
        =.: [current; + [j; i]];
       ? [> [j; 0]; loop2 [= [j; - [j; 1]]]]]]][10];
     ? [> [i; 0]; loop1 [= [i; - [i; 1]]]]]]][10];
-    arr`
-    deepEqual(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it(':: should work', () => {
-    const source = `:= [d; :: ["x"; 10; "y"; 23]];
-    :: ["y"; 5; "m"; :: ["x"; :: ["x"; 10; "y"; d]; "y"; 23];]`
-    deepEqual(runFromInterpreted(source), runFromCompiled(source))
-  })
-  it('^ should work', () => {
-    const source1 = `:= [x; 11; y; 23];
+    arr`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it(':: should work', () =>
+    [
+      `:= [d; :: ["x"; 10; "y"; 23]];
+    :: ["y"; 5; "m"; :: ["x"; :: ["x"; 10; "y"; d]; "y"; 23];]`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('^ should work', () =>
+    [
+      `:= [x; 11; y; 23];
     |> [x; 
         + [y; 23; 4];
         * [2];
@@ -257,55 +281,65 @@ describe('compilation should work as expected', () => {
           * [x; x]
         ]];
        ];
-    `
-    equal(runFromInterpreted(source1), runFromCompiled(source1))
-
-    const source2 = `|> [0; 
+    `,
+      `|> [0; 
       + [2];
-      ^ [-> [x; * [x; x]]]];`
-    deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
-  })
-  it('<> </> .:. >< should work', () => {
-    const source1 = `|> [
+      ^ [-> [x; * [x; x]]]];`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('<> </> .:. >< should work', () =>
+    [
+      `|> [
       .: [1; 2; 3; 4];
       <> [.: [1; 2; 4]];
       .< []
     ];
-    `
-    deepEqual(runFromInterpreted(source1), runFromCompiled(source1))
-    const source2 = `|> [
+    `,
+      `|> [
       .: [1; 2; 3; 4];
       <> [.: [1; 2; 4]];
       .< []
     ];
-    `
-    deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
-    const source3 = `|> [
+    `,
+      `|> [
       .: [1; 2; 3; 4; 5; 6; 7];
       .:. [.: [1; 2; 4; 6]];
     ];
-    `
-    deepEqual(runFromInterpreted(source3), runFromCompiled(source3))
-
-    const source4 = `
+    `,
+      `
     |> [
       .: [1; 2; 3; 4; 5; 6; 7];
       >< [.: [1; 2; 4; 6]];
     ];
-    `
-
-    deepEqual(runFromInterpreted(source4), runFromCompiled(source4))
-  })
-  it('<-:: and <-.: should work', () => {
-    const source1 = `:= [obj; :: ["x"; 10; "y"; 12; "z"; 10]];
-    <-:: [x; y; z; obj]; .:[x; y; z]`
-    deepEqual(runFromInterpreted(source1), runFromCompiled(source1))
-    const source2 = `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]];
-    <-.: [a; b; c; rest; arr]; .: [a; b; c; rest]`
-    deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
-    const source3 = `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]];
+    `,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('<-:: and <-.: should work', () =>
+    [
+      `:= [obj; :: ["x"; 10; "y"; 12; "z"; 10]];
+    <-:: [x; y; z; obj]; .:[x; y; z]`,
+      `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]];
+    <-.: [a; b; c; rest; arr]; .: [a; b; c; rest]`,
+      `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]];
     <-.: [a; b; c; rest; arr];
-    |> [rest; .:= [a]; .:= [b]; .:= [c]];`
-    deepEqual(runFromInterpreted(source3), runFromCompiled(source3))
-  })
+    |> [rest; .:= [a]; .:= [b]; .:= [c]];`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('+= -= *= should work', () =>
+    [
+      `:=[x; 0]; += [x]`,
+      `:=[x; 1]; +=[x; 3]`,
+      `:=[x; 1]; +=[x; 3]; x`,
+      `:=[x; 1]; -= [x]`,
+      `:=[x; 1]; -=[x; 3]`,
+      `:=[x; 1]; -=[x; 3]; x`,
+      `:=[x; 2]; *= [x]`,
+      `:=[x; 2]; *=[x; 3]`,
+      `:=[x; 2]; *=[x; 3]; x`,
+    ].forEach((source) =>
+      equal(runFromInterpreted(source), runFromCompiled(source))
+    ))
 })

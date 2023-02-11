@@ -65,6 +65,36 @@ const tokens = {
       throw new TypeError('Invalid use of | (Not all args are numbers)')
     return +operand.toFixed(rounder)
   },
+  ['+=']: (args, env) => {
+    if (args.length > 2)
+      throw new RangeError('Invalid number of arguments to +=')
+    const [left, right] = args
+    const a = evaluate(left, env)
+    const b = right ? evaluate(right, env) : 1
+    if (typeof a !== 'number' || typeof b !== 'number')
+      throw new TypeError('Invalid use of += (Not all args are numbers)')
+    return (env[left.name] = a + b)
+  },
+  ['-=']: (args, env) => {
+    if (args.length > 2)
+      throw new RangeError('Invalid number of arguments to -=')
+    const [left, right] = args
+    const a = evaluate(left, env)
+    const b = right ? evaluate(right, env) : 1
+    if (typeof a !== 'number' || typeof b !== 'number')
+      throw new TypeError('Invalid use of -= (Not all args are numbers)')
+    return (env[left.name] = a - b)
+  },
+  ['*=']: (args, env) => {
+    if (args.length > 2)
+      throw new RangeError('Invalid number of arguments to *=')
+    const [left, right] = args
+    const a = evaluate(left, env)
+    const b = right ? evaluate(right, env) : 1
+    if (typeof a !== 'number' || typeof b !== 'number')
+      throw new TypeError('Invalid use of *= (Not all args are numbers)')
+    return (env[left.name] = a * b)
+  },
   ['~']: (args, env) => {
     if (args.length < 2)
       throw new RangeError('Invalid number of arguments to ~')

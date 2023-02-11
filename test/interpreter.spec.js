@@ -535,4 +535,15 @@ describe('interpretation should work as expected', () => {
       [1, 2, 3, [4, 5, 6, 7, 8]]
     )
   })
+  it('+= should work', () => {
+    equal(runFromInterpreted(`:=[x; 0]; += [x]`), 1)
+    equal(runFromInterpreted(`:=[x; 1]; +=[x; 3]`), 4)
+    equal(runFromInterpreted(`:=[x; 1]; +=[x; 3]; x`), 4)
+    equal(runFromInterpreted(`:=[x; 1]; -= [x]`), 0)
+    equal(runFromInterpreted(`:=[x; 1]; -=[x; 3]`), -2)
+    equal(runFromInterpreted(`:=[x; 1]; -=[x; 3]; x`), -2)
+    equal(runFromInterpreted(`:=[x; 2]; *= [x]`), 2)
+    equal(runFromInterpreted(`:=[x; 2]; *=[x; 3]`), 6)
+    equal(runFromInterpreted(`:=[x; 2]; *=[x; 3]; x`), 6)
+  })
 })

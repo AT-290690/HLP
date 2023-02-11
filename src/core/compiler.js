@@ -130,6 +130,18 @@ const compile = () => {
           return `(${dfs(tree.args[0], locals)}.toFixed(
           ${tree.args.length === 1 ? 0 : dfs(tree.args[1], locals)}
         ));`
+        case '+=':
+          return `(${dfs(tree.args[0], locals)}+=${
+            tree.args[1] != undefined ? dfs(tree.args[1], locals) : 1
+          });`
+        case '-=':
+          return `(${dfs(tree.args[0], locals)}-=${
+            tree.args[1] != undefined ? dfs(tree.args[1], locals) : 1
+          });`
+        case '*=':
+          return `(${dfs(tree.args[0], locals)}*=${
+            tree.args[1] != undefined ? dfs(tree.args[1], locals) : 1
+          });`
         case '!':
           return '!' + dfs(tree.args[0], locals)
 
@@ -146,6 +158,7 @@ const compile = () => {
           if (conditionStack.length === 3) conditionStack.push(':', 'null;')
           return `(${conditionStack.join('')});`
         }
+
         case '@':
           return `_repeat(${dfs(tree.args[0], locals)},${dfs(
             tree.args[1],
