@@ -261,6 +261,10 @@ describe('compilation should work as expected', () => {
       ? [> [j; 0]; loop2 [= [j; - [j; 1]]]]]]][10];
     ? [> [i; 0]; loop1 [= [i; - [i; 1]]]]]]][10];
     arr`,
+      `:= [arr; .: []];
+    ~= [loop; -> [i; bounds; .. [.:= [arr; i];
+    ? [> [bounds; i]; loop [+= [i]; bounds]]]]][1; 12];
+    arr;`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source), runFromCompiled(source))
     ))

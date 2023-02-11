@@ -22,6 +22,12 @@ const encode = async (file) => {
   const link = `https://at-290690.github.io/HLP?s=`
   logSuccessMessage(link + encoded)
 }
+const count = async (file) => {
+  const encoded = encodeURIComponent(
+    encodeBase64(await readFile(`./examples/${file}`, 'utf-8'))
+  )
+  logWarningMessage(`compressed size: ${encoded.length}`)
+}
 const compile = async (file) => {
   try {
     logWarningMessage(
@@ -35,6 +41,10 @@ const mangle = async (file) => {
   const compressed = compress(await readFile(`./examples/${file}`, 'utf-8'))
   logSuccessMessage(compressed)
 }
+const countMangled = async (file) => {
+  const compressed = compress(await readFile(`./examples/${file}`, 'utf-8'))
+  logWarningMessage(`mangled size: ${compressed.length}`)
+}
 const [, , filename, flag] = process.argv
 switch (flag) {
   case 'link':
@@ -47,6 +57,13 @@ switch (flag) {
     break
   case 'JS':
     compile(filename)
+    break
+  case 'C':
+  case 'count':
+    count(filename)
+    break
+  case 'CM':
+    countMangled(filename)
     break
   case 'run':
   case 'R':

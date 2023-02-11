@@ -440,6 +440,13 @@ describe('interpretation should work as expected', () => {
   it('~= should work', () => {
     deepEqual(
       runFromInterpreted(`:= [arr; .: []];
+    ~= [loop; -> [i; bounds; .. [.:= [arr; i];
+    ? [> [bounds; i]; loop [+= [i]; bounds]]]]][1; 12];
+    arr;`).items,
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    )
+    deepEqual(
+      runFromInterpreted(`:= [arr; .: []];
     ~= [loop1; -> [i;  .. [
       =.: [arr; .:[]];
       := [current; .> [arr]];
@@ -535,7 +542,7 @@ describe('interpretation should work as expected', () => {
       [1, 2, 3, [4, 5, 6, 7, 8]]
     )
   })
-  it('+= should work', () => {
+  it('+= -= *= should work', () => {
     equal(runFromInterpreted(`:=[x; 0]; += [x]`), 1)
     equal(runFromInterpreted(`:=[x; 1]; +=[x; 3]`), 4)
     equal(runFromInterpreted(`:=[x; 1]; +=[x; 3]; x`), 4)
