@@ -32,6 +32,11 @@ const importArgs = (expr) =>
     return arg
   }))
 
+const validateDefinitionsInPipe = (args) => {
+  if (args.some((arg) => arg?.operator?.name === ':='))
+    throw new TypeError(`Can't use := [] inside a |> []`)
+  return args
+}
 const pipeArgs = (expr) => {
   const [first, ...rest] = expr.args
   if (!first) throw new TypeError(`Invalid number of arguments for |> []`)
@@ -40,14 +45,16 @@ const pipeArgs = (expr) => {
 
   // if (!rest.every(x => x.operator.name[0] === '|'))
   //   throw new SyntaxError(`Pipe functions have to start with |`)
-
   expr.args = [
     first,
     ...rest.map((arg) => ({
       args: [
         { type: 'word', name: '__' },
         {
-          args: [{ type: 'word', name: '__' }, ...(arg.args ?? [])],
+          args: [
+            { type: 'word', name: '__' },
+            ...(validateDefinitionsInPipe(arg.args) ?? []),
+          ],
           class: 'function',
           type: 'apply',
           operator: { name: arg.operator.name, type: 'word' },

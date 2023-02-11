@@ -23,9 +23,13 @@ const encode = async (file) => {
   logSuccessMessage(link + encoded)
 }
 const compile = async (file) => {
-  logWarningMessage(
-    compilePlainJs(await readFile(`./examples/${file}`, 'utf-8'))
-  )
+  try {
+    logWarningMessage(
+      compilePlainJs(await readFile(`./examples/${file}`, 'utf-8'))
+    )
+  } catch (error) {
+    logErrorMessage(error.message)
+  }
 }
 const mangle = async (file) => {
   const compressed = compress(await readFile(`./examples/${file}`, 'utf-8'))
