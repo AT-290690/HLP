@@ -1,6 +1,6 @@
 <- [SKETCH; MATH] [LIBRARY]; 
 <- [make_scene; make_group; make_rectangle; update; play; draw; 
-    insert_into_group; background; width; height;
+    insert_into_group; background; width; height; set_position;
     set_fill; set_stroke; no_fill; no_stroke] [SKETCH]; 
 <- [random_int] [MATH];
 
@@ -86,7 +86,8 @@ render; -> [iterate_cells [cells; -> [cell; x; y; .. [
 
 make_scene [W; H; -> [.. [
  |> [cells; 
-    make_grid []];
+    make_grid []; 
+    set_position [N; N]];
   draw [lifespan; -> [delta; fps; trottle [delta; 8; -> [.. [
     update_state []; 
     render []]]]]]; 

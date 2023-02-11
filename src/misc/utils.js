@@ -431,10 +431,7 @@ ${top}async function entry(){${program.substring(6, program.length - 4)}}`
 export const compileHtml = (
   source,
   scripts = `<script
-src="https://cdnjs.cloudflare.com/ajax/libs/two.js/0.8.10/two.min.js"
-integrity="sha512-D9pUm3+gWPkv/Wl6vd45vRLjdkdEKGje7BxOxYG0N6m4UlEUB7RSljBwpmJNAOuf6txLLtlaRchoKfzngr/bQg=="
-crossorigin="anonymous"
-referrerpolicy="no-referrer"
+src="./src/misc/two.min.js"
 ></script>`
 ) => {
   const inlined = wrapInBody(removeNoCode(source))
@@ -456,11 +453,8 @@ ${languageUtilsString}
 export const compileHtmlModule = (
   source,
   scripts = `<script
-src="https://cdnjs.cloudflare.com/ajax/libs/two.js/0.8.10/two.min.js"
-integrity="sha512-D9pUm3+gWPkv/Wl6vd45vRLjdkdEKGje7BxOxYG0N6m4UlEUB7RSljBwpmJNAOuf6txLLtlaRchoKfzngr/bQg=="
-crossorigin="anonymous"
-referrerpolicy="no-referrer"
-></script>`
+  src="./src/misc/two.min.js"
+  ></script>`
 ) => {
   const inlined = wrapInBody(removeNoCode(source))
   const { top, program, modules } = compileToJs(parse(inlined))
@@ -481,10 +475,7 @@ export const interpredHtml = (
   source,
   utils = '../language/misc/utils.js',
   scripts = `<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/two.js/0.8.10/two.min.js"
-  integrity="sha512-D9pUm3+gWPkv/Wl6vd45vRLjdkdEKGje7BxOxYG0N6m4UlEUB7RSljBwpmJNAOuf6txLLtlaRchoKfzngr/bQg=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
+  src="./src/misc/two.min.js"
   ></script>`
 ) => {
   const inlined = wrapInBody(removeNoCode(source))
