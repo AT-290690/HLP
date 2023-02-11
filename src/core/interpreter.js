@@ -7,7 +7,7 @@ export const evaluate = (expr, env) => {
       else throw new ReferenceError(`Undefined variable: ${expr.name}`)
 
     case 'apply': {
-      const tokens = env[';;tokens']
+      const tokens = env[';;runes']
       if (expr.operator.type === 'word' && expr.operator.name in tokens)
         return tokens[expr.operator.name](expr.args, env)
 

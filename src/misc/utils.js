@@ -325,7 +325,7 @@ export const runFromCompiled = (source) => eval(compileModule(source))
 export const exe = (source, extensions) => {
   if (extensions) for (const ext in extensions) STD[ext] = extensions[ext]
   const ENV = protolessModule(STD)
-  ENV[';;tokens'] = protolessModule(tokens)
+  ENV[';;runes'] = protolessModule(tokens)
   const AST = parse(wrapInBody(source))
   const { result } = runFromAST(AST, ENV)
   return result
@@ -506,8 +506,8 @@ import { exe } from '${utils}';
 export const compileExecutable = (source, ctx) => {
   const inlined = wrapInBody(removeNoCode(source))
   const ENV = protolessModule(ctx)
-  ENV[';;tokens'] = protolessModule(tokens)
-  delete ENV[';;tokens']['<-']
+  ENV[';;runes'] = protolessModule(tokens)
+  delete ENV[';;runes']['<-']
   const AST = parse(inlined)
   // const { AST } = cell(ENV, false)(inlined)
   const { top, program, modules } = compileToJs(AST, ctx)
