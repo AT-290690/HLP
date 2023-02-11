@@ -9,7 +9,6 @@ const errorIcon = document.getElementById('error-drone-icon')
 const execIcon = document.getElementById('exec-drone-icon')
 const popupContainer = document.getElementById('popup-container')
 const autoComplete = document.getElementById('autocomplete-container')
-const applicationContainer = document.getElementById('application-container')
 const consoleEditor = CodeMirror(popupContainer)
 
 const CONSOLE_HEIGHT_FACTOR = 5
@@ -67,6 +66,8 @@ const droneIntel = (icon) => {
 const exe = async (source) => {
   consoleElement.style.fontFamily = 'Fantastic'
   try {
+    consoleElement.classList.remove('error_line')
+    consoleElement.classList.add('info_line')
     const result = chipRun(source, extensions)
     droneButton.classList.remove('shake')
     droneIntel(execIcon)
@@ -74,7 +75,7 @@ const exe = async (source) => {
   } catch (err) {
     consoleElement.classList.remove('info_line')
     consoleElement.classList.add('error_line')
-    consoleElement.value = consoleElement.value.trim() || err + ' '
+    consoleElement.value = err + ' '
     droneButton.classList.remove('shake')
     droneButton.classList.add('shake')
     droneIntel(errorIcon)
@@ -114,22 +115,19 @@ document.addEventListener('keydown', (e) => {
     e.stopPropagation()
     popupContainer.style.display = 'none'
     exe(editor.getValue().trim())
-    const encoded = encodeURIComponent(encodeBase64(editor.getValue()))
 
-    if (encoded) {
-      consoleElement.style.fontFamily = 'Drifter'
-      consoleElement.value = encoded
-      window.open(
-        `https://at-290690.github.io/HLP/?s=` + encoded,
-        'Bit',
-        `menubar=no,directories=no,toolbar=no,status=no,scrollbars=no,resize=no,width=600,height=600,left=600,top=150`
-      )
-    }
+    const encoded = encodeURIComponent(encodeBase64(editor.getValue()))
+    consoleElement.style.fontFamily = 'Drifter'
+    consoleElement.value = encoded
+    window.open(
+      `https://at-290690.github.io/HLP/?s=` + encoded,
+      'Bit',
+      `menubar=no,directories=no,toolbar=no,status=no,scrollbars=no,resize=no,width=600,height=600,left=600,top=150`
+    )
   } else if (e.key === 'Escape') {
     e.preventDefault()
     e.stopPropagation()
     popupContainer.style.display = 'none'
-    applicationContainer.style.display = 'none'
     autoComplete.innerHTML = ''
     autoComplete.style.display = 'none'
   }
@@ -142,9 +140,6 @@ window.addEventListener('resize', () => {
   editor.setSize(width - 10, height - 60)
   if (popupContainer.style.display === 'block') {
     consoleEditor.setSize(width - 2, height / CONSOLE_HEIGHT_FACTOR)
-  }
-  if (applicationContainer.style.display === 'block') {
-    applicationContainer.style.display = 'none'
   }
 })
 const bounds = document.body.getBoundingClientRect()

@@ -4,14 +4,13 @@
   --linenumbers: #565f89;
   --border: #6b84b0;
   --background-primary: #1a1b26;
-  --background-secondary: #a9b1d636;
+  --background-secondary: #d677f836;
   --gutters-border: 1px solid transparent;
   --border-width: 1px;
   --error: #e93838;
   --warning: #ffed2b;
   --success: #6de46d;
   --icons: #6b84b0;
-  --progress: #42c6ff;
   --font-primary: 'Fantastic';
   --drone1: #646159;
   --drone2: #f1b442;
@@ -29,7 +28,7 @@
   --bracket: #546a90;
   --color-primary: #f877ba;
   --color-secondary: #42c6ff;
-  --color-thirdly: #acb0fd;
+  --color-thirdly: #d677f8;
   --color-fourtly: #75ff91;
   --color-fiftly: #2eff85;
 }
@@ -308,16 +307,6 @@ input:focus {
   background-color: transparent;
   display: none;
   border-top: solid 1px var(--border);
-}
-#application-container {
-  position: absolute;
-  width: fit-content;
-  top: 50px;
-  right: 0;
-  z-index: 1000;
-  background-color: transparent;
-  display: none;
-  border-left: solid 1px var(--border);
 }
 
 .fs-autocomplete-option {

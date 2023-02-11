@@ -333,9 +333,13 @@ export const LIBRARY = {
     get_elements_by_class_name: (tag) => document.getElementsByClassName(tag),
     get_elements_by_tag_name: (tag) => document.getElementsByTagName(tag),
     make_user_interface: () => {
-      const div = document.createElement('div')
-      document.body.appendChild(div)
-      return div
+      let container = document.getElementById('application-container')
+      if (!container) {
+        container = document.createElement('div')
+        container.setAttribute('id', 'application-container')
+        document.body.appendChild(container)
+      }
+      return container
     },
     make_image: (src) => {
       const img = document.createElement('img')
@@ -599,7 +603,7 @@ export const LIBRARY = {
       const div = document.createElement('div')
       elements.forEach((element) => frag.appendChild(element))
       div.appendChild(frag)
-      document.body.appendChild(div)
+      document.getElementById('application-container').appendChild(div)
       return div
     },
     make_div: (...elements) => {
