@@ -98,7 +98,7 @@ document.addEventListener('keydown', (e) => {
 
     const encoded = encodeURIComponent(encodeBase64(editor.getValue()))
     window.open(
-      `https://at-290690.github.io/HLP/?s=` + encoded,
+      `https://at-290690.github.io/hlp/?s=` + encoded,
       'Bit',
       `menubar=no,directories=no,toolbar=no,status=no,scrollbars=no,resize=no,width=600,height=600,left=600,top=150`
     )

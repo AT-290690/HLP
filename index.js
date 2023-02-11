@@ -17,7 +17,7 @@ const logResult = (file) =>
 
 const encode = async (
   file,
-  destination = 'https://at-290690.github.io/HLP'
+  destination = 'https://at-290690.github.io/hlp'
 ) => {
   const encoded = encodeURIComponent(
     encodeBase64(await readFile(`./examples/${file}`, 'utf-8'))
