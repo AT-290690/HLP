@@ -32,68 +32,34 @@
   --color-fourtly: #75ff91;
   --color-fiftly: #2eff85;
 }
-text,
-input,
-button,
-textarea {
-  font-family: var(--font-primary);
-  font-size: 12pt;
-}
-
-input::selection {
-  color: #2eff85;
-  background: #a9b1d660;
-}
 
 @font-face {
   font-family: 'Fantastic';
   src: url(./assets/fonts/FantasqueSansMono-Regular.ttf) format('truetype');
   font-display: swap;
 }
-@font-face {
+/* @font-face {
   font-family: 'Drifter';
   src: url(./assets/fonts/DrifterMono.ttf) format('truetype');
   font-display: swap;
-}
+} */
 html,
 body {
   background-color: var(--background-primary);
   margin: 0;
   height: 100vh;
 }
-#console:focus {
-  color: var(--icons);
-  background-color: var(--background-primary);
-}
+
 #console {
-  background-color: transparent;
-  outline: none;
-  border: none;
-  resize: none;
-  width: 90%;
-  font-family: var(--font-primary);
-  /* position: fixed; */
-  /* bottom: 0; */
-}
-.success_line,
-.error_line,
-.info_line,
-.warn_line {
-  resize: vertical;
-  z-index: 5;
-  font-family: var(--font-primary);
-  font-style: normal;
-  letter-spacing: -0.05em;
-  background-color: var(--background-primary);
+  position: absolute;
+  left: 0px;
   padding-inline-start: 75px;
+  width: fit-content;
+  color: white;
+  background-color: transparent;
+  border: none;
 }
-.error_line {
-  color: #ff275d;
-}
-.info_line {
-  border: var(--border-width) solid var(--comment);
-  color: var(--icons);
-}
+
 #editor-container {
   z-index: 1;
   border-top: solid 1px var(--border);
@@ -154,8 +120,6 @@ iframe {
 .droneIcon,
 #drone {
   cursor: pointer;
-  /* bottom: 0px;
-  left: 5px; */
   top: 5px;
   left: 5px;
   text-align: center;
@@ -297,17 +261,6 @@ input:focus {
     transform: translate(0, 0);
   }
 }
-#popup-container {
-  position: absolute;
-  bottom: 8px;
-  left: 0px;
-  width: fit-content;
-  z-index: 1000;
-  color: white;
-  background-color: transparent;
-  display: none;
-  border-top: solid 1px var(--border);
-}
 
 .fs-autocomplete-option {
   background-color: var(--background-primary);
@@ -319,16 +272,4 @@ input:focus {
 }
 .fs-autocomplete-option:hover {
   background-color: var(--comment);
-}
-#autocomplete-container {
-  overflow: scroll;
-  max-height: 162px;
-  display: grid;
-  position: absolute;
-  top: 55px;
-  left: 70px;
-  z-index: 1000;
-  border: none;
-  display: none;
-  border: solid 1px var(--border);
 }
