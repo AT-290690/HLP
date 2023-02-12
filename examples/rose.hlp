@@ -1,37 +1,36 @@
-<- [SKETCH; LOOP] [LIBRARY];
+<- [SKETCH] [LIBRARY];
 <- [make_scene; set_stroke; no_fill;
     make_group; background; get_rotation;
     width; height; no_stroke; 
     draw; make_rectangle; play; 
     set_fill; set_opacity; set_rotation] [SKETCH];
-<- [repeat] [LOOP];
 make_scene [300; 300; -> [.. [
 
 := [arr; .: []];
 := [strokes; .: []];
 := [shadows; .: []];
 
-repeat [16; -> [i; .:= [arr; |> [
+@ [16; -> [i; .:= [arr; |> [
   make_rectangle [width [0.5]; height [0.5]; + [10; * [i; 10]]; + [10; * [i; 10]]]; 
   set_rotation [* [i; 0.5]]; 
   set_opacity [* [0.02; i]]; 
   set_fill ["crimson"]; 
   no_stroke []]]]];
 
-repeat [16; -> [i; .:= [strokes; |> [
+@ [16; -> [i; .:= [strokes; |> [
   make_rectangle [width [0.5]; height [0.5]; + [10; * [i; 10]]; + [10; * [i; 10]]]; 
   set_rotation [* [i; 0.5]]; 
   set_opacity [- [1; * [0.01; i]]]; 
   set_stroke ["darkred"]; 
   no_fill []]]]];
 
-repeat [10; -> [i; .:= [shadows; |> [
+@ [10; -> [i; .:= [shadows; |> [
   make_rectangle [width [0.5]; height [0.5]; + [10; * [i; 10]]; + [10; * [i; 10]]]; 
   set_rotation [* [i; 0.5]]; 
   set_opacity [* [0.03; i]]; 
   set_fill ["black"]; 
   no_stroke []]]]];
-draw [60; -> [frame; delta; .. [
+draw [0; -> [frame; delta; .. [
   >> [arr; 
         -> [leaf; i; a; set_rotation [leaf; 
         + [get_rotation [leaf]; * [i; 0.001]]]]];

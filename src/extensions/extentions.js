@@ -673,13 +673,13 @@ export const LIBRARY = {
         options.get('color') ?? ''
       };`.trim(),
     margin: (options) =>
-      `margin: ${options.get('top') ?? '0'} ${options.get('right') ?? '0'} ${
-        options.get('bottom') ?? '0'
-      } ${options.get('left') ?? '0'};`,
+      `margin: ${options.get('t') ?? 'auto'} ${options.get('r') ?? 'auto'} ${
+        options.get('b') ?? 'auto'
+      } ${options.get('l') ?? 'auto'};`,
     padding: (options) =>
-      `padding: ${options.get('top') ?? '0'} ${options.get('right') ?? '0'} ${
-        options.get('bottom') ?? '0'
-      } ${options.get('left') ?? '0'};`,
+      `padding: ${options.get('t') ?? 'auto'} ${options.get('r') ?? 'auto'} ${
+        options.get('b') ?? 'auto'
+      } ${options.get('l') ?? 'auto'};`,
     display: (display) =>
       `display: ${
         { f: 'flex', g: 'grid', i: 'inline', b: 'block', ib: 'inline-block' }[
@@ -1016,10 +1016,11 @@ export const LIBRARY = {
     draw: (lifespan, callback) => {
       if (callback && typeof callback === 'function') {
         LIBRARY.SKETCH.engine.bind('update', callback)
-        setTimeout(() => {
-          LIBRARY.SKETCH.engine.unbind('update', callback)
-          LIBRARY.SKETCH.engine.removeEventListener('update')
-        }, 1000 * lifespan)
+        lifespan &&
+          setTimeout(() => {
+            LIBRARY.SKETCH.engine.unbind('update', callback)
+            LIBRARY.SKETCH.engine.removeEventListener('update')
+          }, 1000 * lifespan)
       }
     },
 
