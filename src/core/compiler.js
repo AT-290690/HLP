@@ -112,7 +112,7 @@ const compile = () => {
             '(' +
             tree.args
               .map((x) => `(${dfs(x, locals)})`)
-              .join(symbols[tree.operator.name] ?? tree.operator.name) +
+              .join(tree.operator.name) +
             ');'
           )
         case '%':

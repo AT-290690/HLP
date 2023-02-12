@@ -116,7 +116,9 @@ const dfs = (
   return { definitions, imports }
 }
 export const compress = (source) => {
-  const value = removeNoCode(source)
+  const raw = removeNoCode(source)
+  const strings = raw.match(/"([^"]*)"/g) || []
+  const value = raw.replaceAll(/"([^"]*)"/g, '" "')
   const AST = parse(wrapInBody(value))
   const { definitions, imports } = dfs(
     AST.args,
@@ -175,17 +177,27 @@ export const compress = (source) => {
     })
   for (const { full, short } of shortDefinitions)
     result = result.replaceAll(new RegExp(`\\b${full}\\b`, 'g'), short)
-  return result
+
+  result = result.split('" "')
+  strings.forEach((str, i) => (result[i] += str))
+
+  return result.join('')
 }
-export const decompress = (source) => {
-  const suffix = [...new Set(source.match(/\'+?\d+/g))]
+export const decompress = (raw) => {
+  const strings = raw.match(/"([^"]*)"/g) || []
+  const value = raw.replaceAll(/"([^"]*)"/g, '" "')
+  const suffix = [...new Set(value.match(/\'+?\d+/g))]
   let result = suffix.reduce(
     (acc, m) => acc.split(m).join(']'.repeat(parseInt(m.substring(1)))),
-    source
+    value
   )
   for (const { full, short } of shortModules)
     result = result.replaceAll(new RegExp(`\\b${short}\\b`, 'g'), full)
-  return result
+
+  result = result.split('" "')
+  strings.forEach((str, i) => (result[i] += str))
+
+  return result.join('')
 }
 export const encodeBase64 = (source) =>
   LZUTF8.compress(compress(source).trim(), { outputEncoding: 'Base64' })

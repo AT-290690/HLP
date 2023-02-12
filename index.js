@@ -4,7 +4,7 @@ import {
   runFromCompiled,
   runFromInterpreted,
 } from './src/misc/utils.js'
-import { encodeBase64, compress } from './src/misc/compression.js'
+import { encodeBase64, compress, decodeBase64 } from './src/misc/compression.js'
 const logBoldMessage = (msg) => console.log('\x1b[1m', msg, '\x1b[0m')
 const logErrorMessage = (msg) =>
   console.log('\x1b[31m', '\x1b[1m', msg, '\x1b[0m')
@@ -49,6 +49,18 @@ const count = async (file) => {
   )
   logWarningMessage(`compressed size: ${encoded.length}`)
 }
+const encodeUri = async (file) => {
+  const encoded = encodeURIComponent(
+    encodeBase64(await readFile(`./examples/${file}`, 'utf-8'))
+  )
+  logWarningMessage(encoded)
+}
+const decodeUri = async (file) => {
+  const dencoded = decodeBase64(
+    decodeURIComponent(await readFile(`./examples/${file}`, 'utf-8'))
+  )
+  logWarningMessage(dencoded)
+}
 const compile = async (file) => {
   try {
     logWarningMessage(
@@ -71,6 +83,12 @@ switch (flag) {
   case 'link':
   case 'L':
     encode(filename)
+    break
+  case 'uri':
+    encodeUri(filename)
+    break
+  case 'deuri':
+    decodeUri(filename)
     break
   case 'local':
     encode(filename, arg)
