@@ -336,7 +336,10 @@ export const LIBRARY = {
       if (!output) {
         document.getElementById('output').style.display = 'none'
       }
-      document.getElementById('placeholder').style.display = 'none'
+      const placeholder = document.getElementById('placeholder')
+      if (placeholder) {
+        placeholder.style.display = 'none'
+      }
       let container = document.getElementById('application-container')
       if (!container) {
         container = document.createElement('div')
@@ -841,7 +844,10 @@ export const LIBRARY = {
     },
 
     make_scene: (width = 100, height = 100, callback, type) => {
-      document.getElementById('placeholder').style.display = 'none'
+      const placeholder = document.getElementById('placeholder')
+      if (placeholder) {
+        placeholder.style.display = 'none'
+      }
       LIBRARY.SKETCH.engine?.removeEventListener('update')
       let container = document.getElementById('canvas-container')
       if (!container) {
@@ -1071,6 +1077,10 @@ export const LIBRARY = {
           })
         : entity.origin.set(x, y)
       return entity
+    },
+    open_path: (path) => {
+      path.closed = false
+      return path
     },
     close_path: (path) => {
       path.closed = true

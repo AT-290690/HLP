@@ -69,40 +69,56 @@ const exe = async (source) => {
 
 const editor = CodeMirror(editorContainer, {})
 droneButton.addEventListener('click', () => {
-  const source = editor.getValue()
-  const selection = editor.getSelection().trim()
-  if (!selection) {
-    return document.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        ctrlKey: true,
-        key: 's',
-      })
-    )
-  }
-  const isEndingWithSemi = selection[selection.length - 1] === ';'
-  const out = `__debug_log[${
-    isEndingWithSemi ? selection.substring(0, selection.length - 1) : selection
-  }; ""]${isEndingWithSemi ? ';' : ''}`
-  editor.replaceSelection(out)
-
-  exe(`:=[__debug_log; LOGGER[0]]; ${editor.getValue().trim()}`)
-  editor.setValue(source)
+  return document.dispatchEvent(
+    new KeyboardEvent('keydown', {
+      ctrlKey: true,
+      key: 's',
+    })
+  )
 })
+const withCommand = (command = editor.getLine(0)) => {
+  const value = editor.getValue()
+  switch (command) {
+    case ';; app':
+      {
+        const encoded = encodeURIComponent(encodeBase64(value))
+        window.open(
+          `https://at-290690.github.io/hlp/?s=` + encoded,
+          'Bit',
+          `menubar=no,directories=no,toolbar=no,status=no,scrollbars=no,resize=no,width=600,height=600,left=600,top=150`
+        )
+      }
+      break
+    case ';; debug':
+      {
+        const selection = editor.getSelection().trim()
+        if (selection) {
+          const isEndingWithSemi = selection[selection.length - 1] === ';'
+          const out = `__debug_log[${
+            isEndingWithSemi
+              ? selection.substring(0, selection.length - 1)
+              : selection
+          }; ""]${isEndingWithSemi ? ';' : ''}`
+          editor.replaceSelection(out)
 
+          exe(`:=[__debug_log; LOGGER[0]]; ${editor.getValue().trim()}`)
+          editor.setValue(value)
+        } else exe(`:=[__debug_log; LOGGER[0]]; __debug_log[..[${value}]]`)
+      }
+      break
+    default:
+      exe(value)
+      break
+  }
+}
 document.addEventListener('keydown', (e) => {
   if (e.key && e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey)) {
     e = e || window.event
     e.preventDefault()
     e.stopPropagation()
-    exe(editor.getValue().trim())
-
-    const encoded = encodeURIComponent(encodeBase64(editor.getValue()))
-    window.open(
-      `https://at-290690.github.io/hlp/?s=` + encoded,
-      'Bit',
-      `menubar=no,directories=no,toolbar=no,status=no,scrollbars=no,resize=no,width=600,height=600,left=600,top=150`
-    )
-    consoleEditor.setValue(encoded)
+    consoleEditor.setValue('')
+    withCommand()
+    // consoleEditor.setValue(encoded)
   } else if (e.key === 'Escape') {
     e.preventDefault()
     e.stopPropagation()
@@ -113,9 +129,9 @@ window.addEventListener('resize', () => {
   const bouds = document.body.getBoundingClientRect()
   const width = bouds.width
   const height = bouds.height
-  editor.setSize(width - 10, height - 60)
+  editor.setSize(width, height - 60)
   consoleEditor.setSize(width - 80, 40)
 })
 const bounds = document.body.getBoundingClientRect()
-editor.setSize(bounds.width - 10, bounds.height - 60)
+editor.setSize(bounds.width, bounds.height - 60)
 consoleEditor.setSize(bounds.width - 80, 40)

@@ -266,6 +266,7 @@ export const DOCUMENTATION = {
     set_width: `[entity, w] -> entity`,
     set_height: `[entity, h] -> entity`,
     set_origin: `[entity, x, y] -> entity`,
+    open_path: `[path] -> path`,
     close_path: `[path] -> path`,
     make: `[prop, ...args] -> element`,
     get_width: `[] -> number`,
