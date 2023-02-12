@@ -39,7 +39,7 @@ make_scene [:= [WIDTH; 500]; := [HEIGHT; 500]; -> [..[
     draw_branch [1];
     draw_branch [-1]]]; 
   = [angle; - [angle; * [theta; dir]]];
-  = [length; : [length; step]];
+  = [length; / [length; step]];
   = [level; - [level; 1]];
   = [x; |. [x_stack]];
   = [y; |. [y_stack]]]]];

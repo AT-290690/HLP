@@ -6,21 +6,23 @@ describe('compression should work as expected', () => {
     [
       `:= [x; 10]; := [y; 3]; := [temp; x]; = [x; y]; = [y; temp]; :: ["x"; x; "y"; y]`,
       `:= [x; 10; y; 23]; .: [x; y]`,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it('simple math', () =>
-    [
-      `:= [x; 30]; := [result; + [/ [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    [`:= [x; 30]; := [result; + [/ [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it('if', () =>
     [
       `:= [age; 18];
@@ -30,12 +32,14 @@ describe('compression should work as expected', () => {
          := [validate age; -> [age; ? [>= [age; 18]; ~ ["Can work"; ? [>=[age; 21]; " and can drink"; ""]]; "Can't work and can't drink"]]];
          .: [validate age [18]; validate age [21]; validate age [12]];
      `,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
 
   it('fib sum', () =>
     [
@@ -47,12 +51,14 @@ describe('compression should work as expected', () => {
               + [fib [- [n; 1]]; fib [- [n; 2]]]]]; n]]];
             fib[10]
               `,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it('max sub array sum rec', () =>
     [
       `;; max_sub_array_recursive
@@ -64,12 +70,11 @@ describe('compression should work as expected', () => {
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
         [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; * [infinity; -1]; * [infinity; -1]]`,
-    ].forEach((source) =>
-      equal(
-        runFromInterpreted(decompress(compress(source))),
-        runFromCompiled(decompress(compress(source)))
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        equal(runFromInterpreted(source), runFromCompiled(source))
+      ))
   it('sum median', () =>
     [
       `
@@ -84,12 +89,11 @@ describe('compression should work as expected', () => {
           * [first; * [+ [1; first]; 0.5]]]]];
       == [sum [NUMBERS]; median]
           `,
-    ].forEach((source) =>
-      equal(
-        runFromInterpreted(decompress(compress(source))),
-        runFromCompiled(decompress(compress(source)))
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        equal(runFromInterpreted(source), runFromCompiled(source))
+      ))
   it('sum tree nodes', () =>
     [
       `;; sum_tree_nodes
@@ -113,19 +117,17 @@ describe('compression should work as expected', () => {
           node [7; 0; 0]]]];
           sum [myTree]
       `,
-    ].forEach((source) =>
-      equal(
-        runFromInterpreted(decompress(compress(source))),
-        runFromCompiled(decompress(compress(source)))
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        equal(runFromInterpreted(source), runFromCompiled(source))
+      ))
   it('length of string', () =>
-    [`.:? [.-: ["01010"; ""]];`].forEach((source) =>
-      equal(
-        runFromInterpreted(decompress(compress(source))),
-        runFromCompiled(decompress(compress(source)))
-      )
-    ))
+    [`.:? [.-: ["01010"; ""]];`]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        equal(runFromInterpreted(source), runFromCompiled(source))
+      ))
   it('split and join', () =>
     [
       `.+:[.-: ["01010"; ""]; "-"];`,
@@ -148,24 +150,25 @@ describe('compression should work as expected', () => {
       :+ [2; "x"; "y"; "z"];
             .+: [", "]
     ]`,
-    ].forEach((source) =>
-      equal(
-        runFromInterpreted(decompress(compress(source))),
-        runFromCompiled(decompress(compress(source)))
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        equal(runFromInterpreted(source), runFromCompiled(source))
+      ))
   it('import should work', () =>
     [
       `<- [MATH; ARRAY] [LIBRARY];
       <- [floor] [MATH];
       >>. [.: [1.123; 3.14; 4.9]; floor];
       `,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it('nested pipes should work', () =>
     [
       `|> [
@@ -173,12 +176,11 @@ describe('compression should work as expected', () => {
         ^ [-> [x; * [x; 3]]];
         ^ [-> [x; * [x; 10]]]
       ]`,
-    ].forEach((source) =>
-      equal(
-        runFromInterpreted(decompress(compress(source))),
-        runFromCompiled(decompress(compress(source)))
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        equal(runFromInterpreted(source), runFromCompiled(source))
+      ))
   it('>> and << should work', () =>
     [
       `
@@ -204,12 +206,14 @@ describe('compression should work as expected', () => {
       >- [-> [x; i; a; % [x; 2]]]
     ]
     `,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
 
   it('><> should work', () =>
     [
@@ -217,65 +221,68 @@ describe('compression should work as expected', () => {
       `<>< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
       `>.: [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
       `.:< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
-    ].forEach((source) =>
-      equal(
-        runFromInterpreted(decompress(compress(source))),
-        runFromCompiled(decompress(compress(source)))
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        equal(runFromInterpreted(source), runFromCompiled(source))
+      ))
   it('>>. and .<< should work', () =>
     [
       `>>. [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`,
       `|> [.: [1; 2; 3; 4]; >>. [-> [x; i; a; + [i; * [x; 2]]]]; >>. [-> [x; i; a; + [i; * [x; 2]]]]]`,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
 
   it('@ should work', () =>
-    [`:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    [`:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it('|. should work', () =>
     [
       `|> [
       .: [1; 2; 3];
      |. [];
      + [100]]`,
-    ].forEach((source) =>
-      equal(
-        runFromInterpreted(decompress(compress(source))),
-        runFromCompiled(decompress(compress(source)))
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        equal(runFromInterpreted(source), runFromCompiled(source))
+      ))
   it('.| should work', () =>
     [
       `|> [
       .: [1; 2; 3];
      |. [];
      + [100]]`,
-    ].forEach((source) =>
-      equal(
-        runFromInterpreted(decompress(compress(source))),
-        runFromCompiled(decompress(compress(source)))
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        equal(runFromInterpreted(source), runFromCompiled(source))
+      ))
   it('... shoud work', () =>
     [
       `.: [
       ... [.: [1; 2; 3]; .: [4; 5; 6]];
       ]`,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it('*:: and ~:: should work', () =>
     [
       ` |> [
@@ -288,23 +295,27 @@ describe('compression should work as expected', () => {
       ~:: [-1]
     ];
     `,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it(':: ::. ::: ::* .? ::? should work', () =>
     [
       `.: [::: [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
       `.: [::. [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
       `.: [::* [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it(':+: should work', () =>
     [
       `|> [
@@ -312,12 +323,14 @@ describe('compression should work as expected', () => {
       :+: [3]
     ];`,
       `:+: [.: [3; 4; 2; 1; 2; 3]; 2];`,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it(':+ and :- should work', () =>
     [
       `|> [
@@ -335,12 +348,14 @@ describe('compression should work as expected', () => {
       :- [2; 4];
     ]`,
       `:= [obj; :: ["x"; 3; "y"; 4]]; .: [.? [obj; "z"]; .? [obj; "x"]; ::? [obj]]`,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it('~= should work', () =>
     [
       `:= [arr; .: []];
@@ -356,22 +371,26 @@ describe('compression should work as expected', () => {
     ~= [loop; -> [i; bounds; .. [.:= [arr; i];
     ? [> [bounds; i]; loop [+= [i]; bounds]]]]][1; 12];
     arr;`,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it(':: should work', () =>
     [
       `:= [d; :: ["x"; 10; "y"; 23]];
     :: ["y"; 5; "m"; :: ["x"; :: ["x"; 10; "y"; d]; "y"; 23];]`,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it('^ should work', () =>
     [
       `:= [x; 11; y; 23];
@@ -386,12 +405,14 @@ describe('compression should work as expected', () => {
       `|> [0; 
       + [2];
       ^ [-> [x; * [x; x]]]];`,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it('<> </> .:. >< should work', () =>
     [
       `|> [
@@ -417,12 +438,14 @@ describe('compression should work as expected', () => {
       >< [.: [1; 2; 4; 6]];
     ];
     `,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it('<-:: and <-.: should work', () =>
     [
       `:= [obj; :: ["x"; 10; "y"; 12; "z"; 10]];
@@ -432,12 +455,14 @@ describe('compression should work as expected', () => {
       `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]];
     <-.: [a; b; c; rest; arr];
     |> [rest; .:= [a]; .:= [b]; .:= [c]];`,
-    ].forEach((source) =>
-      deepEqual(
-        runFromInterpreted(decompress(compress(source))).items,
-        runFromCompiled(decompress(compress(source))).items
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(
+          runFromInterpreted(source).items,
+          runFromCompiled(source).items
+        )
+      ))
   it('+= -= *= should work', () =>
     [
       `:=[x; 0]; += [x]`,
@@ -449,10 +474,9 @@ describe('compression should work as expected', () => {
       `:=[x; 2]; *= [x]`,
       `:=[x; 2]; *=[x; 3]`,
       `:=[x; 2]; *=[x; 3]; x`,
-    ].forEach((source) =>
-      equal(
-        runFromInterpreted(decompress(compress(source))),
-        runFromCompiled(decompress(compress(source)))
-      )
-    ))
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        equal(runFromInterpreted(source), runFromCompiled(source))
+      ))
 })

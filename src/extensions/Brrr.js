@@ -1,3 +1,11 @@
+/*
+  Optimal Array Data Structure with 
+  O (1) insertions at start
+  O (1) insertions at end
+  O (1) deletionss at start
+  O (1) deletionss at end
+  O (1) random access
+*/
 export default class Brrr {
   #left = [Brrr.#negativeZeroSymbol]
   #right = []
