@@ -218,6 +218,11 @@ describe('interpretation should work as expected', () => {
       runFromInterpreted(`:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`).items,
       [1, 1, 1]
     )
+    deepEqual(
+      runFromInterpreted(`:= [arr; .:[]]; @ [3; -> [i; .:=[arr; +[i; 1]]]]`)
+        .items,
+      [1, 2, 3]
+    )
   })
   it('|. should work', () => {
     equal(

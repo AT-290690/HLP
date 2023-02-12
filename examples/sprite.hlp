@@ -5,7 +5,7 @@
 <- [make_rgb_color] [COLOR];
 <- [make_grid; CANVAS] [UTILS];
 
-:= [src; "https://storage.googleapis.com/archive.jono.fyi/forums/codepen/ken-stance.png"];
+:= [src; "./examples/game/ken-stance.png"];
 
 make_scene [500; 500; -> [.. [
 := [x; width [0.5]; y; height [0.5]; cols; 10; rows; 1; rate; 20];

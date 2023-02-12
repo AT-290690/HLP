@@ -1,27 +1,12 @@
-|> [
-      .: [3; 4; 2; 1; 2; 3];
-      :+: [3];
-      >>. [-> [x; ~["["; .+: [x; ", "]; "]"]]];
-     .+: [", "]
-    ];
+<- [DOM; EVENT; CONSOLE] [LIBRARY];
+<- [make_user_interface; make_container; get_body] [DOM];
+<- [game_controller] [EVENT];
+<- [console_log] [CONSOLE];
 
-
-    |> [:+: [.: [3; 4; 2; 1; 2; 3]; 2]; >>. [-> [x; ~["["; .+: [x; ", "]; "]"]]]; .+: [", "]];
-
-
-
-    |> [
-      .: [1; 2; 3; 4; 5; 6; 7; 8];
-      :+ [4; "x"; "y"; "z"];
-      :- [0; 4];
-      :- [3; 4];
-      .+: [", "]
-    ];
-
-      |> [
-      .: [1; 2; 3; 4; 5; 6; 7; 8];
-      :+ [2; "x"; "y"; "z"];
-            .+: [", "]
-
-    ]
-    
+make_user_interface [];
+game_controller [get_body[]; :: [
+  "w"; -> [console_log["w was pressed"]];
+  "s"; -> [console_log["s was pressed"]];
+  "a"; -> [console_log["a was pressed"]];
+  "d"; -> [console_log["d was pressed"]];
+]];

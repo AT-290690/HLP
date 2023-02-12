@@ -192,7 +192,10 @@ describe('compilation should work as expected', () => {
     ))
 
   it('@ should work', () =>
-    [`:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`].forEach((source) =>
+    [
+      `:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`,
+      `:= [arr; .:[]]; @ [3; -> [i; .:=[arr; +[i; 1]]]]`,
+    ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it('|. should work', () =>

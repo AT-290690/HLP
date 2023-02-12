@@ -240,7 +240,10 @@ describe('compression should work as expected', () => {
       ))
 
   it('@ should work', () =>
-    [`:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`]
+    [
+      `:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`,
+      `:= [arr; .:[]]; @ [3; -> [i; .:=[arr; +[i; 1]]]]`,
+    ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
         deepEqual(

@@ -330,8 +330,10 @@ export const LIBRARY = {
     get_parent_node: (element) => element.parentNode,
     make_fragment: () => document.createDocumentFragment(),
     get_element_by_id: (id) => document.getElementById(id),
-    get_elements_by_class_name: (tag) => document.getElementsByClassName(tag),
-    get_elements_by_tag_name: (tag) => document.getElementsByTagName(tag),
+    get_elements_by_class_name: (tag) =>
+      Brrr.from([...document.getElementsByClassName(tag)]),
+    get_elements_by_tag_name: (tag) =>
+      Brrr.from([...document.getElementsByTagName(tag)]),
     make_user_interface: (output = 0) => {
       if (!output) {
         const output = document.getElementById('output')
@@ -361,29 +363,39 @@ export const LIBRARY = {
     },
     make_element: (type, settings) => {
       const element = document.createElement(type)
-      for (const [key, value] of settings) {
-        element.setAttribute(key, value)
+      if (settings) {
+        for (const [key, value] of settings) {
+          element.setAttribute(key, value)
+        }
       }
+
       return element
     },
     make_canvas: (settings) => {
       const element = document.createElement('canvas')
-      for (const [key, value] of settings) {
-        element.setAttribute(key, value)
+      if (settings) {
+        for (const [key, value] of settings) {
+          element.setAttribute(key, value)
+        }
       }
       return element
     },
     make_input: (settings) => {
       const element = document.createElement('input')
-      for (const [key, value] of settings) {
-        element.setAttribute(key, value)
+      if (settings) {
+        for (const [key, value] of settings) {
+          element.setAttribute(key, value)
+        }
       }
+
       return element
     },
     make_text_area: (settings) => {
       const element = document.createElement('textarea')
-      for (const [key, value] of settings) {
-        element.setAttribute(key, value)
+      if (settings) {
+        for (const [key, value] of settings) {
+          element.setAttribute(key, value)
+        }
       }
       return element
     },
@@ -395,9 +407,10 @@ export const LIBRARY = {
     make_slider: (settings) => {
       const element = document.createElement('input')
       element.type = 'range'
-
-      for (const [key, value] of settings) {
-        element.setAttribute(key, value)
+      if (settings) {
+        for (const [key, value] of settings) {
+          element.setAttribute(key, value)
+        }
       }
       return element
     },
@@ -736,6 +749,14 @@ export const LIBRARY = {
     },
     on_key_up: (element, callback) => {
       element.addEventListener('keyup', (e) => callback(e.key))
+      return element
+    },
+    game_controller: (element, keyMap) => {
+      element.addEventListener('keydown', (e) => {
+        e.preventDefault()
+        const key = keyMap.get(e.key.toLowerCase())
+        key && key()
+      })
       return element
     },
   },

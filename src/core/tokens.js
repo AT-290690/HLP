@@ -528,7 +528,7 @@ const tokens = {
     if (typeof callback !== 'function')
       throw new TypeError('Second argument of @ must be an -> []')
     let out
-    for (let i = 0; i < n; ++i) out = callback()
+    for (let i = 0; i < n; ++i) out = callback(i)
     return out
   },
   ['>.:']: (args, env) => {

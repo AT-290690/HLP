@@ -13,7 +13,7 @@
     >>. [-> [vec; f; m; multiply_self [vec; 3]]]]];
 make_scene [500; 500; -> [.. [
 := [src; "./examples/game/drifter.png"];
- background ["#ddd"];
+ background ["#111"];
  := [cols; 12; rows; 4; rate; 18];
  := [drifter; |> [
    make_sprite [src; 250; 120; cols; rows; rate; 0]; 
@@ -32,4 +32,4 @@ make_scene [500; 500; -> [.. [
    ? [== [key; "a"]; move [2]];
    ? [== [key; "d"]; move [3]]]]]; 
   on_key_up [body; -> [key; stop []]]]]; CANVAS []];
-make_grid [20; 15];
+  set_screen_size[1000; 1000]
