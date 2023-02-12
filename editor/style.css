@@ -58,6 +58,7 @@ body {
   color: white;
   background-color: transparent;
   border: none;
+  /* border: solid 1px red; */
 }
 
 #editor-container {

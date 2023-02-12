@@ -334,7 +334,8 @@ export const LIBRARY = {
     get_elements_by_tag_name: (tag) => document.getElementsByTagName(tag),
     make_user_interface: (output = 0) => {
       if (!output) {
-        document.getElementById('output').style.display = 'none'
+        const output = document.getElementById('output')
+        if (output) output.style.display = 'none'
       }
       const placeholder = document.getElementById('placeholder')
       if (placeholder) {

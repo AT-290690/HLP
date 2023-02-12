@@ -12,7 +12,7 @@ describe('interpretation should work as expected', () => {
       runFromInterpreted(`:= [x; 10; y; 23]; .: [x; y]`).items,
       [10, 23]
     )
-    throws(() => runFromInterpreted(`: [29; 0]`), RangeError)
+    throws(() => runFromInterpreted(`/ [29; 0]`), RangeError)
   })
   it(':: ::. ::: ::* ::? .? should work', () => {
     deepEqual(runFromInterpreted(`::: [:: ["x"; 10; "y"; 23; "z"; 4]]`).items, [
@@ -36,47 +36,14 @@ describe('interpretation should work as expected', () => {
       [0, 1, 2]
     )
   })
-  //   it('handles prototype polution', () => {
-  //     throws(
-  //       () =>
-  //         runFromInterpreted(
-  //           `. [LIBRARY; "constructor"; "constructor"]["console.log(1)"][]`
-  //         ),
-  //       TypeError
-  //     )
-  //     throws(
-  //       () =>
-  //         runFromInterpreted(`<- ["constructor"][. [:: ["x"; 10]; "constructor"]];
-  // constructor ["console.log(2)"][];`),
-  //       TypeError
-  //     )
-  //     throws(
-  //       () =>
-  //         runFromInterpreted(
-  //           `. [:: ["x"; 10]; "constructor"; "constructor"]["console.log(3)"][];`
-  //         ),
-  //       TypeError
-  //     )
-  //     throws(
-  //       () => runFromInterpreted(`<- ["constructor"] [. [:: []]];`),
-  //       TypeError
-  //     )
-  //     throws(
-  //       () =>
-  //         runFromInterpreted(
-  //           `<- ["constructor"] [. [:: []; "constructor"]]; constructor ["console.log(2)"][];`
-  //         ),
-  //       TypeError
-  //     )
-  //   })
   it('simple math', () => {
     equal(
       runFromInterpreted(
-        `:= [x; 30]; := [result; + [: [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`
+        `:= [x; 30]; := [result; + [/ [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`
       ),
       42
     )
-    throws(() => runFromInterpreted(`: [29; 0]`), RangeError)
+    throws(() => runFromInterpreted(`/ [29; 0]`), RangeError)
   })
 
   it('if', () => {

@@ -10,7 +10,7 @@ describe('compilation should work as expected', () => {
     ))
   it('simple math', () =>
     [
-      `:= [x; 30]; := [result; + [: [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`,
+      `:= [x; 30]; := [result; + [/ [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))

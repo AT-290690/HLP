@@ -11,7 +11,6 @@ const sanitizeProp = (prop) => {
 const compile = () => {
   const vars = new Set()
   let modules = {}
-  const symbols = { ':': '/' }
   const dfs = (tree, locals) => {
     if (!tree) return ''
     if (tree.type === 'apply') {
@@ -97,16 +96,14 @@ const compile = () => {
         case '+':
         case '-':
         case '*':
-        case ':':
+        case '/':
         case '>=':
         case '<=':
         case '>':
         case '<':
           return (
             '(' +
-            tree.args
-              .map((x) => dfs(x, locals))
-              .join(symbols[tree.operator.name] ?? tree.operator.name) +
+            tree.args.map((x) => dfs(x, locals)).join(tree.operator.name) +
             ');'
           )
         case '&&':

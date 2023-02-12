@@ -36,7 +36,7 @@ const tokens = {
     const [first, ...rest] = operands
     return rest.reduce((acc, x) => (acc *= x), first)
   },
-  [':']: (args, env) => {
+  ['/']: (args, env) => {
     if (args.length < 2)
       throw new RangeError('Invalid number of arguments to :')
     const operands = args.map((a) => evaluate(a, env))

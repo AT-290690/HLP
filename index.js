@@ -12,15 +12,25 @@ const logSuccessMessage = (msg) =>
   console.log('\x1b[32m', '\x1b[1m', msg, '\x1b[0m')
 const logWarningMessage = (msg) =>
   console.log('\x1b[33m', '\x1b[1m', msg, '\x1b[0m')
-const logResultInterpreted = (file) =>
+const logResultInterpreted = (file, type = 'raw') =>
   readFile(`./examples/${file}`, 'utf-8')
     .then((result) =>
-      logBoldMessage(runFromInterpreted(result?.items ?? result))
+      logBoldMessage(
+        type == 'items'
+          ? runFromInterpreted(result).items
+          : runFromInterpreted(result)
+      )
     )
     .catch((error) => logErrorMessage(error.message))
-const logResultCompiled = (file) =>
+const logResultCompiled = (file, type = 'raw') =>
   readFile(`./examples/${file}`, 'utf-8')
-    .then((result) => logBoldMessage(runFromCompiled(result?.items ?? result)))
+    .then((result) =>
+      logBoldMessage(
+        type == 'items'
+          ? runFromCompiled(result).items
+          : runFromCompiled(result)
+      )
+    )
     .catch((error) => logErrorMessage(error.message))
 
 const encode = async (
@@ -81,10 +91,10 @@ switch (flag) {
     break
   case 'COMPILE':
   case 'CR':
-    logResultCompiled(filename)
+    logResultCompiled(filename, arg)
     break
   case 'run':
   case 'R':
   default:
-    logResultInterpreted(filename)
+    logResultInterpreted(filename, arg)
 }
