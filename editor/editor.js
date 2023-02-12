@@ -13,8 +13,9 @@ const extensions = {
     if (disable) return () => {}
     return (msg) => {
       consoleEditor.focus()
+      const current = consoleEditor.getValue()
       consoleEditor.setValue(
-        `${
+        `${current ? `${current}; ` : ''}${
           msg !== undefined
             ? typeof msg === 'string'
               ? `"${msg}"`

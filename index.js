@@ -1,5 +1,9 @@
 import { readFile } from 'fs/promises'
-import { compilePlainJs, runFromInterpreted } from './src/misc/utils.js'
+import {
+  compilePlainJs,
+  runFromCompiled,
+  runFromInterpreted,
+} from './src/misc/utils.js'
 import { encodeBase64, compress } from './src/misc/compression.js'
 const logBoldMessage = (msg) => console.log('\x1b[1m', msg, '\x1b[0m')
 const logErrorMessage = (msg) =>
@@ -8,11 +12,15 @@ const logSuccessMessage = (msg) =>
   console.log('\x1b[32m', '\x1b[1m', msg, '\x1b[0m')
 const logWarningMessage = (msg) =>
   console.log('\x1b[33m', '\x1b[1m', msg, '\x1b[0m')
-const logResult = (file) =>
+const logResultInterpreted = (file) =>
   readFile(`./examples/${file}`, 'utf-8')
     .then((result) =>
       logBoldMessage(runFromInterpreted(result?.items ?? result))
     )
+    .catch((error) => logErrorMessage(error.message))
+const logResultCompiled = (file) =>
+  readFile(`./examples/${file}`, 'utf-8')
+    .then((result) => logBoldMessage(runFromCompiled(result?.items ?? result)))
     .catch((error) => logErrorMessage(error.message))
 
 const encode = async (
@@ -71,8 +79,12 @@ switch (flag) {
   case 'CM':
     countMangled(filename)
     break
+  case 'COMPILE':
+  case 'CR':
+    logResultCompiled(filename)
+    break
   case 'run':
   case 'R':
   default:
-    logResult(filename)
+    logResultInterpreted(filename)
 }

@@ -375,7 +375,7 @@ const compile = () => {
           const [first, second, ...rest] = tree.args.map((item) =>
             dfs(item, locals)
           )
-          return `_addAt(${first}, ${second}, ${rest});`
+          return `_addAt(${first}, ${second}, [${rest}]);`
         }
         case ':-':
           return `_removeFrom(${dfs(tree.args[0], locals)}, ${dfs(

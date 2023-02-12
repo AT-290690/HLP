@@ -770,7 +770,9 @@ const tokens = {
           scope[entityName] == undefined ||
           !(scope[entityName] instanceof Map)
         )
-          throw new TypeError(`:: ${scope[entityName]} is not a instance of ::`)
+          throw new TypeError(
+            `:: ${entityName} is not a instance of :: at .? []`
+          )
         return +scope[entityName].has(prop[0])
       }
   },
@@ -804,7 +806,7 @@ const tokens = {
             !(scope[entityName] instanceof Map)
           )
             throw new TypeError(
-              `:: ${scope[entityName]} is not a instance of ::`
+              `:: ${entityName} is not a instance of :: at . []`
             )
           if (!scope[entityName].has(prop[0]))
             throw new RangeError(
@@ -836,7 +838,7 @@ const tokens = {
     if (main.type === 'apply') {
       const entity = evaluate(main, env)
       if (entity == undefined || !(entity instanceof Map))
-        throw new TypeError(`:: ${main.name} is not a instance of ::`)
+        throw new TypeError(`:: ${main.name} is not a instance of :: at .= []`)
       entity.set(prop[0], value)
       return entity
     } else if (main.type === 'word') {
@@ -845,7 +847,9 @@ const tokens = {
         if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
           const entity = scope[entityName]
           if (entity == undefined || !(entity instanceof Map))
-            throw new TypeError(`:: ${entityName} is not a instance of ::`)
+            throw new TypeError(
+              `:: ${entityName} is not a instance of :: at .= []`
+            )
           entity.set(prop[0], value)
           return entity
         }
@@ -868,7 +872,9 @@ const tokens = {
       if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
         let temp = scope[entityName]
         if (temp == undefined || !(temp instanceof Map))
-          throw new TypeError(`:: ${entityName} is not a instance of ::`)
+          throw new TypeError(
+            `:: ${entityName} is not a instance of :: at .!= []`
+          )
         temp.delete(prop[0])
         return temp
       }

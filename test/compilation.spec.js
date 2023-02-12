@@ -6,13 +6,13 @@ describe('compilation should work as expected', () => {
       `:= [x; 10]; := [y; 3]; := [temp; x]; = [x; y]; = [y; temp]; :: ["x"; x; "y"; y]`,
       `:= [x; 10; y; 23]; .: [x; y]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it('simple math', () =>
     [
       `:= [x; 30]; := [result; + [: [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it('if', () =>
     [
@@ -24,7 +24,7 @@ describe('compilation should work as expected', () => {
          .: [validate age [18]; validate age [21]; validate age [12]];
      `,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
 
   it('fib sum', () =>
@@ -38,7 +38,7 @@ describe('compilation should work as expected', () => {
             fib[10]
               `,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it('max sub array sum rec', () =>
     [
@@ -102,7 +102,28 @@ describe('compilation should work as expected', () => {
       equal(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('split and join', () =>
-    [`.+:[.-: ["01010"; ""]; "-"];`].forEach((source) =>
+    [
+      `.+:[.-: ["01010"; ""]; "-"];`,
+      `|> [
+      .: [3; 4; 2; 1; 2; 3];
+      :+: [3];
+      >>. [-> [x; ~["["; .+: [x; ", "]; "]"]]];
+     .+: [", "]
+    ];`,
+      `|> [:+: [.: [3; 4; 2; 1; 2; 3]; 2]; >>. [-> [x; ~["["; .+: [x; ", "]; "]"]]]; .+: [", "]];`,
+      `|> [
+      .: [1; 2; 3; 4; 5; 6; 7; 8];
+      :+ [4; "x"; "y"; "z"];
+      :- [0; 4];
+      :- [3; 4];
+      .+: [", "]
+    ];`,
+      `|> [
+      .: [1; 2; 3; 4; 5; 6; 7; 8];
+      :+ [2; "x"; "y"; "z"];
+            .+: [", "]
+    ]`,
+    ].forEach((source) =>
       equal(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('import should work', () =>
@@ -112,7 +133,7 @@ describe('compilation should work as expected', () => {
       >>. [.: [1.123; 3.14; 4.9]; floor];
       `,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it('nested pipes should work', () =>
     [
@@ -150,7 +171,7 @@ describe('compilation should work as expected', () => {
     ]
     `,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
 
   it('><> should work', () =>
@@ -163,13 +184,16 @@ describe('compilation should work as expected', () => {
       equal(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('>>. and .<< should work', () =>
-    [`>>. [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    [
+      `>>. [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`,
+      `|> [.: [1; 2; 3; 4]; >>. [-> [x; i; a; + [i; * [x; 2]]]]; >>. [-> [x; i; a; + [i; * [x; 2]]]]]`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
 
   it('@ should work', () =>
     [`:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it('|. should work', () =>
     [
@@ -195,7 +219,7 @@ describe('compilation should work as expected', () => {
       ... [.: [1; 2; 3]; .: [4; 5; 6]];
       ]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it('*:: and ~:: should work', () =>
     [
@@ -210,15 +234,15 @@ describe('compilation should work as expected', () => {
     ];
     `,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it(':: ::. ::: ::* .? ::? should work', () =>
     [
-      `::: [:: ["x"; 10; "y"; 23; "z"; 4]]`,
-      `::. [:: ["x"; 10; "y"; 23; "z"; 4]]`,
-      `::* [:: ["x"; 10; "y"; 23; "z"; 4]]`,
+      `.: [::: [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
+      `.: [::. [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
+      `.: [::* [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it(':+: should work', () =>
     [
@@ -228,7 +252,7 @@ describe('compilation should work as expected', () => {
     ];`,
       `:+: [.: [3; 4; 2; 1; 2; 3]; 2];`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it(':+ and :- should work', () =>
     [
@@ -248,7 +272,7 @@ describe('compilation should work as expected', () => {
     ]`,
       `:= [obj; :: ["x"; 3; "y"; 4]]; .: [.? [obj; "z"]; .? [obj; "x"]; ::? [obj]]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it('~= should work', () =>
     [
@@ -266,14 +290,14 @@ describe('compilation should work as expected', () => {
     ? [> [bounds; i]; loop [+= [i]; bounds]]]]][1; 12];
     arr;`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it(':: should work', () =>
     [
       `:= [d; :: ["x"; 10; "y"; 23]];
     :: ["y"; 5; "m"; :: ["x"; :: ["x"; 10; "y"; d]; "y"; 23];]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it('^ should work', () =>
     [
@@ -290,7 +314,7 @@ describe('compilation should work as expected', () => {
       + [2];
       ^ [-> [x; * [x; x]]]];`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it('<> </> .:. >< should work', () =>
     [
@@ -318,7 +342,7 @@ describe('compilation should work as expected', () => {
     ];
     `,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it('<-:: and <-.: should work', () =>
     [
@@ -330,7 +354,7 @@ describe('compilation should work as expected', () => {
     <-.: [a; b; c; rest; arr];
     |> [rest; .:= [a]; .:= [b]; .:= [c]];`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
   it('+= -= *= should work', () =>
     [

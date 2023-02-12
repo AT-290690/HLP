@@ -1,33 +1,36 @@
+;; debug
 <- [SKETCH; STRING] [LIBRARY];
 <- [make_scene; make_rectangle; no_stroke; no_fill; 
     set_fill; set_stroke; set_position; update;
     set_scale; insert_into_group; make_group; 
     set_position_x; set_position_y] [SKETCH];
 <- [trim] [STRING];
-
-:= [make_abc; -> [font; cols; rows; .. [
-  = [font; |> [font; ::: []; >>. [-> [entry; .. [
-    <-:: [key; obj; entry];
-    .= [obj; key; |> [. [obj; key]; 
+:= [fonts; :: []];
+:= [make_abc; -> [raw; cols; rows; .. [
+ |> [raw; ::: []; >>. [-> [entry; .. [
+    := [key; .> [entry]];
+    := [value; .< [entry]];
+    .= [fonts; key; |> [value; 
                trim [];
                .-: [" "];
-               >- [-> [x; x]];
-               >>. [-> [item;  == [item; "*"]]]
-               ]]]]]]];
-  
-  := [letter; . [font; glyph]];
+               >- [-> [x; != [x; ""]]];
+               >>. [-> [item;  == [item; "*"]]]]]]]]];
+  -> [glyph; .. [
+    
+  := [letter; . [fonts; glyph]];
   := [group; |> [make_group []; 
                 set_position [20; 50]]];
   := [y; 0];
   ~= [loop; -> [i; bounds; .. [
     := [x; % [i; cols]];
-    ? [== [x; 0]; = [y; + [y; 1]]];
+    ? [== [x; 0]; += [y]];
     ? [:. [letter; i];
          insert_into_group [group; 
          |> [make_rectangle [* [x; 10]; * [y; 10]; 10; 10];
             no_stroke []]]];
-  ? [> [bounds; i]; loop [+= [i]]; bounds]]]]];
-  loop[0; * [rows; cols]]; group]];
+  ? [> [bounds; i]; loop [+= [i]; bounds]]]]];
+  loop[0; - [* [rows; cols]; 1]]; 
+  group]]]]];
 
 := [make_glyph; make_abc [:: [
 "a"; 
