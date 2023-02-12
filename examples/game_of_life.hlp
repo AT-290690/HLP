@@ -1,10 +1,11 @@
+;; debug
 <- [SKETCH; MATH] [LIBRARY]; 
 <- [make_scene; make_group; make_rectangle; update; play; draw; 
     insert_into_group; background; width; height; set_position;
     set_fill; set_stroke; no_fill; no_stroke] [SKETCH]; 
 <- [random_int] [MATH];
 
-' [render; next; alive];
+' [view; next; alive];
 
 := [W; 415; H; 415;
     lifespan; 1000; 
@@ -28,16 +29,16 @@
       next_is_alive; random_int [0; 1]; 
       
       rect; |> [make_rectangle [% [* [count; r]; * [r; cols]]; h; r; r]; 
-        set_fill [. [COLORS; is_alive]];
+        set_fill [:. [COLORS; is_alive]];
         no_stroke []];
       
       cell; :: [alive; is_alive;
                 next; next_is_alive;
-                render; rect]]; 
+                view; rect]]; 
   insert_into_group [cells_container; rect]; 
   .:= [cells; cell]; 
-  ? [> [bounds; count]; loop [= [count; + [count; 1]]; bounds]]]]];
-loop [0; - [* [rows; cols]; 1]]; cells_container]];
+  ? [> [bounds; count]; loop [+= [count]; bounds]]]]];
+loop [0; * [rows; cols]]; cells_container]];
 
 iterate_cells; -> [cells; callback; .. [
 := [y; -1]; 
@@ -81,7 +82,7 @@ trottle; -> [delta; value; callback; ? [! [% [delta; value]]; callback []]];
 
 render; -> [iterate_cells [cells; -> [cell; x; y; .. [
   := [is_alive; . [cell; alive]]; 
-  set_fill [. [cell; render]; . [COLORS; is_alive]]; 
+  set_fill [. [cell; view]; :. [COLORS; is_alive]]; 
   .= [cell; alive; . [cell; next]]]]]]]; 
 
 make_scene [W; H; -> [.. [

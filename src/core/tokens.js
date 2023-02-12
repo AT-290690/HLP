@@ -742,7 +742,7 @@ const tokens = {
         const key = extract(item, env)
         if (typeof key !== 'string') {
           throw new SyntaxError(
-            'Invalid use of operation :: (Only strings can be used as keys)'
+            `Invalid use of operation :: (Only strings can be used as keys) setting ${key} `
           )
         } else if (key.length > MAX_KEY) {
           throw new RangeError(
@@ -885,7 +885,7 @@ const tokens = {
     args.forEach(({ name, type }) => {
       if (type !== 'word')
         throw new SyntaxError(
-          `Invalid use of operation ' (Arguments must be words)`
+          `Invalid use of operation ' setting ${name} (Arguments must be words)`
         )
       if (name.includes('.') || name.includes('-'))
         throw new SyntaxError(
