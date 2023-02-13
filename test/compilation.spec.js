@@ -150,7 +150,7 @@ describe('compilation should work as expected', () => {
       `
     := [out; .: []];
     >> [.: [1; 2; 3; 4]; -> [x; i; a; .:= [out; * [x; 10]]]];
-    << [.: [10; 20; 30]; -> [x; i; a; .:= [out; - [:. [out; i]; * [x; 0.1]]]]];
+    << [.: [10; 20; 30]; -> [x; i; a; .:= [out; - [: [out; i]; * [x; 0.1]]]]];
     >> [out; -> [x; i; a; ^= [out; i; + [x; i]]]];
     out;
     `,
@@ -158,9 +158,9 @@ describe('compilation should work as expected', () => {
     |> [
       .: [1; 2; 3; 4];
       >> [-> [x; i; a; ^= [a; i; * [x; 10]]]];
-      << [-> [x; i; a; ^= [a; i; - [:. [a; i]; * [x; 0.1]]]]];
+      << [-> [x; i; a; ^= [a; i; - [: [a; i]; * [x; 0.1]]]]];
       >> [-> [x; i; a; ^= [a; i; + [x; i]]]];
-      << [-> [x; i; a; ^= [a; i; + [:. [a; i]; i; 1]]]];
+      << [-> [x; i; a; ^= [a; i; + [: [a; i]; i; 1]]]];
     ]
     `,
       `
@@ -373,4 +373,11 @@ describe('compilation should work as expected', () => {
     ].forEach((source) =>
       equal(runFromInterpreted(source), runFromCompiled(source))
     ))
+  it('.:? :. : :? should work', () => {
+    ;[
+      `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:? [arr]; :. [arr; -2]; : [arr; 3]; ? [:? [arr; 4]; 1; 0]; ? [:? [arr; 9]; 1; 0]]`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+    )
+  })
 })

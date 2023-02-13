@@ -7,7 +7,7 @@
 <- [on_mouse_click] [EVENT];
 <- [cursor_pointer; padding; text_color; units_pixel; background_color; border] [STYLE];
 
-' [view; next; alive];
+' [view; next; alive; x; y];
 
 := [W; 415; H; 415;
     N; 20; 
@@ -46,21 +46,21 @@ iterate_cells; -> [cells; callback; .. [
   callback [cell; x; y]]]]]]; 
 
 directions; .: [
-  :: ["x"; 0; "y"; 1]; 
-  :: ["x"; 1; "y"; 0]; 
-  :: ["x"; -1; "y"; 0]; 
-  :: ["x"; 0; "y"; -1]; 
-  :: ["x"; 1; "y"; -1]; 
-  :: ["x"; -1; "y"; -1]; 
-  :: ["x"; 1; "y"; 1]; 
-  :: ["x"; -1; "y"; 1]]; 
+  :: [x; 0; y; 1]; 
+  :: [x; 1; y; 0]; 
+  :: [x; -1; y; 0]; 
+  :: [x; 0; y; -1]; 
+  :: [x; 1; y; -1]; 
+  :: [x; -1; y; -1]; 
+  :: [x; 1; y; 1]; 
+  :: [x; -1; y; 1]]; 
 
-adjacent; -> [x; y; .. [
+adjacent; -> [x1; y1; .. [
 := [sum; 0]; 
 >> [directions; -> [dir; .. [
   := [cell; get_cell [
-    + [x; . [dir; "x"]]; 
-    + [y; . [dir; "y"]]]]; 
+    + [x1; . [dir; x]]; 
+    + [y1; . [dir; y]]]]; 
   = [sum; + [sum; ? [cell; . [cell; alive]; 0]]]]]]; sum]];
 
 update_state; -> [iterate_cells [cells; -> [cell; x; y; .. [

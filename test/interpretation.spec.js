@@ -171,7 +171,7 @@ describe('interpretation should work as expected', () => {
       runFromInterpreted(`
     := [out; .: []];
     >> [.: [1; 2; 3; 4]; -> [x; i; a; .:= [out; * [x; 10]]]];
-    << [.: [10; 20; 30]; -> [x; i; a; .:= [out; - [:. [out; i]; * [x; 0.1]]]]];
+    << [.: [10; 20; 30]; -> [x; i; a; .:= [out; - [: [out; i]; * [x; 0.1]]]]];
     >> [out; -> [x; i; a; ^= [out; i; + [x; i]]]];
     out;
       `).items,
@@ -183,9 +183,9 @@ describe('interpretation should work as expected', () => {
       |> [
         .: [1; 2; 3; 4];
         >> [-> [x; i; a; ^= [a; i; * [x; 10]]]];
-        << [-> [x; i; a; ^= [a; i; - [:. [a; i]; * [x; 0.1]]]]];
+        << [-> [x; i; a; ^= [a; i; - [: [a; i]; * [x; 0.1]]]]];
         >> [-> [x; i; a; ^= [a; i; + [x; i]]]];
-        << [-> [x; i; a; ^= [a; i; + [:. [a; i]; i; 1]]]];
+        << [-> [x; i; a; ^= [a; i; + [: [a; i]; i; 1]]]];
       ]
       `).items,
       [10, 21, 32, 43]
@@ -524,5 +524,13 @@ describe('interpretation should work as expected', () => {
     equal(runFromInterpreted(`:=[x; 2]; *= [x]`), 2)
     equal(runFromInterpreted(`:=[x; 2]; *=[x; 3]`), 6)
     equal(runFromInterpreted(`:=[x; 2]; *=[x; 3]; x`), 6)
+  })
+  it('.:? :. : :? should work', () => {
+    deepEqual(
+      runFromInterpreted(
+        `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:? [arr]; :. [arr; -2]; : [arr; 3]; :? [arr; 4]; :? [arr; 9]]`
+      ).items,
+      [8, 7, 4, 1, 0]
+    )
   })
 })

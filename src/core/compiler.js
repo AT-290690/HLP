@@ -232,11 +232,21 @@ const compile = () => {
             locals
           )});`
         case '.>':
-          return `_at(${dfs(tree.args[0], locals)}, 0);`
+          return `_arrAt(${dfs(tree.args[0], locals)}, 0);`
         case '.<':
-          return `_at(${dfs(tree.args[0], locals)}, -1);`
+          return `_arrAt(${dfs(tree.args[0], locals)}, -1);`
         case ':.':
-          return `_at(${dfs(tree.args[0], locals)}, ${dfs(
+          return `_arrAt(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case ':?':
+          return `_arrInBounds(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case ':':
+          return `_arrGet(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )});`
@@ -249,7 +259,7 @@ const compile = () => {
             'Brrr.of(' + tree.args.map((x) => dfs(x, locals)).join(',') + ')'
           )
         case '^=':
-          return `_set(${dfs(tree.args[0], locals)}, ${dfs(
+          return `_arrSet(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )}, ${dfs(tree.args[2], locals)});`
