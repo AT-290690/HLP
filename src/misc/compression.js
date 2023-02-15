@@ -2,8 +2,9 @@ import { removeNoCode, wrapInBody } from './helpers.js'
 import { parse } from '../core/parser.js'
 import { LZUTF8 } from './lz-utf8.js'
 import { STD } from '../extensions/extentions.js'
+import { tokens } from '../core/tokens.js'
 
-export const ABC = [
+const ABC = [
   'a',
   'b',
   'c',
@@ -58,12 +59,19 @@ export const ABC = [
   'Z',
 ]
 
+const generateCompressionRunes = (start) => {
+  return Object.keys(tokens)
+    .map((t) => `${t}[`)
+    .concat(['][', '];', ']];'])
+    .sort((a, b) => (a.length < b.length ? 1 : -1))
+    .map((t, i) => ({ full: t, short: String.fromCharCode(start + i + 191) }))
+}
 export const generateCompressedModules = () => {
   const { NAME, ...lib } = STD.LIBRARY
   const modules = new Set([NAME])
   const dfs = (lib, modules) => {
     for (const module in lib) {
-      if (module.length > 2) modules.add(module)
+      if (module.length > 1) modules.add(module)
       for (const m in lib[module]) {
         if (lib[module][m].NAME) dfs(lib[module][m], modules)
         if (m !== 'NAME' && m.length > 2) modules.add(m)
@@ -71,22 +79,16 @@ export const generateCompressedModules = () => {
     }
   }
   dfs(lib, modules)
-  let index = 0
-  let count = 0
   return [...modules]
     .sort((a, b) => (a.length > b.length ? 1 : -1))
-    .map((full) => {
-      const short = count + ABC[index]
-      ++index
-      if (index === ABC.length) {
-        index = 0
-        ++count
-      }
+    .map((full, i) => {
+      const short = String.fromCharCode(i + 191)
       return { full, short }
     })
 }
 
 export const shortModules = generateCompressedModules()
+export const shortRunes = generateCompressionRunes(shortModules.length)
 const dfs = (
   tree,
   definitions = new Set(),
@@ -96,7 +98,6 @@ const dfs = (
   for (const node of tree) {
     const { type, operator, args, name } = node
     if (type === 'import') imports.add(name)
-    // if (type === 'value' && node.class === 'string') excludes.add(value)
     else if (
       type === 'word' &&
       node.name.length > 1 &&
@@ -116,7 +117,7 @@ const dfs = (
   return { definitions, imports }
 }
 export const compress = (source) => {
-  const raw = removeNoCode(source)
+  const raw = removeNoCode(source).split('];]').join(']]')
   const strings = raw.match(/"([^"]*)"/g) || []
   const value = raw.replaceAll(/"([^"]*)"/g, '" "')
   const AST = parse(wrapInBody(value))
@@ -125,7 +126,6 @@ export const compress = (source) => {
     new Set(),
     new Set(['LIBRARY'])
   )
-
   // imports.forEach(value => {
   //   if (definitions.has(value)) definitions.delete(value)
   // })
@@ -136,27 +136,23 @@ export const compress = (source) => {
   }, [])
 
   const defs = [...definitions]
-  let { result, occurance } = value
-    .split('];]')
-    .join(']]')
-    .split('')
-    .reduce(
-      (acc, item) => {
-        if (item === ']') acc.occurance++
-        else {
-          if (acc.occurance < 3) {
-            acc.result += ']'.repeat(acc.occurance)
-            acc.occurance = 0
-          } else {
-            acc.result += "'" + acc.occurance
-            acc.occurance = 0
-          }
-          acc.result += item
+  let { result, occurance } = value.split('').reduce(
+    (acc, item) => {
+      if (item === ']') acc.occurance++
+      else {
+        if (acc.occurance < 3) {
+          acc.result += ']'.repeat(acc.occurance)
+          acc.occurance = 0
+        } else {
+          acc.result += "'" + acc.occurance
+          acc.occurance = 0
         }
-        return acc
-      },
-      { result: '', occurance: 0 }
-    )
+        acc.result += item
+      }
+      return acc
+    },
+    { result: '', occurance: 0 }
+  )
   if (occurance > 0) result += "'" + occurance
 
   for (const { full, short } of importedModules)
@@ -178,6 +174,9 @@ export const compress = (source) => {
   for (const { full, short } of shortDefinitions)
     result = result.replaceAll(new RegExp(`\\b${full}\\b`, 'g'), short)
 
+  for (const { full, short } of shortRunes)
+    result = result.replaceAll(full, short)
+
   result = result.split('" "')
   strings.forEach((str, i) => (result[i] += str))
 
@@ -192,7 +191,10 @@ export const decompress = (raw) => {
     value
   )
   for (const { full, short } of shortModules)
-    result = result.replaceAll(new RegExp(`\\b${short}\\b`, 'g'), full)
+    result = result.replaceAll(new RegExp(short, 'g'), full)
+
+  for (const { full, short } of shortRunes)
+    result = result.replaceAll(short, full)
 
   result = result.split('" "')
   strings.forEach((str, i) => (result[i] += str))
@@ -208,17 +210,4 @@ export const decodeBase64 = (source) =>
       inputEncoding: 'Base64',
       outputEncoding: 'String',
     })
-  )
-export const addSpace = (str) => str + '\n'
-export const prettier = (str) =>
-  addSpace(
-    str
-      .replaceAll('];', '];\n')
-      .replaceAll(';', '; ')
-      .replaceAll('; ;', ';;')
-      .replaceAll('[', ' [')
-      .replaceAll('|', '| ')
-      .replaceAll('| >', '\n|>')
-      .replaceAll('.. [', '.. [\n')
-      .replaceAll('; :=', ';\n:=')
   )

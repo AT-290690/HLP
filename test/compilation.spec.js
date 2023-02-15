@@ -132,6 +132,21 @@ describe('compilation should work as expected', () => {
       <- [floor] [MATH];
       >>. [.: [1.123; 3.14; 4.9]; floor];
       `,
+      `<- [MATH; LOGIC; STRING; LOOP; CONVERT] [LIBRARY];
+      <- [floor; PI; sin; cos] [MATH];
+      <- [trim; upper_case] [STRING];
+      <- [string] [CONVERT];
+      <- [repeat] [LOOP];
+      <- [is_equal] [LOGIC];
+
+      ? [|> [
+        12;
+        + [sin [4]];
+        > [10];
+        is_equal [10];  
+      ]; 1; 
+      |> [15; + [100]; string []; ~ ["hello"; " "; "there"]; upper_case []]];
+      `,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))

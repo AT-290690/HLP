@@ -17,7 +17,7 @@
     COLORS; .: [ "#ccc"; 0]; 
     cols; N; rows; N; cells; .: []; 
     bound; - [* [rows; cols]; 1];
-    get_cell; -> [x; y; :. [cells; + [x; * [rows; y]]]]; 
+    get_cell; -> [x; y; : [cells; + [x; * [rows; y]]]]; 
 
   make_grid; -> [cells; .. [
 := [cells_container; make_group []]; 
@@ -27,7 +27,7 @@
   := [is_alive; random_int [0; 1];
       next_is_alive; random_int [0; 1]; 
       rect; |> [make_rectangle [% [* [count; r]; * [r; cols]]; h; r; r]; 
-        set_fill [:. [COLORS; is_alive]];
+        set_fill [: [COLORS; is_alive]];
         no_stroke []];
       cell; :: [alive; is_alive;
                 next; next_is_alive;
@@ -80,7 +80,7 @@ update_state; -> [iterate_cells [cells; -> [cell; x; y; .. [
 
 render; -> [iterate_cells [cells; -> [cell; x; y; .. [
   := [is_alive; . [cell; alive]]; 
-  set_fill [. [cell; view]; :. [COLORS; is_alive]]; 
+  set_fill [. [cell; view]; : [COLORS; is_alive]]; 
   .= [cell; alive; . [cell; next]]]]]]]; 
 
 make_scene [W; H; -> [.. [

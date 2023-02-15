@@ -147,6 +147,25 @@ describe('interpretation should work as expected', () => {
       `).items,
       [1, 3, 4]
     )
+
+    equal(
+      runFromInterpreted(`<- [MATH; LOGIC; STRING; LOOP; CONVERT] [LIBRARY];
+      <- [floor; PI; sin; cos] [MATH];
+      <- [trim; upper_case] [STRING];
+      <- [string] [CONVERT];
+      <- [repeat] [LOOP];
+      <- [is_equal] [LOGIC];
+  
+      ? [|> [
+        12;
+        + [sin [4]];
+        > [10];
+        is_equal [10];  
+      ]; 1; 
+      |> [15; + [100]; string []; ~ ["hello"; " "; "there"]; upper_case []]];
+      `),
+      '115HELLO THERE'
+    )
   })
 
   it('nested pipes should work', () => {
