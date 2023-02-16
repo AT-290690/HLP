@@ -166,6 +166,11 @@ describe('interpretation should work as expected', () => {
       `),
       '115HELLO THERE'
     )
+
+    equal(
+      runFromInterpreted(`<- [MATH] [LIBRARY]; <- [PI] [MATH]; PI;`),
+      Math.PI
+    )
   })
 
   it('nested pipes should work', () => {

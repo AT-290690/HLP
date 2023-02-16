@@ -147,6 +147,7 @@ describe('compilation should work as expected', () => {
       ]; 1; 
       |> [15; + [100]; string []; ~ ["hello"; " "; "there"]; upper_case []]];
       `,
+      `<- [MATH] [LIBRARY]; <- [PI] [MATH]; PI;`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))

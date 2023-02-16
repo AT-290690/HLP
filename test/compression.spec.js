@@ -176,6 +176,7 @@ describe('compression should work as expected', () => {
       ]; 1; 
       |> [15; + [100]; string []; ~ ["hello"; " "; "there"]; upper_case []]];
       `,
+      `<- [MATH] [LIBRARY]; <- [PI] [MATH]; PI;`,
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>

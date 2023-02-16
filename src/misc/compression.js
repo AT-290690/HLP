@@ -74,7 +74,7 @@ export const generateCompressedModules = () => {
       if (module.length > 1) modules.add(module)
       for (const m in lib[module]) {
         if (lib[module][m].NAME) dfs(lib[module][m], modules)
-        if (m !== 'NAME' && m.length > 2) modules.add(m)
+        if (m !== 'NAME' && m.length > 1) modules.add(m)
       }
     }
   }
