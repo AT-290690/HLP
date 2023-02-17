@@ -83,8 +83,8 @@ describe('interpretation should work as expected', () => {
       <- [MATH] [LIBRARY];
       <- [max; infinity] [MATH];
       ~= [loop; -> [i; nums; maxGlobal; maxSoFar;
-          ? [< [i; .:? [nums]]; .. [
-          = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; :. [nums; i]]]]]];
+          ? [< [i; .:? [nums]]; : [
+          = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; ^ [nums; i]]]]]];
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
       [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; * [infinity; -1]; * [infinity; -1]]`),
@@ -99,8 +99,8 @@ describe('interpretation should work as expected', () => {
   <- [range] [ARRAY];
 
   := [NUMBERS; range [1; 100]];
-  := [first; :. [NUMBERS; 0]];
-  := [last; :. [NUMBERS; - [.:? [NUMBERS]; 1]]];
+  := [first; ^ [NUMBERS; 0]];
+  := [last; ^ [NUMBERS; - [.:? [NUMBERS]; 1]]];
   := [median; + [first;
   - [* [last; * [+ [1; last]; 0.5]];
       * [first; * [+ [1; first]; 0.5]]]]];
@@ -178,8 +178,8 @@ describe('interpretation should work as expected', () => {
       runFromInterpreted(`
         |> [
           10;
-          ^ [-> [x; * [x; 3]]];
-          ^ [-> [x; * [x; 10]]]
+          => [-> [x; * [x; 3]]];
+          => [-> [x; * [x; 10]]]
         ]`),
       300
     )
@@ -195,7 +195,7 @@ describe('interpretation should work as expected', () => {
       runFromInterpreted(`
     := [out; .: []];
     >> [.: [1; 2; 3; 4]; -> [x; i; a; .:= [out; * [x; 10]]]];
-    << [.: [10; 20; 30]; -> [x; i; a; .:= [out; - [: [out; i]; * [x; 0.1]]]]];
+    << [.: [10; 20; 30]; -> [x; i; a; .:= [out; - [^ [out; i]; * [x; 0.1]]]]];
     >> [out; -> [x; i; a; ^= [out; i; + [x; i]]]];
     out;
       `).items,
@@ -207,9 +207,9 @@ describe('interpretation should work as expected', () => {
       |> [
         .: [1; 2; 3; 4];
         >> [-> [x; i; a; ^= [a; i; * [x; 10]]]];
-        << [-> [x; i; a; ^= [a; i; - [: [a; i]; * [x; 0.1]]]]];
+        << [-> [x; i; a; ^= [a; i; - [^ [a; i]; * [x; 0.1]]]]];
         >> [-> [x; i; a; ^= [a; i; + [x; i]]]];
-        << [-> [x; i; a; ^= [a; i; + [: [a; i]; i; 1]]]];
+        << [-> [x; i; a; ^= [a; i; + [^ [a; i]; i; 1]]]];
       ]
       `).items,
       [10, 21, 32, 43]
@@ -436,17 +436,17 @@ describe('interpretation should work as expected', () => {
   it('~= should work', () => {
     deepEqual(
       runFromInterpreted(`:= [arr; .: []];
-    ~= [loop; -> [i; bounds; .. [.:= [arr; i];
+    ~= [loop; -> [i; bounds; : [.:= [arr; i];
     ? [> [bounds; i]; loop [+= [i]; bounds]]]]][1; 12];
     arr;`).items,
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     )
     deepEqual(
       runFromInterpreted(`:= [arr; .: []];
-    ~= [loop1; -> [i;  .. [
+    ~= [loop1; -> [i;  : [
       =.: [arr; .:[]];
       := [current; .> [arr]];
-      ~= [loop2; -> [j;  .. [
+      ~= [loop2; -> [j;  : [
        =.: [current; + [j; i]];
       ? [> [j; 0]; loop2 [= [j; - [j; 1]]]]]]][10];
     ? [> [i; 0]; loop1 [= [i; - [i; 1]]]]]]][10];
@@ -472,7 +472,7 @@ describe('interpretation should work as expected', () => {
     |> [x; 
         + [y; 23; 4];
         * [2];
-        ^ [-> [x;
+        => [-> [x;
           * [x; x]
         ]];
        ];
@@ -482,7 +482,7 @@ describe('interpretation should work as expected', () => {
     equal(
       runFromInterpreted(`|> [0; 
         + [2];
-        ^ [-> [x; * [x; x]]]];`),
+        => [-> [x; * [x; x]]]];`),
       4
     )
   })
@@ -552,7 +552,7 @@ describe('interpretation should work as expected', () => {
   it('.:? :. : :? should work', () => {
     deepEqual(
       runFromInterpreted(
-        `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:? [arr]; :. [arr; -2]; : [arr; 3]; :? [arr; 4]; :? [arr; 9]]`
+        `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:? [arr]; ^ [arr; -2]; ^ [arr; 3]; :? [arr; 4]; :? [arr; 9]]`
       ).items,
       [8, 7, 4, 1, 0]
     )

@@ -16,12 +16,12 @@
     COLORS; .: [ "#ccc"; 0]; 
     cols; N; rows; N; cells; .: []; 
 
-    get_cell; -> [x; y; : [cells; + [x; * [rows; y]]]]; 
+    get_cell; -> [x; y; ^ [cells; + [x; * [rows; y]]]]; 
 
-  make_grid; -> [cells; .. [
+  make_grid; -> [cells; : [
 := [cells_container; make_group []]; 
 
-~= [loop; -> [count; bounds; .. [
+~= [loop; -> [count; bounds; : [
   ? [! [% [count; cols]]; += [h; r]]; 
 
   := [is_alive; random_int [0; 1];
@@ -29,7 +29,7 @@
       next_is_alive; random_int [0; 1]; 
       
       rect; |> [make_rectangle [% [* [count; r]; * [r; cols]]; h; r; r]; 
-        set_fill [: [COLORS; is_alive]];
+        set_fill [^ [COLORS; is_alive]];
         no_stroke []];
       
       cell; :: [alive; is_alive;
@@ -40,9 +40,9 @@
   ? [> [bounds; count]; loop [+= [count]; bounds]]]]];
 loop [0; - [* [rows; cols]; 1]]; cells_container]];
 
-iterate_cells; -> [cells; callback; .. [
+iterate_cells; -> [cells; callback; : [
 := [y; -1]; 
->> [cells; -> [cell; i; cells; .. [
+>> [cells; -> [cell; i; cells; : [
   = [y; ? [% [i; rows]; 
   y; += [y]]]; 
   := [x; % [i; cols]; 
@@ -59,15 +59,15 @@ directions; .: [
   :: ["x"; 1; "y"; 1]; 
   :: ["x"; -1; "y"; 1]]; 
 
-adjacent; -> [x; y; .. [
+adjacent; -> [x; y; : [
 := [sum; 0]; 
->> [directions; -> [dir; .. [
+>> [directions; -> [dir; : [
   := [cell; get_cell [
     + [x; . [dir; "x"]]; 
     + [y; . [dir; "y"]]]]; 
   = [sum; + [sum; ? [cell; . [cell; alive]; 0]]]]]]; sum]];
 
-update_state; -> [iterate_cells [cells; -> [cell; x; y; .. [
+update_state; -> [iterate_cells [cells; -> [cell; x; y; : [
   := [is_alive; . [cell; alive]; 
   neighbors; adjacent [x; y]]; 
   ? [&& [is_alive; < [neighbors; 2]]; 
@@ -80,16 +80,16 @@ update_state; -> [iterate_cells [cells; -> [cell; x; y; .. [
 
 trottle; -> [delta; value; callback; ? [! [% [delta; value]]; callback []]];
 
-render; -> [iterate_cells [cells; -> [cell; x; y; .. [
+render; -> [iterate_cells [cells; -> [cell; x; y; : [
   := [is_alive; . [cell; alive]]; 
-  set_fill [. [cell; view]; : [COLORS; is_alive]]; 
+  set_fill [. [cell; view]; ^ [COLORS; is_alive]]; 
   .= [cell; alive; . [cell; next]]]]]]]; 
 
-make_scene [W; H; -> [.. [
+make_scene [W; H; -> [: [
  |> [cells; 
     make_grid []; 
     set_position [N; N]];
-  draw [lifespan; -> [delta; fps; trottle [delta; 8; -> [.. [
+  draw [lifespan; -> [delta; fps; trottle [delta; 8; -> [: [
     update_state []; 
     render []]]]]]; 
   play []]]];

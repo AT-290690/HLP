@@ -1,3 +1,4 @@
+;; debug
 <- [SKETCH; MATH; DOM; EVENT; STYLE] [LIBRARY]; 
 <- [make_scene; make_group; make_rectangle; update; play; draw; 
     insert_into_group; background; width; height; set_position;
@@ -17,17 +18,17 @@
     COLORS; .: [ "#ccc"; 0]; 
     cols; N; rows; N; cells; .: []; 
     bound; - [* [rows; cols]; 1];
-    get_cell; -> [x; y; : [cells; + [x; * [rows; y]]]]; 
+    get_cell; -> [x; y; ^ [cells; + [x; * [rows; y]]]]; 
 
-  make_grid; -> [cells; .. [
+  make_grid; -> [cells; : [
 := [cells_container; make_group []]; 
 
-@ [bound; -> [count; .. [
+@ [bound; -> [count; : [
   ? [! [% [count; cols]]; += [h; r]]; 
   := [is_alive; random_int [0; 1];
       next_is_alive; random_int [0; 1]; 
       rect; |> [make_rectangle [% [* [count; r]; * [r; cols]]; h; r; r]; 
-        set_fill [: [COLORS; is_alive]];
+        set_fill [^ [COLORS; is_alive]];
         no_stroke []];
       cell; :: [alive; is_alive;
                 next; next_is_alive;
@@ -36,9 +37,9 @@
   .:= [cells; cell]; 
   ]]]; cells_container]];
 
-iterate_cells; -> [cells; callback; .. [
+iterate_cells; -> [cells; callback; : [
 := [y; -1]; 
->> [cells; -> [cell; i; cells; .. [
+>> [cells; -> [cell; i; cells; : [
   = [y; ? [% [i; rows]; 
   y; += [y]]]; 
   := [x; % [i; cols]; 
@@ -55,15 +56,15 @@ directions; .: [
   :: [x; 1; y; 1]; 
   :: [x; -1; y; 1]]; 
 
-adjacent; -> [x1; y1; .. [
+adjacent; -> [x1; y1; : [
 := [sum; 0]; 
->> [directions; -> [dir; .. [
+>> [directions; -> [dir; : [
   := [cell; get_cell [
     + [x1; . [dir; x]]; 
     + [y1; . [dir; y]]]]; 
   = [sum; + [sum; ? [cell; . [cell; alive]; 0]]]]]]; sum]];
 
-update_state; -> [iterate_cells [cells; -> [cell; x; y; .. [
+update_state; -> [iterate_cells [cells; -> [cell; x; y; : [
   := [is_alive; . [cell; alive]; 
   neighbors; adjacent [x; y]]; 
   ? [&& [is_alive; < [neighbors; 2]]; 
@@ -78,16 +79,16 @@ update_state; -> [iterate_cells [cells; -> [cell; x; y; .. [
              ? [! [% [delta; value]]; 
                        callback []]];
 
-render; -> [iterate_cells [cells; -> [cell; x; y; .. [
+render; -> [iterate_cells [cells; -> [cell; x; y; : [
   := [is_alive; . [cell; alive]]; 
-  set_fill [. [cell; view]; : [COLORS; is_alive]]; 
+  set_fill [. [cell; view]; ^ [COLORS; is_alive]]; 
   .= [cell; alive; . [cell; next]]]]]]]; 
 
-make_scene [W; H; -> [.. [
+make_scene [W; H; -> [: [
  |> [cells; 
     make_grid []; 
     set_position [N; N]];
-  draw [0; -> [delta; fps; trottle [delta; 8; -> [.. [
+  draw [0; -> [delta; fps; trottle [delta; 8; -> [: [
     update_state []; 
     render []]]]]]; 
   play []]]];
@@ -100,6 +101,6 @@ make_container [|> [
   background_color ["#000"]; 
   text_color ["#fff"]];
   on_mouse_click [-> [
-    >> [cells;  -> [current; .. [
+    >> [cells;  -> [current; : [
     .= [current; alive; random_int [0; 1]];
     .= [current; next; random_int [0; 1]]]]]]]]];

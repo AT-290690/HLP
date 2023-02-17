@@ -4,7 +4,7 @@
     width; height; no_stroke; 
     draw; make_rectangle; play; 
     set_fill; set_opacity; set_rotation] [SKETCH];
-make_scene [300; 300; -> [.. [
+make_scene [300; 300; -> [: [
 
 := [arr; .: []];
 := [strokes; .: []];
@@ -30,7 +30,7 @@ make_scene [300; 300; -> [.. [
   set_opacity [* [0.03; i]]; 
   set_fill ["black"]; 
   no_stroke []]]]];
-draw [0; -> [frame; delta; .. [
+draw [0; -> [frame; delta; : [
   >> [arr; 
         -> [leaf; i; a; set_rotation [leaf; 
         + [get_rotation [leaf]; * [i; 0.001]]]]];

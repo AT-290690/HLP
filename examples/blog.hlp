@@ -64,29 +64,29 @@ make_css_link ["https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"];
               add_class ["media"]];
       
           |> [make_container [
-            add_text_content [make_paragraph []; :. [content_exposition; 0]];
-            add_text_content [make_strong_text []; :. [content_exposition; 1]];
+            add_text_content [make_paragraph []; ^ [content_exposition; 0]];
+            add_text_content [make_strong_text []; ^ [content_exposition; 1]];
             
             make_paragraph [];
             
-            add_text_content [make_paragraph []; :. [content_exposition; 2]]; 
-            add_text_content [make_paragraph []; :. [content_goal; 0]];
-            add_text_content [make_italic_text []; :. [content_goal; 1]]; make_paragraph [];
-            add_text_content [make_paragraph []; :. [content_goal; 2]];
+            add_text_content [make_paragraph []; ^ [content_exposition; 2]]; 
+            add_text_content [make_paragraph []; ^ [content_goal; 0]];
+            add_text_content [make_italic_text []; ^ [content_goal; 1]]; make_paragraph [];
+            add_text_content [make_paragraph []; ^ [content_goal; 2]];
             
             make_paragraph [];
             
-            add_text_content [make_paragraph []; :. [content_goal; 3]];
-            add_text_content [make_strong_text []; :. [content_goal; 4]]; 
+            add_text_content [make_paragraph []; ^ [content_goal; 3]];
+            add_text_content [make_strong_text []; ^ [content_goal; 4]]; 
    |> [make_figure [
             make_image ["https://miro.medium.com/max/1400/1*ErCCPAEcI3Gh1R4My8n8lQ.webp"]];
             add_class ["image"];  add_class ["card-image"]];
   
        add_text_content [make_paragraph []; 
-              :. [content_explanation; 0]];
+              ^ [content_explanation; 0]];
   
        add_text_content [make_paragraph []; 
-              :. [content_explanation; 1]];
+              ^ [content_explanation; 1]];
     
    |> [make_figure [
             make_image ["https://miro.medium.com/max/1400/1*RiphOyRvYqkB4Z3Dv9PGgg.webp"]];
@@ -94,23 +94,23 @@ make_css_link ["https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"];
   
             
              add_text_content [make_paragraph []; 
-           :. [content_explanation; 2]];
+           ^ [content_explanation; 2]];
   
             
    add_text_content [make_paragraph []; 
-  :. [content_explanation; 3]]; 
+  ^ [content_explanation; 3]]; 
   insert_into_container [make_pre []; 
-  add_text_content [make_paragraph []; :. [content_arithmetic; 0]];
-  add_text_content [make_paragraph []; :. [content_arithmetic; 1]];
-  add_text_content [make_paragraph []; :. [content_arithmetic; 2]];
-  add_text_content [make_paragraph []; :. [content_arithmetic; 3]];
-  add_text_content [make_paragraph []; :. [content_arithmetic; 4]];
-  add_text_content [make_paragraph []; :. [content_arithmetic; 5]];
-  add_text_content [make_paragraph []; :. [content_arithmetic; 6]];
-  add_text_content [make_paragraph []; :. [content_arithmetic; 7]];
-  add_text_content [make_paragraph []; :. [content_arithmetic; 8]];
-  add_text_content [make_paragraph []; :. [content_arithmetic; 9]];
-  add_text_content [make_paragraph []; :. [content_arithmetic; 10]]];
+  add_text_content [make_paragraph []; ^ [content_arithmetic; 0]];
+  add_text_content [make_paragraph []; ^ [content_arithmetic; 1]];
+  add_text_content [make_paragraph []; ^ [content_arithmetic; 2]];
+  add_text_content [make_paragraph []; ^ [content_arithmetic; 3]];
+  add_text_content [make_paragraph []; ^ [content_arithmetic; 4]];
+  add_text_content [make_paragraph []; ^ [content_arithmetic; 5]];
+  add_text_content [make_paragraph []; ^ [content_arithmetic; 6]];
+  add_text_content [make_paragraph []; ^ [content_arithmetic; 7]];
+  add_text_content [make_paragraph []; ^ [content_arithmetic; 8]];
+  add_text_content [make_paragraph []; ^ [content_arithmetic; 9]];
+  add_text_content [make_paragraph []; ^ [content_arithmetic; 10]]];
   make_paragraph []]; 
               
     make_container [|> [make_figure [
@@ -118,29 +118,29 @@ make_css_link ["https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"];
     add_class ["image"];  
     add_class ["card-image"]];
              
-    add_text_content [make_italic_text []; :. [content_arithmetic; 11]];
+    add_text_content [make_italic_text []; ^ [content_arithmetic; 11]];
       make_paragraph [];
     |> [
     make_paragraph [];
     insert_into_container [
-    add_text_content [make_italic_text []; :. [content_arithmetic; 12]]]];
+    add_text_content [make_italic_text []; ^ [content_arithmetic; 12]]]];
   
   
     |> [
     make_paragraph [];
     insert_into_container [
-    add_text_content [make_strong_text []; :. [content_arithmetic; 13]]]];
+    add_text_content [make_strong_text []; ^ [content_arithmetic; 13]]]];
   
                     
-    add_text_content [make_italic_text []; :. [content_source; 0]]];
+    add_text_content [make_italic_text []; ^ [content_source; 0]]];
     add_class ["content"]];
   
     make_paragraph [];
           
      add_class [make_container [
-               add_text_content [make_paragraph []; :. [content_source; 1]];
-             add_text_content [make_anchor ["https://github.com/AT-290690/brrr"]; :. [content_source; 2]];
-            add_text_content [make_paragraph [];  :. [content_source; 3]
+               add_text_content [make_paragraph []; ^ [content_source; 1]];
+             add_text_content [make_anchor ["https://github.com/AT-290690/brrr"]; ^ [content_source; 2]];
+            add_text_content [make_paragraph [];  ^ [content_source; 3]
              ]];  add_class ["card-content"]]; 
           
        
@@ -153,7 +153,7 @@ make_css_link ["https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"];
           |> [make_container [
             add_text_content [
               make_span []; 
-              :. [content_source; 4]]; 
+              ^ [content_source; 4]]; 
               add_text_content [make_anchor ["https://monolith-q9u8.onrender.com"]; 
               " monolith"];
             make_paragraph [];

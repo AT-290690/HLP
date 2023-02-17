@@ -168,7 +168,7 @@ const tokens = {
       else continue
     return evaluate(args[args.length - 1], env)
   },
-  ['..']: (args, env) => {
+  [':']: (args, env) => {
     let value = VOID
     args.forEach((arg) => (value = evaluate(arg, env)))
     return value
@@ -622,30 +622,15 @@ const tokens = {
     const index = evaluate(args[1], env)
     return +array.isInBounds(Math.abs(index))
   },
-  [':']: (args, env) => {
+  ['^']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to :')
+      throw new RangeError('Invalid number of arguments to ^')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of : must be an .: []')
-    const index = evaluate(args[1], env)
-    if (!Number.isInteger(index) && index >= 0)
-      throw new TypeError('Second argument of : must be a positive number')
-    if (!array.isInBounds(index))
-      throw new TypeError(
-        `Index is out of bounds [${index}] <> .: [${array.length}]`
-      )
-    return array.get(index)
-  },
-  [':.']: (args, env) => {
-    if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to :.')
-    const array = evaluate(args[0], env)
-    if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of :. must be an .: []')
+      throw new TypeError('First argument of ^ must be an .: []')
     const index = evaluate(args[1], env)
     if (!Number.isInteger(index))
-      throw new TypeError('Second argument of :. must be a number')
+      throw new TypeError('Second argument of ^ must be a number')
     if (!array.isInBounds(Math.abs(index)))
       throw new TypeError(
         `Index is out of bounds [${index}] <> .: [${array.length}]`
@@ -1052,13 +1037,13 @@ const tokens = {
     env[name] = value
     return value
   },
-  ['^']: (args, env) => {
+  ['=>']: (args, env) => {
     if (args.length != 2)
-      throw new SyntaxError('Invalid number of arguments for ^ []')
+      throw new SyntaxError('Invalid number of arguments for => []')
     const entity = evaluate(args[0], env)
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of ^ [] must be an -> []')
+      throw new TypeError('Second argument of => [] must be an -> []')
     return callback(entity)
   },
 }

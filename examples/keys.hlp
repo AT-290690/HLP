@@ -8,8 +8,8 @@
     make_group] [SKETCH];
 <- [make_rgb_color] [COLOR];
 
-make_scene [125; 180; -> [.. [
-  := [make_key; -> [x; y; scale; color; .. [
+make_scene [125; 180; -> [: [
+  := [make_key; -> [x; y; scale; color; : [
   := [key_group; |> [
       make_group [];
       set_scale [scale];
@@ -34,10 +34,10 @@ make_scene [125; 180; -> [.. [
   := [rows; * [cols; 2]];
   := [offset_x; 1];
   := [offset_y; 0];
-  ~= [loop; -> [i; bounds; .. [
+  ~= [loop; -> [i; bounds; : [
      = [offset_x; + [offset_x; 25]];
      ? [== [% [i; cols]; 0]; 
-          .. [= [offset_x;  1];
+          : [= [offset_x;  1];
               = [offset_y; 
                 + [offset_y; i; 45]];  
               ]];

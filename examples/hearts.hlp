@@ -17,16 +17,16 @@
    make_heart_part; -> [i; |> [make_rectangle [
             pos x [i]; pos y [i]; brush; brush]; no_stroke []; set_fill [COLOR]]]];
 
-:= [make_heart; -> [.. [
+:= [make_heart; -> [: [
   := [g; make_group []];
-  ~= [loop; -> [i; .. [
+  ~= [loop; -> [i; : [
   insert_into_group [g; make_heart_part [i]]; 
-  ? [> [i; 0]; loop [= [i; - [i; 1]]]]]]][RESOLUTION]; g]]];
+  ? [> [i; 0]; loop [-= [i]]]]]][RESOLUTION]; g]]];
 
-make_scene [880; 400; -> [..[
-  ~= [loop; -> [i; bounds; .. [
+make_scene [880; 400; -> [: [
+  ~= [loop; -> [i; bounds; : [
     |> [make_heart []; set_position_x [* [i; 100]]];
-  ? [> [bounds; i]; loop [= [i; + [i; 1]]; bounds]]]]][0; 10];
+  ? [> [bounds; i]; loop [+= [i]; bounds]]]]][0; 10];
   ;; set_screen_size [880; 80];
   update[];
 ]]];

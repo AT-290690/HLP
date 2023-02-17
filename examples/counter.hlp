@@ -6,5 +6,5 @@ make_user_interface [1];
 make_container[|> [
   make_button [];
   set_text_content [counter];
-  on_mouse_click [-> [button; set_text_content[button; = [counter; + [counter; 1]]]]]]];
+  on_mouse_click [-> [button; set_text_content[button; += [counter]]]]]];
 "Counter"

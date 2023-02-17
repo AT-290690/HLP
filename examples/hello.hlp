@@ -3,8 +3,8 @@
 
 := [HELLO; "Hello world"];
 
-~= [loop; -> [i;  .. [
+~= [loop; -> [i;  : [
   console_log [~ [HELLO; "!"]];  
-? [> [i; 0]; loop [= [i; - [i; 1]]]]]]][5];
+? [> [i; 0]; loop [-= [i]]]]]][5];
 
 "Done!"

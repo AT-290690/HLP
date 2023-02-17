@@ -6,8 +6,8 @@
     set_position_x; set_position_y] [SKETCH];
 <- [trim] [STRING];
 := [fonts; :: []];
-:= [make_abc; -> [raw; cols; rows; .. [
- |> [raw; ::: []; >>. [-> [entry; .. [
+:= [make_abc; -> [raw; cols; rows; : [
+ |> [raw; ::: []; >>. [-> [entry; : [
     := [key; .> [entry]];
     := [value; .< [entry]];
     .= [fonts; key; |> [value; 
@@ -15,16 +15,16 @@
                .-: [" "];
                >- [-> [x; != [x; ""]]];
                >>. [-> [item;  == [item; "*"]]]]]]]]];
-  -> [glyph; .. [
+  -> [glyph; : [
     
   := [letter; . [fonts; glyph]];
   := [group; |> [make_group []; 
                 set_position [20; 50]]];
   := [y; 0];
-  ~= [loop; -> [i; bounds; .. [
+  ~= [loop; -> [i; bounds; : [
     := [x; % [i; cols]];
     ? [== [x; 0]; += [y]];
-    ? [:. [letter; i];
+    ? [^ [letter; i];
          insert_into_group [group; 
          |> [make_rectangle [* [x; 10]; * [y; 10]; 10; 10];
             no_stroke []]]];
@@ -131,7 +131,7 @@
 "
 ]; 4; 5]];
 
-make_scene [500; 500; -> [.. [
+make_scene [500; 500; -> [: [
   |> [make_glyph ["a"]; set_position_x [10]];
   |> [make_glyph ["b"]; set_position_x [60]];
   |> [make_glyph ["c"]; set_position_x [110]];

@@ -15,7 +15,7 @@ const compile = () => {
     if (!tree) return ''
     if (tree.type === 'apply') {
       switch (tree.operator.name) {
-        case '..':
+        case ':':
           return `(()=>{${tree.args
             .map((x, i) => {
               const res = dfs(x, locals)
@@ -235,7 +235,7 @@ const compile = () => {
           return `_arrAt(${dfs(tree.args[0], locals)}, 0);`
         case '.<':
           return `_arrAt(${dfs(tree.args[0], locals)}, -1);`
-        case ':.':
+        case '^':
           return `_arrAt(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
@@ -446,7 +446,7 @@ const compile = () => {
           const [array, callback, out] = tree.args.map((x) => dfs(x, locals))
           return `_reduceRight(${array}, ${callback}, ${out});`
         }
-        case '^': {
+        case '=>': {
           return `_call(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals

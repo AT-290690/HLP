@@ -7,7 +7,7 @@
 <- [PI] [MATH];
 <- [make_rgb_color] [COLOR];
 
-make_scene [300; 200; -> [.. [
+make_scene [300; 200; -> [: [
  |> [make_curve [110; 100; 120; 50; 140; 150; 160; 50; 180; 150; 190; 100];
       set_line_width [2];
       set_scale [1.5];

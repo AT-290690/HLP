@@ -2,7 +2,7 @@
 <- [make_scene; make_line; update; width; height] [SKETCH];
 <- [sin; cos; PI] [MATH];
 
-make_scene [:= [WIDTH; 500]; := [HEIGHT; 500]; -> [..[
+make_scene [:= [WIDTH; 500]; := [HEIGHT; 500]; -> [: [
   := [theta; 0.8];
   := [step; 0.7];
   := [angle; * [PI; 0.5]];
@@ -16,7 +16,7 @@ make_scene [:= [WIDTH; 500]; := [HEIGHT; 500]; -> [..[
   := [x_stack; .: [max_level]];
   := [y_stack; .: [max_level]];
 
-  := [draw_branch; -> [dir; .. [
+  := [draw_branch; -> [dir; : [
 
   ;; CALCULATE NEXT POINT
   := [delta_x; * [length; cos [angle]]];
@@ -35,7 +35,7 @@ make_scene [:= [WIDTH; 500]; := [HEIGHT; 500]; -> [..[
   = [length; * [length; step]];
 
   ;; EXIT CONDITION OF RECURSION
-  ? [< [level; max_level]; .. [
+  ? [< [level; max_level]; : [
     draw_branch [1];
     draw_branch [-1]]]; 
   = [angle; - [angle; * [theta; dir]]];
