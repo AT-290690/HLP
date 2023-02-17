@@ -46,7 +46,7 @@ describe('compilation should work as expected', () => {
       <- [MATH] [LIBRARY];
       <- [max; infinity] [MATH];
       ~= [loop; -> [i; nums; maxGlobal; maxSoFar;
-          ? [< [i; .:? [nums]]; : [
+          ? [< [i; .:length [nums]]; : [
           = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; ^ [nums; i]]]]]];
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
@@ -62,7 +62,7 @@ describe('compilation should work as expected', () => {
       <- [range] [ARRAY];
       := [NUMBERS; range [1; 100]];
       := [first; ^ [NUMBERS; 0]];
-      := [last; ^ [NUMBERS; - [.:? [NUMBERS]; 1]]];
+      := [last; ^ [NUMBERS; - [.:length [NUMBERS]; 1]]];
       := [median; + [first;
       - [* [last; * [+ [1; last]; 0.5]];
           * [first; * [+ [1; first]; 0.5]]]]];
@@ -98,30 +98,30 @@ describe('compilation should work as expected', () => {
       equal(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('length of string', () =>
-    [`.:? [.-: ["01010"; ""]];`].forEach((source) =>
+    [`.:length [.:from_string ["01010"; ""]];`].forEach((source) =>
       equal(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('split and join', () =>
     [
-      `.+:[.-: ["01010"; ""]; "-"];`,
+      `.:to_string[.:from_string ["01010"; ""]; "-"];`,
       `|> [
       .: [3; 4; 2; 1; 2; 3];
-      :+: [3];
-      >>. [-> [x; ~["["; .+: [x; ", "]; "]"]]];
-     .+: [", "]
+      .:chunks [3];
+      .:map>> [-> [x; ~["["; .:to_string [x; ", "]; "]"]]];
+     .:to_string [", "]
     ];`,
-      `|> [:+: [.: [3; 4; 2; 1; 2; 3]; 2]; >>. [-> [x; ~["["; .+: [x; ", "]; "]"]]]; .+: [", "]];`,
+      `|> [.:chunks [.: [3; 4; 2; 1; 2; 3]; 2]; .:map>> [-> [x; ~["["; .:to_string [x; ", "]; "]"]]]; .:to_string [", "]];`,
       `|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
-      :+ [4; "x"; "y"; "z"];
-      :- [0; 4];
-      :- [3; 4];
-      .+: [", "]
+      .:add_at [4; "x"; "y"; "z"];
+      .:remove_from [0; 4];
+      .:remove_from [3; 4];
+      .:to_string [", "]
     ];`,
       `|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
-      :+ [2; "x"; "y"; "z"];
-            .+: [", "]
+      .:add_at [2; "x"; "y"; "z"];
+            .:to_string [", "]
     ]`,
     ].forEach((source) =>
       equal(runFromInterpreted(source), runFromCompiled(source))
@@ -130,7 +130,7 @@ describe('compilation should work as expected', () => {
     [
       `<- [MATH; ARRAY] [LIBRARY];
       <- [floor] [MATH];
-      >>. [.: [1.123; 3.14; 4.9]; floor];
+      .:map>> [.: [1.123; 3.14; 4.9]; floor];
       `,
       `<- [MATH; LOGIC; STRING; LOOP; CONVERT] [LIBRARY];
       <- [floor; PI; sin; cos] [MATH];
@@ -165,8 +165,8 @@ describe('compilation should work as expected', () => {
     [
       `
     := [out; .: []];
-    >> [.: [1; 2; 3; 4]; -> [x; i; a; .:= [out; * [x; 10]]]];
-    << [.: [10; 20; 30]; -> [x; i; a; .:= [out; - [^ [out; i]; * [x; 0.1]]]]];
+    >> [.: [1; 2; 3; 4]; -> [x; i; a; .:append [out; * [x; 10]]]];
+    << [.: [10; 20; 30]; -> [x; i; a; .:append [out; - [^ [out; i]; * [x; 0.1]]]]];
     >> [out; -> [x; i; a; ^= [out; i; + [x; i]]]];
     out;
     `,
@@ -182,52 +182,56 @@ describe('compilation should work as expected', () => {
       `
     |> [
       .: [1; 2; 3; 4];
-      >>. [-> [x; i; a; * [x; 10]]];
-      >- [-> [x; i; a; % [x; 2]]]
+      .:map>> [-> [x; i; a; * [x; 10]]];
+      .:filter [-> [x; i; a; % [x; 2]]]
     ]
     `,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
 
-  it('><> should work', () =>
+  it('.:find>> should work', () =>
     [
-      `><> [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
-      `<>< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
-      `>.: [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
-      `.:< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
+      `.:find>> [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
+      `.:find<< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
+      `.:find_index>> [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
+      `.:find_index<< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
+      `|> [.: [1; 2; 3; 4; 5; 6; 7; 8];
+      .: filter [-> [x; % [x; 2]]];
+      .: map << [-> [x; * [x; 2]]];
+      .: find >> [-> [x; > [x; 10]]]];`,
     ].forEach((source) =>
       equal(runFromInterpreted(source), runFromCompiled(source))
     ))
-  it('>>. and .<< should work', () =>
+  it('.:map>> and .:map<< should work', () =>
     [
-      `>>. [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`,
-      `|> [.: [1; 2; 3; 4]; >>. [-> [x; i; a; + [i; * [x; 2]]]]; >>. [-> [x; i; a; + [i; * [x; 2]]]]]`,
+      `.:map>> [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`,
+      `|> [.: [1; 2; 3; 4]; .:map>> [-> [x; i; a; + [i; * [x; 2]]]]; .:map>> [-> [x; i; a; + [i; * [x; 2]]]]]`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
 
-  it('@ should work', () =>
+  it('*loop should work', () =>
     [
-      `:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`,
-      `:= [arr; .:[]]; @ [3; -> [i; .:=[arr; +[i; 1]]]]`,
+      `:= [arr; .:[]]; *loop [3; -> [.:append[arr; 1]]]`,
+      `:= [arr; .:[]]; *loop [3; -> [i; .:append[arr; +[i; 1]]]]`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
-  it('|. should work', () =>
+  it('.:cut should work', () =>
     [
       `|> [
       .: [1; 2; 3];
-     |. [];
+     .:cut [];
      + [100]]`,
     ].forEach((source) =>
       equal(runFromInterpreted(source), runFromCompiled(source))
     ))
-  it('.| should work', () =>
+  it('.:chop should work', () =>
     [
       `|> [
       .: [1; 2; 3];
-     |. [];
+     .:cut [];
      + [100]]`,
     ].forEach((source) =>
       equal(runFromInterpreted(source), runFromCompiled(source))
@@ -240,56 +244,56 @@ describe('compilation should work as expected', () => {
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
-  it('*:: and ~:: should work', () =>
+  it('.:merge_sort and .:quick_sort should work', () =>
     [
       ` |> [
       .: [3; 4; 2; 1; 2; 3];
-      *:: [-> [a; b; ? [> [a; b]; -1; 1]]]
+      .:merge_sort [-> [a; b; ? [> [a; b]; -1; 1]]]
     ];
     `,
       ` |> [
       .: [3; 4; 2; 1; 2; 3];
-      ~:: [-1]
+      .:quick_sort [-1]
     ];
     `,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
-  it(':: ::. ::: ::* .? ::? should work', () =>
+  it(':: ::keys ::entries ::values .? ::size should work', () =>
     [
-      `.: [::: [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
-      `.: [::. [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
-      `.: [::* [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
+      `.: [::entries [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
+      `.: [::keys [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
+      `.: [::values [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
-  it(':+: should work', () =>
+  it('.:chunks should work', () =>
     [
       `|> [
       .: [3; 4; 2; 1; 2; 3];
-      :+: [3]
+      .:chunks [3]
     ];`,
-      `:+: [.: [3; 4; 2; 1; 2; 3]; 2];`,
+      `.:chunks [.: [3; 4; 2; 1; 2; 3]; 2];`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
-  it(':+ and :- should work', () =>
+  it('.:add_at and .:remove_from should work', () =>
     [
       `|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
-      :+ [4; "x"; "y"; "z"];
-      :- [0; 4];
-      :- [3; 4]
+      .:add_at [4; "x"; "y"; "z"];
+      .:remove_from [0; 4];
+      .:remove_from [3; 4]
     ]`,
       `|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
-      :+ [2; "x"; "y"; "z"];
+      .:add_at [2; "x"; "y"; "z"];
     ]`,
       `|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
-      :- [2; 4];
+      .:remove_from [2; 4];
     ]`,
-      `:= [obj; :: ["x"; 3; "y"; 4]]; .: [.? [obj; "z"]; .? [obj; "x"]; ::? [obj]]`,
+      `:= [obj; :: ["x"; 3; "y"; 4]]; .: [.? [obj; "z"]; .? [obj; "x"]; ::size [obj]]`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
@@ -297,15 +301,15 @@ describe('compilation should work as expected', () => {
     [
       `:= [arr; .: []];
     ~= [loop1; -> [i;  : [
-      =.: [arr; .:[]];
-      := [current; .> [arr]];
+      .:prepend [arr; .:[]];
+      := [current; .:first [arr]];
       ~= [loop2; -> [j;  : [
-       =.: [current; + [j; i]];
+       .:prepend [current; + [j; i]];
       ? [> [j; 0]; loop2 [= [j; - [j; 1]]]]]]][10];
     ? [> [i; 0]; loop1 [= [i; - [i; 1]]]]]]][10];
     arr`,
       `:= [arr; .: []];
-    ~= [loop; -> [i; bounds; : [.:= [arr; i];
+    ~= [loop; -> [i; bounds; : [.:append [arr; i];
     ? [> [bounds; i]; loop [+= [i]; bounds]]]]][1; 12];
     arr;`,
     ].forEach((source) =>
@@ -335,29 +339,29 @@ describe('compilation should work as expected', () => {
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
-  it('<> </> .:. >< should work', () =>
+  it('.:difference .:xor .:union .:intersection should work', () =>
     [
       `|> [
       .: [1; 2; 3; 4];
-      <> [.: [1; 2; 4]];
-      .< []
+      .:difference [.: [1; 2; 4]];
+      .:last []
     ];
     `,
       `|> [
       .: [1; 2; 3; 4];
-      <> [.: [1; 2; 4]];
-      .< []
+      .:difference [.: [1; 2; 4]];
+      .:last []
     ];
     `,
       `|> [
       .: [1; 2; 3; 4; 5; 6; 7];
-      .:. [.: [1; 2; 4; 6]];
+      .:union [.: [1; 2; 4; 6]];
     ];
     `,
       `
     |> [
       .: [1; 2; 3; 4; 5; 6; 7];
-      >< [.: [1; 2; 4; 6]];
+      .:intersection [.: [1; 2; 4; 6]];
     ];
     `,
     ].forEach((source) =>
@@ -371,7 +375,7 @@ describe('compilation should work as expected', () => {
     <-.: [a; b; c; rest; arr]; .: [a; b; c; rest]`,
       `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]];
     <-.: [a; b; c; rest; arr];
-    |> [rest; .:= [a]; .:= [b]; .:= [c]];`,
+    |> [rest; .:append [a]; .:append [b]; .:append [c]];`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
@@ -389,9 +393,9 @@ describe('compilation should work as expected', () => {
     ].forEach((source) =>
       equal(runFromInterpreted(source), runFromCompiled(source))
     ))
-  it('.:? :. : :? should work', () => {
+  it('.:length :. : .:is_in_bounds should work', () => {
     ;[
-      `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:? [arr]; ^ [arr; -2]; ^ [arr; 3]; ? [:? [arr; 4]; 1; 0]; ? [:? [arr; 9]; 1; 0]]`,
+      `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:length [arr]; ^ [arr; -2]; ^ [arr; 3]; ? [.:is_in_bounds [arr; 4]; 1; 0]; ? [.:is_in_bounds [arr; 9]; 1; 0]]`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     )

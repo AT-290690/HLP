@@ -515,7 +515,7 @@ export const LIBRARY = {
     load_bulma: (v1, v2, v3) => {
       const link = document.createElement('link')
       link.rel = 'stylesheet'
-      link.href = `https://cdn.jsdelivr.net/npm/bulma@${v1}.${v2}.${v3}/css/bulma.min.css`
+      link.href = `https://cdn.jsdelivr.net/npm/bulma*loop${v1}.${v2}.${v3}/css/bulma.min.css`
       link.crossorigin = 'anonymous'
       document.head.appendChild(link)
       return link

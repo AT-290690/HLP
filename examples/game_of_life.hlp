@@ -36,7 +36,7 @@
                 next; next_is_alive;
                 view; rect]]; 
   insert_into_group [cells_container; rect]; 
-  .:= [cells; cell]; 
+  .:append [cells; cell]; 
   ? [> [bounds; count]; loop [+= [count]; bounds]]]]];
 loop [0; - [* [rows; cols]; 1]]; cells_container]];
 

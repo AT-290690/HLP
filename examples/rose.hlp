@@ -10,21 +10,21 @@ make_scene [300; 300; -> [: [
 := [strokes; .: []];
 := [shadows; .: []];
 
-@ [16; -> [i; .:= [arr; |> [
+*loop [16; -> [i; .:append [arr; |> [
   make_rectangle [width [0.5]; height [0.5]; + [10; * [i; 10]]; + [10; * [i; 10]]]; 
   set_rotation [* [i; 0.5]]; 
   set_opacity [* [0.02; i]]; 
   set_fill ["crimson"]; 
   no_stroke []]]]];
 
-@ [16; -> [i; .:= [strokes; |> [
+*loop [16; -> [i; .:append [strokes; |> [
   make_rectangle [width [0.5]; height [0.5]; + [10; * [i; 10]]; + [10; * [i; 10]]]; 
   set_rotation [* [i; 0.5]]; 
   set_opacity [- [1; * [0.01; i]]]; 
   set_stroke ["darkred"]; 
   no_fill []]]]];
 
-@ [10; -> [i; .:= [shadows; |> [
+*loop [10; -> [i; .:append [shadows; |> [
   make_rectangle [width [0.5]; height [0.5]; + [10; * [i; 10]]; + [10; * [i; 10]]]; 
   set_rotation [* [i; 0.5]]; 
   set_opacity [* [0.03; i]]; 

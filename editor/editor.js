@@ -104,7 +104,7 @@ const withCommand = (command = editor.getLine(0)) => {
 
           exe(`:=[__debug_log; LOGGER[0]]; ${editor.getValue().trim()}`)
           editor.setValue(value)
-        } else exe(`:=[__debug_log; LOGGER[0]]; __debug_log[..[${value}]]`)
+        } else exe(`:=[__debug_log; LOGGER[0]]; __debug_log[:[${value}]]`)
       }
       break
     default:

@@ -1,4 +1,3 @@
-;; debug
 <- [SKETCH; MATH; DOM; EVENT; STYLE] [LIBRARY]; 
 <- [make_scene; make_group; make_rectangle; update; play; draw; 
     insert_into_group; background; width; height; set_position;
@@ -23,7 +22,7 @@
   make_grid; -> [cells; : [
 := [cells_container; make_group []]; 
 
-@ [bound; -> [count; : [
+*loop [bound; -> [count; : [
   ? [! [% [count; cols]]; += [h; r]]; 
   := [is_alive; random_int [0; 1];
       next_is_alive; random_int [0; 1]; 
@@ -34,7 +33,7 @@
                 next; next_is_alive;
                 view; rect]]; 
   insert_into_group [cells_container; rect]; 
-  .:= [cells; cell]; 
+  .:append [cells; cell]; 
   ]]]; cells_container]];
 
 iterate_cells; -> [cells; callback; : [

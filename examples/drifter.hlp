@@ -10,7 +10,7 @@
 ' [w; s; a; d];
 := [moving; 0; directions; |> [
     .: [UP []; DOWN []; LEFT []; RIGHT []]; 
-    >>. [-> [vec; f; m; multiply_self [vec; 3]]]]];
+    .:map>> [-> [vec; f; m; multiply_self [vec; 3]]]]];
 make_scene [500; 500; -> [: [
 := [src; "https://i.imgur.com/G2zkd5t.png"];
  background ["#ddd"];

@@ -6,7 +6,7 @@ insert_into_container; make_strong_text; make_css_link; make_nav;  make_paragrap
 <- [add_class; background_color; text_align] [STYLE];
 
 make_user_interface [];
-make_css_link ["https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"];
+make_css_link ["https://cdn.jsdelivr.net/npm/bulma*loop0.9.4/css/bulma.min.css"];
 |> [get _body []; set_style [background_color ["white"]; text_align ["l"]]];
    
       := [
