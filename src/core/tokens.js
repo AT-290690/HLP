@@ -289,27 +289,57 @@ const tokens = {
       return acc
     }, new Map())
   },
+  // ['.?']: (args, env) => {
+  //   const prop = []
+  //   const entityName = args[0].name
+  //   for (let i = 1; i < args.length; ++i) {
+  //     const arg = args[i]
+  //     const p = extract(arg, env)
+  //     if (p == undefined)
+  //       throw new TypeError(`Void key for accesing :: ${entityName}`)
+  //     prop.push(extract(arg, env).toString())
+  //   }
+  //   for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
+  //     if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
+  //       if (
+  //         scope[entityName] == undefined ||
+  //         !(scope[entityName] instanceof Map)
+  //       )
+  //         throw new TypeError(
+  //           `:: ${entityName} is not a instance of :: at .? []`
+  //         )
+  //       return +scope[entityName].has(prop[0])
+  //     }
+  // },
   ['.?']: (args, env) => {
+    if (args.length !== 2)
+      throw new RangeError('Invalid number of arguments for .? []')
     const prop = []
-    const entityName = args[0].name
     for (let i = 1; i < args.length; ++i) {
       const arg = args[i]
       const p = extract(arg, env)
       if (p == undefined)
-        throw new TypeError(`Void key for accesing :: ${entityName}`)
+        throw new TypeError(`Void key for accesing :: ${args[0].name}`)
       prop.push(extract(arg, env).toString())
     }
-    for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
-      if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
-        if (
-          scope[entityName] == undefined ||
-          !(scope[entityName] instanceof Map)
+    if (args[0].type === 'apply' || args[0].type === 'value') {
+      const entity = evaluate(args[0], env)
+      if (!(entity instanceof Map))
+        throw new TypeError(
+          `:: ${args[0].name} is not a instance of :: at .? []`
         )
-          throw new TypeError(
-            `:: ${entityName} is not a instance of :: at .? []`
-          )
-        return +scope[entityName].has(prop[0])
-      }
+      return +entity.has(prop[0])
+    } else {
+      const entityName = args[0].name
+      for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
+        if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
+          if (!(scope[entityName] instanceof Map))
+            throw new TypeError(
+              `:: ${entityName} is not a instance of :: at .? []`
+            )
+          return +scope[entityName].has(prop[0])
+        }
+    }
   },
   ['.']: (args, env) => {
     if (args.length !== 2)
@@ -394,6 +424,7 @@ const tokens = {
     if (args.length !== 2)
       throw new RangeError('Invalid number of arguments for .!= []')
     const prop = []
+    const main = args[0]
     const entityName = args[0].name
 
     for (let i = 1; i < args.length; ++i) {
@@ -403,16 +434,28 @@ const tokens = {
         throw new TypeError(`Void key for accesing :: ${entityName}`)
       prop.push(extract(arg, env).toString())
     }
-    for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
-      if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
-        let temp = scope[entityName]
-        if (temp == undefined || !(temp instanceof Map))
-          throw new TypeError(
-            `:: ${entityName} is not a instance of :: at .!= []`
-          )
-        temp.delete(prop[0])
-        return temp
-      }
+    if (main.type === 'apply') {
+      const entity = evaluate(main, env)
+      if (entity == undefined || !(entity instanceof Map))
+        throw new TypeError(`:: ${entity} is not a instance of :: at .!= []`)
+      entity.set(prop[0], value)
+      return entity
+    } else if (main.type === 'word') {
+      for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
+        if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
+          let temp = scope[entityName]
+          if (temp == undefined || !(temp instanceof Map))
+            throw new TypeError(
+              `:: ${entityName} is not a instance of :: at .!= []`
+            )
+
+          if (!temp.has(prop[0])) {
+            throw new TypeError(`:: "${prop[0]}" doesn't exist in :: at .!= []`)
+          }
+          temp.delete(prop[0])
+          return temp
+        }
+    }
   },
   ["'"]: (args, env) => {
     if (!args.length)
@@ -485,14 +528,7 @@ const tokens = {
     })
     return VOID
   },
-  ['|>']: (args, env) => {
-    const [param, ...rest] = args
-    return pipe(...rest.map((arg) => (p) => evaluate(arg, env)(p)))(
-      param.type === 'apply' || param.type === 'word'
-        ? evaluate(param, env)
-        : param.value
-    )
-  },
+  ['|>']: (args, env) => evaluate(args[0], env),
   ['~=']: (args, env) => {
     if (!args.length || args.length > 2)
       throw new SyntaxError('Invalid number of arguments for ~= []')

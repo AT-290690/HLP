@@ -1,12 +1,5 @@
-<- [DOM; EVENT; CONSOLE] [LIBRARY];
-<- [make_user_interface; make_container; get_body] [DOM];
-<- [game_controller] [EVENT];
-<- [console_log] [CONSOLE];
-
-make_user_interface [];
-game_controller [get_body[]; :: [
-  "w"; -> [console_log["w was pressed"]];
-  "s"; -> [console_log["s was pressed"]];
-  "a"; -> [console_log["a was pressed"]];
-  "d"; -> [console_log["d was pressed"]];
-]];
+|> [
+    .: [3; 4; 2; 1; 2; 3];
+    .:map>> [-> [x; * [x; 4]]];
+    .:chunks [3];
+  ];

@@ -26,7 +26,7 @@
   --keyword: #e3e6ef;
   --string: #bbe7c4;
   --bracket: #546a90;
-  --color-primary: #f877ba;
+  --color-primary: #42e5f1;
   --color-secondary: #42c6ff;
   --color-thirdly: #d677f8;
   --color-fourtly: #75ff91;
@@ -100,11 +100,11 @@ body {
   background-color: var(--background-primary);
   z-index: 1000;
 }
-iframe {
+/* iframe {
   background: transparent;
   border: none;
   border-top: solid 1px var(--border);
-}
+} */
 .header-buttons {
   /* margin-left: 20px; */
   /* right: 0px;
@@ -134,24 +134,10 @@ iframe {
   left: 30px;
   visibility: hidden;
 }
-#exit-full {
-  cursor: zoom-out;
-  opacity: 0;
-  top: 0px;
-  right: 0px;
-  text-align: center;
-  padding: 5px;
-  background-color: transparent;
-  position: fixed;
-  z-index: 1000;
-  display: none;
-}
-#exit-full:hover {
-  opacity: 1;
-}
+
 .cm-editor {
   border: none;
-  padding-inline-start: 10px;
+  padding-inline-start: 2px;
 
   /* border-bottom: 1px solid var(--border);
   border-bottom: none; */
@@ -161,18 +147,7 @@ iframe {
   background: transparent;
   border: none;
 }
-input {
-  font-weight: 900;
-  background-color: transparent;
-  border: var(--border-width) solid var(--comment);
-  color: var(--icons);
-  margin: 5px;
-  padding: 8px;
-}
-input:focus {
-  background-color: var(--icons);
-  color: var(--background-primary);
-}
+
 @keyframes fadeInOpacity {
   0% {
     width: 15%;
@@ -198,7 +173,6 @@ input:focus {
 .cm-search {
   background-color: transparent !important;
   width: auto;
-  left: 5px;
 }
 .cm-completionLabel,
 .cm-completionMatchedText,

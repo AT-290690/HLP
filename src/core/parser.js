@@ -32,39 +32,26 @@ const importArgs = (expr) =>
     return arg
   }))
 
-const validateDefinitionsInPipe = (args) => {
-  if (args.some((arg) => arg?.operator?.name === ':='))
-    throw new TypeError(`Can't use := [] inside a |> []`)
-  return args
+// const validateDefinitionsInPipe = (args) => {
+//   if (args.some((arg) => arg?.operator?.name === ':='))
+//     throw new TypeError(`Can't use := [] inside a |> []`)
+//   return args
+// }
+const pipeDfs = (stack, parent) => {
+  const current = stack.pop()
+  if (current) {
+    parent.unshift(current)
+    pipeDfs(stack, current.args)
+  }
 }
 const pipeArgs = (expr) => {
   const [first, ...rest] = expr.args
   if (!first) throw new TypeError(`Invalid number of arguments for |> []`)
   if (!rest.every((x) => x.class === 'function' && x.operator.name))
     throw new TypeError(`Following arguments of|> [] must be -> []`)
-
-  // if (!rest.every(x => x.operator.name[0] === '|'))
-  //   throw new SyntaxError(`Pipe functions have to start with |`)
-  expr.args = [
-    first,
-    ...rest.map((arg) => ({
-      args: [
-        { type: 'word', name: '__' },
-        {
-          args: [
-            { type: 'word', name: '__' },
-            ...(validateDefinitionsInPipe(arg.args) ?? []),
-          ],
-          class: 'function',
-          type: 'apply',
-          operator: { name: arg.operator.name, type: 'word' },
-        },
-      ],
-      class: 'function',
-      type: 'apply',
-      operator: { name: '->', type: 'word' },
-    })),
-  ]
+  expr.args = []
+  rest.unshift(first)
+  pipeDfs(rest, expr.args)
 }
 export const parseApply = (expr, program) => {
   if (program[0] !== '[') return { expr: expr, rest: program }

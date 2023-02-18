@@ -12,7 +12,6 @@ const extensions = {
   LOGGER: (disable = 0) => {
     if (disable) return () => {}
     return (msg) => {
-      consoleEditor.focus()
       const current = consoleEditor.getValue()
       consoleEditor.setValue(
         `${current ? `${current}; ` : ''}${
@@ -79,7 +78,7 @@ droneButton.addEventListener('click', () => {
 })
 const withCommand = (command = editor.getLine(0)) => {
   const value = editor.getValue()
-  switch (command) {
+  switch (command.trim()) {
     case ';; app':
       {
         const encoded = encodeURIComponent(encodeBase64(value))

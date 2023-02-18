@@ -7,6 +7,26 @@ const sanitizeProp = (prop) => {
     throw new TypeError(`Forbidden property access ${prop}`)
   return prop
 }
+const semiColumnEdgeCases = new Set([
+  ';)',
+  ';-',
+  ';+',
+  ';*',
+  ';%',
+  ';&',
+  ';/',
+  ';:',
+  ';.',
+  ';=',
+  ';<',
+  ';>',
+  ';|',
+  ';,',
+  ';?',
+  ',,',
+  ';;',
+  ';]',
+])
 
 const compile = () => {
   const vars = new Set()
@@ -307,9 +327,12 @@ const compile = () => {
             .map((x) => dfs(x, locals))
             .join(',')}]);`
         case '|>': {
-          const [param, ...rest] = tree.args.map((x) => dfs(x, locals))
-          return `_pipe(${rest.join(',')})(${param});`
+          return `(${dfs(tree.args[0], locals)});`
         }
+        // case '|>': {
+        //   const [param, ...rest] = tree.args.map((x) => dfs(x, locals))
+        //   return `_pipe(${rest.join(',')})(${param});`
+        // }
         case '.:quick_sort': {
           return `_qSort(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
@@ -492,27 +515,6 @@ const compile = () => {
   }
   return { dfs, vars, modules }
 }
-
-const semiColumnEdgeCases = new Set([
-  ';)',
-  ';-',
-  ';+',
-  ';*',
-  ';%',
-  ';&',
-  ';/',
-  ';:',
-  ';.',
-  ';=',
-  ';<',
-  ';>',
-  ';|',
-  ';,',
-  ';?',
-  ',,',
-  ';;',
-  ';]',
-])
 
 export const compileToJs = (AST) => {
   const { dfs, vars, modules } = compile()
