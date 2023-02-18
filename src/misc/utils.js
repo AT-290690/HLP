@@ -5,7 +5,7 @@ import { tokens } from '../core/tokens.js'
 import { STD, protolessModule } from '../extensions/extentions.js'
 import { removeNoCode, wrapInBody } from './helpers.js'
 import Brrr from '../extensions/Brrr.js'
-export const languageUtilsString = `const _tco = func => (...args) => { let result = func(...args); while (typeof result === 'function') { result = result(); }; return result }, _pipe = (...fns) => x => fns.reduce((v, f) => f(v), x),
+export const languageUtilsString = `const _tco = func => (...args) => { let result = func(...args); while (typeof result === 'function') { result = result(); }; return result },
 _spreadArr = (args) => {
   if (Brrr.isBrrr(args[0])) {
     const [first, ...rest] = args

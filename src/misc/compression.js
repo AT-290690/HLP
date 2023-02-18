@@ -3,6 +3,32 @@ import { parse } from '../core/parser.js'
 import { LZUTF8 } from './lz-utf8.js'
 import { STD } from '../extensions/extentions.js'
 import { tokens } from '../core/tokens.js'
+import { runFromInterpreted } from './utils.js'
+
+const LIBRARY = STD.LIBRARY
+LIBRARY.HTTP.signal = (url, callback) =>
+  fetch(url)
+    .then((raw) => raw.text())
+    .then((source) =>
+      callback(
+        runFromInterpreted(decodeBase64(decodeURIComponent(source.trim())))
+      )
+    )
+LIBRARY.HTTP.signals = (urls, callback) =>
+  Promise.all(urls.map((url) => fetch(url).then((raw) => raw.text()))).then(
+    (sources) =>
+      callback(
+        new Map(
+          Object.entries(
+            sources.map((source) =>
+              runFromInterpreted(
+                decodeBase64(decodeURIComponent(source.trim()))
+              )
+            )
+          )
+        )
+      )
+  )
 
 const ABC = [
   'a',
@@ -63,11 +89,10 @@ const generateCompressionRunes = (start) => {
   return Object.keys(tokens)
     .map((t) => `${t}[`)
     .concat(['][', '];', ']];'])
-    .sort((a, b) => (a.length < b.length ? 1 : -1))
     .map((t, i) => ({ full: t, short: String.fromCharCode(start + i + 191) }))
 }
 export const generateCompressedModules = () => {
-  const { NAME, ...lib } = STD.LIBRARY
+  const { NAME, ...lib } = LIBRARY
   const modules = new Set([NAME])
   const dfs = (lib, modules) => {
     for (const module in lib) {
@@ -79,12 +104,10 @@ export const generateCompressedModules = () => {
     }
   }
   dfs(lib, modules)
-  return [...modules]
-    .sort((a, b) => (a.length > b.length ? 1 : -1))
-    .map((full, i) => {
-      const short = String.fromCharCode(i + 191)
-      return { full, short }
-    })
+  return [...modules].map((full, i) => {
+    const short = String.fromCharCode(i + 191)
+    return { full, short }
+  })
 }
 
 export const shortModules = generateCompressedModules()
@@ -160,17 +183,15 @@ export const compress = (source) => {
 
   let index = 0
   let count = 0
-  const shortDefinitions = defs
-    .sort((a, b) => (a.length > b.length ? 1 : -1))
-    .map((full) => {
-      const short = ABC[index] + count
-      ++index
-      if (index === ABC.length) {
-        index = 0
-        ++count
-      }
-      return { full, short }
-    })
+  const shortDefinitions = defs.map((full) => {
+    const short = ABC[index] + count
+    ++index
+    if (index === ABC.length) {
+      index = 0
+      ++count
+    }
+    return { full, short }
+  })
   for (const { full, short } of shortDefinitions)
     result = result.replaceAll(new RegExp(`\\b${full}\\b`, 'g'), short)
 

@@ -92,6 +92,24 @@ describe('interpretation should work as expected', () => {
       [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; * [infinity; -1]; * [infinity; -1]]`),
       21
     )
+    equal(
+      runFromInterpreted(
+        `<- [MATH] [LIBRARY];
+    <- [max; infinity] [MATH];
+    := [max_sub_array_sum; -> [nums; : [
+       := [max_global; * [infinity; -1]; 
+           max_so_far;  max_global];    
+       * loop [.: length [nums]; -> [i; 
+               = [max_global; 
+                  max [max_global; 
+                       = [max_so_far; 
+                          max [0; 
+                               + [max_so_far; 
+                                  ^ [nums; i]]]]]]]]]]];
+    max_sub_array_sum [.: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]];`
+      ),
+      21
+    )
   })
   it('sum median', () => {
     equal(
@@ -184,6 +202,15 @@ describe('interpretation should work as expected', () => {
           => [-> [x; * [x; 10]]]
         ]`),
       300
+    )
+  })
+  it('calling :: methods should work', () => {
+    equal(
+      runFromInterpreted(`
+    := [create_db; -> [:: ["connect"; -> ["connected!"]]]];
+    := [db; create_db[]];
+    |> [db; . ["connect"]][];`),
+      'connected!'
     )
   })
   it('.:chunks should work', () => {

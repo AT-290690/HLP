@@ -51,6 +51,19 @@ describe('compilation should work as expected', () => {
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
         [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; * [infinity; -1]; * [infinity; -1]]`,
+      `<- [MATH] [LIBRARY];
+        <- [max; infinity] [MATH];
+        := [max_sub_array_sum; -> [nums; : [
+           := [max_global; * [infinity; -1]; 
+               max_so_far;  max_global];    
+           * loop [.: length [nums]; -> [i; 
+                   = [max_global; 
+                      max [max_global; 
+                           = [max_so_far; 
+                              max [0; 
+                                   + [max_so_far; 
+                                      ^ [nums; i]]]]]]]]]]];
+        max_sub_array_sum [.: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]];`,
     ].forEach((source) =>
       equal(runFromInterpreted(source), runFromCompiled(source))
     ))
@@ -393,11 +406,18 @@ describe('compilation should work as expected', () => {
     ].forEach((source) =>
       equal(runFromInterpreted(source), runFromCompiled(source))
     ))
-  it('.:length :. : .:is_in_bounds should work', () => {
-    ;[
+  it('.:length :. : .:is_in_bounds should work', () =>
+    [
       `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:length [arr]; ^ [arr; -2]; ^ [arr; 3]; ? [.:is_in_bounds [arr; 4]; 1; 0]; ? [.:is_in_bounds [arr; 9]; 1; 0]]`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
-    )
-  })
+    ))
+  it('calling :: methods should work', () =>
+    [
+      `:= [create_db; -> [:: ["connect"; -> ["connected!"]]]];
+    := [db; create_db[]];
+    |> [db; . ["connect"]][];`,
+    ].forEach((source) =>
+      equal(runFromInterpreted(source).items, runFromCompiled(source).items)
+    ))
 })
