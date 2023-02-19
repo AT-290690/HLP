@@ -3,8 +3,8 @@
   "short_name": "HLP",
   "start_url": "./editor/index.html",
   "display": "standalone",
-  "background_color": "transparent",
-  "theme_color": "transparent",
+  "background_color": "#565f89",
+  "theme_color": "#565f89",
   "description": "Hyper Link Program",
   "icons": [
     {
