@@ -1,52 +1,8 @@
-const cacheName = 'hlp-v1'
-const staticAssets = [
-  './',
-  './assets/images/',
-  './index.html',
-  './styles.css',
-  './editor.js',
-  './hlp.editor.bundle.js',
-]
+importScripts(
+  'https://storage.googleapis.com/workbox-cdn/releases/6.0.2/workbox-sw.js'
+)
 
-self.addEventListener('install', async (e) => {
-  const cache = await caches.open(cacheName)
-  try {
-    await cache.addAll(staticAssets)
-  } catch (err) {
-    console.log(err)
-  }
-  return self.skipWaiting()
-})
-
-self.addEventListener('activate', (e) => {
-  self.clients.claim()
-})
-
-self.addEventListener('fetch', async (e) => {
-  const req = e.request
-  const url = new URL(req.url)
-
-  if (url.origin === location.origin) {
-    e.respondWith(cacheFirst(req))
-  } else {
-    e.respondWith(networkAndCache(req))
-  }
-})
-
-async function cacheFirst(req) {
-  const cache = await caches.open(cacheName)
-  const cached = await cache.match(req)
-  return cached || fetch(req)
-}
-
-async function networkAndCache(req) {
-  const cache = await caches.open(cacheName)
-  try {
-    const fresh = await fetch(req)
-    await cache.put(req, fresh.clone())
-    return fresh
-  } catch (e) {
-    const cached = await cache.match(req)
-    return cached
-  }
-}
+workbox.routing.registerRoute(
+  ({ request }) => request.destination === 'image',
+  new workbox.strategies.CacheFirst()
+)
