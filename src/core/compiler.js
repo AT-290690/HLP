@@ -199,6 +199,8 @@ const compile = () => {
             locals
           )}).isEqual(Brrr.of(x)));`
         }
+        case '`':
+          return `_cast(${dfs(tree.args[0], locals)})`
         case '.:difference':
           return `_difference(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],

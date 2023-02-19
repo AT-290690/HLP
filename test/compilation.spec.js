@@ -1,4 +1,4 @@
-import { equal, deepEqual } from 'assert'
+import { equal, strictEqual, deepEqual } from 'assert'
 import { runFromInterpreted, runFromCompiled } from '../src/misc/utils.js'
 describe('compilation should work as expected', () => {
   it('definitions', () =>
@@ -65,7 +65,7 @@ describe('compilation should work as expected', () => {
                                       ^ [nums; i]]]]]]]]]]];
         max_sub_array_sum [.: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]];`,
     ].forEach((source) =>
-      equal(runFromInterpreted(source), runFromCompiled(source))
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('sum median', () =>
     [
@@ -108,11 +108,11 @@ describe('compilation should work as expected', () => {
           sum [myTree]
       `,
     ].forEach((source) =>
-      equal(runFromInterpreted(source), runFromCompiled(source))
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('length of string', () =>
     [`.:length [.:from_string ["01010"; ""]];`].forEach((source) =>
-      equal(runFromInterpreted(source), runFromCompiled(source))
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('split and join', () =>
     [
@@ -137,7 +137,7 @@ describe('compilation should work as expected', () => {
             .:to_string [", "]
     ]`,
     ].forEach((source) =>
-      equal(runFromInterpreted(source), runFromCompiled(source))
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('import should work', () =>
     [
@@ -172,7 +172,7 @@ describe('compilation should work as expected', () => {
         => [-> [x; * [x; 10]]]
       ]`,
     ].forEach((source) =>
-      equal(runFromInterpreted(source), runFromCompiled(source))
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('>> and << should work', () =>
     [
@@ -214,7 +214,7 @@ describe('compilation should work as expected', () => {
       .: map << [-> [x; * [x; 2]]];
       .: find >> [-> [x; > [x; 10]]]];`,
     ].forEach((source) =>
-      equal(runFromInterpreted(source), runFromCompiled(source))
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('.:map>> and .:map<< should work', () =>
     [
@@ -238,7 +238,7 @@ describe('compilation should work as expected', () => {
      .:cut [];
      + [100]]`,
     ].forEach((source) =>
-      equal(runFromInterpreted(source), runFromCompiled(source))
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('.:chop should work', () =>
     [
@@ -247,7 +247,7 @@ describe('compilation should work as expected', () => {
      .:cut [];
      + [100]]`,
     ].forEach((source) =>
-      equal(runFromInterpreted(source), runFromCompiled(source))
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('... shoud work', () =>
     [
@@ -404,7 +404,7 @@ describe('compilation should work as expected', () => {
       `:=[x; 2]; *=[x; 3]`,
       `:=[x; 2]; *=[x; 3]; x`,
     ].forEach((source) =>
-      equal(runFromInterpreted(source), runFromCompiled(source))
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('.:length :. : .:is_in_bounds should work', () =>
     [
@@ -418,6 +418,18 @@ describe('compilation should work as expected', () => {
     := [db; create_db[]];
     |> [db; . ["connect"]][];`,
     ].forEach((source) =>
-      equal(runFromInterpreted(source).items, runFromCompiled(source).items)
+      strictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
+    ))
+  it('` should work', () =>
+    [
+      '` [1]',
+      '` ["1"]',
+      '+ [1; 2; 3; `[" "]; ` ["10"]]',
+      '~ [`[1]; `[2]; `[3]; " "; "sequance"; "!"]',
+    ].forEach((source) =>
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
 })

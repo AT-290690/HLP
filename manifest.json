@@ -1,7 +1,7 @@
 {
   "name": "HLP",
   "short_name": "HLP",
-  "start_url": "./editor/",
+  "start_url": "./editor/index.html",
   "display": "standalone",
   "background_color": "transparent",
   "theme_color": "transparent",

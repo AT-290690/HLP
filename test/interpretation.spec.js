@@ -1,4 +1,4 @@
-import { equal, deepEqual, throws } from 'assert'
+import { equal, deepEqual, throws, strictEqual } from 'assert'
 import { runFromInterpreted } from '../src/misc/utils.js'
 describe('interpretation should work as expected', () => {
   it('definitions', () => {
@@ -39,7 +39,7 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('simple math', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(
         `:= [x; 30]; := [result; + [/ [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`
       ),
@@ -49,7 +49,7 @@ describe('interpretation should work as expected', () => {
   })
 
   it('if', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(
         `:= [age; 18];
    ? [>= [age; 18]; "Can work!"; "Can't work"];`
@@ -66,7 +66,7 @@ describe('interpretation should work as expected', () => {
   })
 
   it('fib sum', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(`;; calculating fib sequance
           := [fib; -> [n; ? [
             > [n; 0];
@@ -80,7 +80,7 @@ describe('interpretation should work as expected', () => {
   })
 
   it('max sub array sum rec', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(`;; max_sub_array_recursive
       <- [MATH] [LIBRARY];
       <- [max; infinity] [MATH];
@@ -92,7 +92,7 @@ describe('interpretation should work as expected', () => {
       [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; * [infinity; -1]; * [infinity; -1]]`),
       21
     )
-    equal(
+    strictEqual(
       runFromInterpreted(
         `<- [MATH] [LIBRARY];
     <- [max; infinity] [MATH];
@@ -112,7 +112,7 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('sum median', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(`
   <- [MATH; ARRAY] [LIBRARY];
   <- [sum] [MATH];
@@ -131,7 +131,7 @@ describe('interpretation should work as expected', () => {
   })
 
   it('sum tree nodes', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(`;; sum_tree_nodes
       := [node; -> [value; left; right;
         :: ["value"; value;
@@ -168,7 +168,7 @@ describe('interpretation should work as expected', () => {
       [1, 3, 4]
     )
 
-    equal(
+    strictEqual(
       runFromInterpreted(`<- [MATH; LOGIC; STRING; LOOP; CONVERT] [LIBRARY];
       <- [floor; PI; sin; cos] [MATH];
       <- [trim; upper_case] [STRING];
@@ -187,14 +187,14 @@ describe('interpretation should work as expected', () => {
       '115HELLO THERE'
     )
 
-    equal(
+    strictEqual(
       runFromInterpreted(`<- [MATH] [LIBRARY]; <- [PI] [MATH]; PI;`),
       Math.PI
     )
   })
 
   it('nested pipes should work', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(`
         |> [
           10;
@@ -205,7 +205,7 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('calling :: methods should work', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(`
     := [create_db; -> [:: ["connect"; -> ["connected!"]]]];
     := [db; create_db[]];
@@ -249,28 +249,28 @@ describe('interpretation should work as expected', () => {
   })
 
   it('.:find>> should work', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(`|> [.: [1; 2; 3; 4; 5; 6; 7; 8];
     .: filter [-> [x; % [x; 2]]];
     .: map << [-> [x; * [x; 2]]];
     .: find >> [-> [x; > [x; 10]]]];`),
       14
     )
-    equal(
+    strictEqual(
       runFromInterpreted(`.:find>> [.: [1; 2; 3; 4]; -> [x;  == [x; 2]]]`),
       2
     )
-    equal(
+    strictEqual(
       runFromInterpreted(`.:find<< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`),
       2
     )
   })
   it('.:find_index>> should work', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(`.:find_index>> [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`),
       1
     )
-    equal(
+    strictEqual(
       runFromInterpreted(`.:find_index<< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`),
       1
     )
@@ -304,7 +304,7 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('.:cut should work', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(`|> [
       .: [1; 2; 3];
      .:cut [];
@@ -313,7 +313,7 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('.:chop should work', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(`|> [
       .: [1; 2; 3];
       .:chop [];
@@ -360,11 +360,11 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('.:to_string should work', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(`.:to_string [.: ["a"; "b"; "c"; "d"]; ""]`),
       'abcd'
     )
-    equal(
+    strictEqual(
       runFromInterpreted(`.:to_string [.: ["a"; "b"; "c"; "d"]; "-"]`),
       'a-b-c-d'
     )
@@ -408,7 +408,7 @@ describe('interpretation should work as expected', () => {
   })
 
   it('. .? .= .!= should work', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(
         `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; . ["x"]; . ["y"]]`
       ),
@@ -428,13 +428,13 @@ describe('interpretation should work as expected', () => {
         ),
       RangeError
     )
-    equal(
+    strictEqual(
       runFromInterpreted(
         `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; . ["x"]; .= ["y"; 1]]; |> [obj; . ["x"]; . ["y"]]`
       ),
       1
     )
-    equal(
+    strictEqual(
       runFromInterpreted(
         `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; . ["x"]; .= ["z"; 1]]; |> [obj; . ["x"]; . ["z"]]`
       ),
@@ -532,7 +532,7 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('^ should work', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(`:= [x; 11; y; 23];
     |> [x; 
         + [y; 23; 4];
@@ -544,7 +544,7 @@ describe('interpretation should work as expected', () => {
     `),
       14884
     )
-    equal(
+    strictEqual(
       runFromInterpreted(`|> [0; 
         + [2];
         => [-> [x; * [x; x]]]];`),
@@ -552,7 +552,7 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('.:difference .:xor .:union .:intersection should work', () => {
-    equal(
+    strictEqual(
       runFromInterpreted(
         `|> [
       .: [1; 2; 3; 4];
@@ -604,15 +604,15 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('+= -= *= should work', () => {
-    equal(runFromInterpreted(`:=[x; 0]; += [x]`), 1)
-    equal(runFromInterpreted(`:=[x; 1]; +=[x; 3]`), 4)
-    equal(runFromInterpreted(`:=[x; 1]; +=[x; 3]; x`), 4)
-    equal(runFromInterpreted(`:=[x; 1]; -= [x]`), 0)
-    equal(runFromInterpreted(`:=[x; 1]; -=[x; 3]`), -2)
-    equal(runFromInterpreted(`:=[x; 1]; -=[x; 3]; x`), -2)
-    equal(runFromInterpreted(`:=[x; 2]; *= [x]`), 2)
-    equal(runFromInterpreted(`:=[x; 2]; *=[x; 3]`), 6)
-    equal(runFromInterpreted(`:=[x; 2]; *=[x; 3]; x`), 6)
+    strictEqual(runFromInterpreted(`:=[x; 0]; += [x]`), 1)
+    strictEqual(runFromInterpreted(`:=[x; 1]; +=[x; 3]`), 4)
+    strictEqual(runFromInterpreted(`:=[x; 1]; +=[x; 3]; x`), 4)
+    strictEqual(runFromInterpreted(`:=[x; 1]; -= [x]`), 0)
+    strictEqual(runFromInterpreted(`:=[x; 1]; -=[x; 3]`), -2)
+    strictEqual(runFromInterpreted(`:=[x; 1]; -=[x; 3]; x`), -2)
+    strictEqual(runFromInterpreted(`:=[x; 2]; *= [x]`), 2)
+    strictEqual(runFromInterpreted(`:=[x; 2]; *=[x; 3]`), 6)
+    strictEqual(runFromInterpreted(`:=[x; 2]; *=[x; 3]; x`), 6)
   })
   it('.:length :. : .:is_in_bounds should work', () => {
     deepEqual(
@@ -620,6 +620,15 @@ describe('interpretation should work as expected', () => {
         `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:length [arr]; ^ [arr; -2]; ^ [arr; 3]; .:is_in_bounds [arr; 4]; .:is_in_bounds [arr; 9]]`
       ).items,
       [8, 7, 4, 1, 0]
+    )
+  })
+  it('` should work', () => {
+    strictEqual(runFromInterpreted('` [1]'), '1')
+    strictEqual(runFromInterpreted('` ["1"]'), 1)
+    strictEqual(runFromInterpreted('+ [1; 2; 3; `[" "]; ` ["10"]]'), 16)
+    strictEqual(
+      runFromInterpreted('~ [`[1]; `[2]; `[3]; " "; "sequance"; "!"]'),
+      '123 sequance!'
     )
   })
 })
