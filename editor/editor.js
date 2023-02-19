@@ -90,6 +90,28 @@ const withCommand = (command = editor.getLine(0)) => {
         )
       }
       break
+    case ';; share':
+      {
+        const link = `https://at-290690.github.io/hlp/?s=${encodeURIComponent(
+          encodeBase64(value)
+        )}`
+        consoleEditor.setValue(link)
+        consoleEditor.focus()
+        consoleEditor.setSelection(0, link.length)
+      }
+
+      break
+    case ';; window':
+      {
+        const encoded = encodeURIComponent(encodeBase64(value))
+        window.open(
+          `${window.location.href.split('/editor/')[0]}/index.html?s=` +
+            encoded,
+          'Bit',
+          `menubar=no,directories=no,toolbar=no,status=no,scrollbars=no,resize=no,width=600,height=600,left=600,top=150`
+        )
+      }
+      break
     case ';; debug':
       {
         const selection = editor.getSelection().trim()
@@ -140,7 +162,7 @@ consoleEditor.setSize(bounds.width - 80, 40)
 const registerSW = async () => {
   if ('serviceWorker' in navigator)
     try {
-      await navigator.serviceWorker.register('./sw.js')
+      await navigator.serviceWorker.register('../sw.js')
     } catch (e) {
       console.log(`SW registration failed`)
     }
