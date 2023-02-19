@@ -8,6 +8,7 @@ const droneButton = document.getElementById('drone')
 const errorIcon = document.getElementById('error-drone-icon')
 const execIcon = document.getElementById('exec-drone-icon')
 const consoleEditor = CodeMirror(consoleElement)
+
 const extensions = {
   LOGGER: (disable = 0) => {
     if (disable) return () => {}
@@ -135,3 +136,14 @@ window.addEventListener('resize', () => {
 const bounds = document.body.getBoundingClientRect()
 editor.setSize(bounds.width, bounds.height - 60)
 consoleEditor.setSize(bounds.width - 80, 40)
+
+const registerSW = async () => {
+  if ('serviceWorker' in navigator)
+    try {
+      await navigator.serviceWorker.register('./sw.js')
+    } catch (e) {
+      console.log(`SW registration failed`)
+    }
+}
+
+window.addEventListener('load', registerSW)
