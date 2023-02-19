@@ -1,4 +1,4 @@
-import { equal, strictEqual, deepEqual } from 'assert'
+import { equal, strictEqual, deepEqual, deepStrictEqual } from 'assert'
 import { compress, decompress } from '../src/misc/compression.js'
 import { runFromInterpreted, runFromCompiled } from '../src/misc/utils.js'
 describe('compression should work as expected', () => {
@@ -9,7 +9,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -18,7 +18,7 @@ describe('compression should work as expected', () => {
     [`:= [x; 30]; := [result; + [/ [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -35,7 +35,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -54,7 +54,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -193,7 +193,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -238,7 +238,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -266,7 +266,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -279,7 +279,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -314,7 +314,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -334,7 +334,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -347,7 +347,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -362,7 +362,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -410,7 +410,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -422,7 +422,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -444,7 +444,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -477,7 +477,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -494,7 +494,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -521,7 +521,7 @@ describe('compression should work as expected', () => {
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
-        deepEqual(
+        deepStrictEqual(
           runFromInterpreted(source).items,
           runFromCompiled(source).items
         )
@@ -545,6 +545,39 @@ describe('compression should work as expected', () => {
       '` ["1"]',
       '+ [1; 2; 3; `[" "]; ` ["10"]]',
       '~ [`[1]; `[2]; `[3]; " "; "sequance"; "!"]',
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        strictEqual(runFromInterpreted(source), runFromCompiled(source))
+      ))
+
+  it('.: head, .: tail, .: first, .: last, .: cut, .: chop should work', () =>
+    [
+      `
+        := [arr; .: [1; 2; 3; 4; 5; 6]];
+    |> [arr; 
+       .: head [];
+       .: head [];
+       .: tail [];
+       .: tail []; 
+       .: reduce >> [-> [acc; x; + [acc; x]]; 0]];
+        `,
+      `
+        := [arr; .: [1; 2; 3; 4; 5; 6]];
+          .: first [arr]
+        `,
+      `
+        := [arr; .: [1; 2; 3; 4; 5; 6]];
+          .: last [arr]
+        `,
+      `
+      := [arr; .: [1; 2; 3; 4; 5; 6]];
+      .: chop [arr]
+      `,
+      `
+      := [arr; .: [1; 2; 3; 4; 5; 6]];
+      .: cut [arr]
+      `,
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>

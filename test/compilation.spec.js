@@ -1,4 +1,4 @@
-import { equal, strictEqual, deepEqual } from 'assert'
+import { equal, strictEqual, deepEqual, deepStrictEqual } from 'assert'
 import { runFromInterpreted, runFromCompiled } from '../src/misc/utils.js'
 describe('compilation should work as expected', () => {
   it('definitions', () =>
@@ -6,13 +6,19 @@ describe('compilation should work as expected', () => {
       `:= [x; 10]; := [y; 3]; := [temp; x]; = [x; y]; = [y; temp]; :: ["x"; x; "y"; y]`,
       `:= [x; 10; y; 23]; .: [x; y]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('simple math', () =>
     [
       `:= [x; 30]; := [result; + [/ [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('if', () =>
     [
@@ -24,7 +30,10 @@ describe('compilation should work as expected', () => {
          .: [validate age [18]; validate age [21]; validate age [12]];
      `,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
 
   it('fib sum', () =>
@@ -38,7 +47,10 @@ describe('compilation should work as expected', () => {
             fib[10]
               `,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('max sub array sum rec', () =>
     [
@@ -162,7 +174,10 @@ describe('compilation should work as expected', () => {
       `,
       `<- [MATH] [LIBRARY]; <- [PI] [MATH]; PI;`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('nested pipes should work', () =>
     [
@@ -200,7 +215,10 @@ describe('compilation should work as expected', () => {
     ]
     `,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
 
   it('.:find>> should work', () =>
@@ -221,7 +239,10 @@ describe('compilation should work as expected', () => {
       `.:map>> [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`,
       `|> [.: [1; 2; 3; 4]; .:map>> [-> [x; i; a; + [i; * [x; 2]]]]; .:map>> [-> [x; i; a; + [i; * [x; 2]]]]]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
 
   it('*loop should work', () =>
@@ -229,7 +250,10 @@ describe('compilation should work as expected', () => {
       `:= [arr; .:[]]; *loop [3; -> [.:append[arr; 1]]]`,
       `:= [arr; .:[]]; *loop [3; -> [i; .:append[arr; +[i; 1]]]]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('.:cut should work', () =>
     [
@@ -255,7 +279,10 @@ describe('compilation should work as expected', () => {
       ... [.: [1; 2; 3]; .: [4; 5; 6]];
       ]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('.:merge_sort and .:quick_sort should work', () =>
     [
@@ -270,7 +297,10 @@ describe('compilation should work as expected', () => {
     ];
     `,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it(':: ::keys ::entries ::values .? ::size should work', () =>
     [
@@ -278,7 +308,10 @@ describe('compilation should work as expected', () => {
       `.: [::keys [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
       `.: [::values [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('.:chunks should work', () =>
     [
@@ -288,7 +321,10 @@ describe('compilation should work as expected', () => {
     ];`,
       `.:chunks [.: [3; 4; 2; 1; 2; 3]; 2];`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('.:add_at and .:remove_from should work', () =>
     [
@@ -326,14 +362,20 @@ describe('compilation should work as expected', () => {
     ? [> [bounds; i]; loop [+= [i]; bounds]]]]][1; 12];
     arr;`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it(':: should work', () =>
     [
       `:= [d; :: ["x"; 10; "y"; 23]];
     :: ["y"; 5; "m"; :: ["x"; :: ["x"; 10; "y"; d]; "y"; 23];]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('^ should work', () =>
     [
@@ -350,7 +392,10 @@ describe('compilation should work as expected', () => {
       + [2];
       => [-> [x; * [x; x]]]];`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('.:difference .:xor .:union .:intersection should work', () =>
     [
@@ -378,7 +423,10 @@ describe('compilation should work as expected', () => {
     ];
     `,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('<-:: and <-.: should work', () =>
     [
@@ -390,7 +438,10 @@ describe('compilation should work as expected', () => {
     <-.: [a; b; c; rest; arr];
     |> [rest; .:append [a]; .:append [b]; .:append [c]];`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('+= -= *= should work', () =>
     [
@@ -410,7 +461,10 @@ describe('compilation should work as expected', () => {
     [
       `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:length [arr]; ^ [arr; -2]; ^ [arr; 3]; ? [.:is_in_bounds [arr; 4]; 1; 0]; ? [.:is_in_bounds [arr; 9]; 1; 0]]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it('calling :: methods should work', () =>
     [
@@ -429,6 +483,37 @@ describe('compilation should work as expected', () => {
       '` ["1"]',
       '+ [1; 2; 3; `[" "]; ` ["10"]]',
       '~ [`[1]; `[2]; `[3]; " "; "sequance"; "!"]',
+    ].forEach((source) =>
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+
+  it('.: head, .: tail, .: first, .: last, .: cut, .: chop should work', () =>
+    [
+      `
+      := [arr; .: [1; 2; 3; 4; 5; 6]];
+  |> [arr; 
+     .: head [];
+     .: head [];
+     .: tail [];
+     .: tail []; 
+     .: reduce >> [-> [acc; x; + [acc; x]]; 0]];
+      `,
+      `
+      := [arr; .: [1; 2; 3; 4; 5; 6]];
+        .: first [arr]
+      `,
+      `
+      := [arr; .: [1; 2; 3; 4; 5; 6]];
+        .: last [arr]
+      `,
+      `
+    := [arr; .: [1; 2; 3; 4; 5; 6]];
+    .: chop [arr]
+    `,
+      `
+    := [arr; .: [1; 2; 3; 4; 5; 6]];
+    .: cut [arr]
+    `,
     ].forEach((source) =>
       strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))

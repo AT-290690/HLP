@@ -1,4 +1,4 @@
-;; debug
+;; app
 <- [SKETCH; STRING] [LIBRARY];
 <- [make_scene; make_rectangle; no_stroke; no_fill; 
     set_fill; set_stroke; set_position; update;

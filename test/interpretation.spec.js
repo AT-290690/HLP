@@ -1,21 +1,21 @@
-import { equal, deepEqual, throws, strictEqual } from 'assert'
+import { equal, deepEqual, throws, strictEqual, deepStrictEqual } from 'assert'
 import { runFromInterpreted } from '../src/misc/utils.js'
 describe('interpretation should work as expected', () => {
   it('definitions', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(
         `:= [x; 10]; := [y; 3]; := [temp; x]; = [x; y]; = [y; temp]`
       ),
       10
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`:= [x; 10; y; 23]; .: [x; y]`).items,
       [10, 23]
     )
     throws(() => runFromInterpreted(`/ [29; 0]`), RangeError)
   })
   it(':: ::keys ::entries ::values ::size .? should work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`::entries [:: ["x"; 10; "y"; 23; "z"; 4]]`).items,
       [
         ['x', 10],
@@ -23,15 +23,15 @@ describe('interpretation should work as expected', () => {
         ['z', 4],
       ]
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`::keys [:: ["x"; 10; "y"; 23; "z"; 4]]`).items,
       ['x', 'y', 'z']
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`::values [:: ["x"; 10; "y"; 23; "z"; 4]]`).items,
       [10, 23, 4]
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(
         `:= [obj; :: ["x"; 3; "y"; 4]]; .: [.? [obj; "z"]; .? [obj; "x"]; ::size [obj]]`
       ).items,
@@ -56,7 +56,7 @@ describe('interpretation should work as expected', () => {
       ),
       'Can work!'
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`
           := [validate age; -> [age; ? [>= [age; 18]; ~ ["Can work"; ? [>=[age; 21]; " and can drink"; ""]]; "Can't work and can't drink"]]];
           .: [validate age [18]; validate age [21]; validate age [12]];
@@ -160,7 +160,7 @@ describe('interpretation should work as expected', () => {
   })
 
   it('import should work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`<- [MATH; ARRAY] [LIBRARY];
       <- [floor] [MATH];
       .:map>> [.: [1.123; 3.14; 4.9]; floor];
@@ -214,7 +214,7 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('.:chunks should work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted('|> [.: [1; 2; 3; 4; 5; 6]; .:chunks [3]]').items,
       [
         [1, 2, 3],
@@ -223,7 +223,7 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('>> and << should work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`
     := [out; .: []];
     >> [.: [1; 2; 3; 4]; -> [x; i; a; .:append [out; * [x; 10]]]];
@@ -234,7 +234,7 @@ describe('interpretation should work as expected', () => {
       [10, 21, 32, 43, 31, 23, 15]
     )
 
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`
       |> [
         .: [1; 2; 3; 4];
@@ -276,13 +276,13 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('.:map>> and .:map<< should work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(
         `.:map>> [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`
       ).items,
       [2, 5, 8, 11]
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(
         `.:map<< [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`
       ).items,
@@ -291,12 +291,12 @@ describe('interpretation should work as expected', () => {
   })
 
   it('*loop should work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`:= [arr; .:[]]; *loop [3; -> [.:append[arr; 1]]]`)
         .items,
       [1, 1, 1]
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(
         `:= [arr; .:[]]; *loop [3; -> [i; .:append[arr; +[i; 1]]]]`
       ).items,
@@ -322,7 +322,7 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('...  shoud work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`.: [
       ... [.: [1; 2; 3]; .: [4; 5; 6]];
       ]`).items,
@@ -330,7 +330,7 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('.:merge_sort and .:quick_sort should work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(` |> [
       .: [3; 4; 2; 1; 2; 3];
       .:merge_sort [-> [a; b; ? [> [a; b]; -1; 1]]]
@@ -338,7 +338,7 @@ describe('interpretation should work as expected', () => {
     `).items,
       [4, 3, 3, 2, 2, 1]
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(` |> [
       .: [3; 4; 2; 1; 2; 3];
       .:quick_sort [-1]
@@ -348,13 +348,13 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('.:rotate should work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`
       .:rotate [.: [3; 4; 2; 1; 2; 3]; 2; -1]
     `).items,
       [2, 1, 2, 3, 3, 4]
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`.:rotate [.: [3; 4; 2; 1; 2; 3]; 3; 1]`).items,
       [1, 2, 3, 3, 4, 2]
     )
@@ -370,7 +370,7 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('.:add_at and .:remove_from should work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
       .:add_at [4; "x"; "y"; "z"];
@@ -379,14 +379,14 @@ describe('interpretation should work as expected', () => {
     ]`).items,
       ['x', 'y', 'z']
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
       .:add_at [2; "x"; "y"; "z"];
     ]`).items,
       [1, 2, 'x', 'y', 'z', 3, 4, 5, 6, 7, 8]
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
       .:remove_from [2; 4];
@@ -499,14 +499,14 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('~= should work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`:= [arr; .: []];
     ~= [loop; -> [i; bounds; : [.:append [arr; i];
     ? [> [bounds; i]; loop [+= [i]; bounds]]]]][1; 12];
     arr;`).items,
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`:= [arr; .: []];
     ~= [loop1; -> [i;  : [
       .:prepend [arr; .:[]];
@@ -563,7 +563,7 @@ describe('interpretation should work as expected', () => {
       ),
       3
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`|> [
       .: [1; 2; 3; 4; 5; 6; 7];
       .:xor [.: [1; 2; 4; 6]];
@@ -572,7 +572,7 @@ describe('interpretation should work as expected', () => {
       [3, 5, 7]
     )
 
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`|> [
       .: [1; 2; 3; 4; 5; 6; 7];
       .:union [.: [1; 2; 4; 6]];
@@ -581,7 +581,7 @@ describe('interpretation should work as expected', () => {
       [1, 2, 3, 4, 5, 6, 7, 1, 2, 4, 6]
     )
 
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`
     |> [
       .: [1; 2; 3; 4; 5; 6; 7];
@@ -592,12 +592,12 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('<-:: and <-.: should work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`:= [obj; :: ["x"; 10; "y"; 12; "z"; 10]];
   <-:: [x; y; z; obj]; .:[x; y; z]`).items,
       [10, 12, 10]
     )
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(`:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]];
        <-.: [a; b; c; rest; arr]; .: [a; b; c; rest]`).items,
       [1, 2, 3, [4, 5, 6, 7, 8]]
@@ -615,7 +615,7 @@ describe('interpretation should work as expected', () => {
     strictEqual(runFromInterpreted(`:=[x; 2]; *=[x; 3]; x`), 6)
   })
   it('.:length :. : .:is_in_bounds should work', () => {
-    deepEqual(
+    deepStrictEqual(
       runFromInterpreted(
         `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:length [arr]; ^ [arr; -2]; ^ [arr; 3]; .:is_in_bounds [arr; 4]; .:is_in_bounds [arr; 9]]`
       ).items,
@@ -629,6 +629,47 @@ describe('interpretation should work as expected', () => {
     strictEqual(
       runFromInterpreted('~ [`[1]; `[2]; `[3]; " "; "sequance"; "!"]'),
       '123 sequance!'
+    )
+  })
+  it('.: head, .: tail, .: first, .: last, .: cut, .: chop should work', () => {
+    deepStrictEqual(
+      runFromInterpreted(`
+    := [arr; .: [1; 2; 3; 4; 5; 6]];
+|> [arr; 
+   .: head [];
+   .: head [];
+   .: tail [];
+   .: tail []];
+    `).items,
+      [3, 4]
+    )
+    strictEqual(
+      runFromInterpreted(`
+    := [arr; .: [1; 2; 3; 4; 5; 6]];
+      .: first [arr]
+    `),
+      1
+    )
+    strictEqual(
+      runFromInterpreted(`
+    := [arr; .: [1; 2; 3; 4; 5; 6]];
+      .: last [arr]
+    `),
+      6
+    )
+    deepStrictEqual(
+      runFromInterpreted(`
+    := [arr; .: [1; 2; 3; 4; 5; 6]];
+      .: [.: chop [arr]; arr]
+    `).items,
+      [1, [2, 3, 4, 5, 6]]
+    )
+    deepStrictEqual(
+      runFromInterpreted(`
+    := [arr; .: [1; 2; 3; 4; 5; 6]];
+      .: [.: cut [arr]; arr]
+    `).items,
+      [6, [1, 2, 3, 4, 5]]
     )
   })
 })

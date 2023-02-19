@@ -483,8 +483,8 @@ const tokens = {
     if (!Number.isInteger(index))
       throw new TypeError('Second argument of ^ must be a number')
     if (!array.isInBounds(Math.abs(index)))
-      throw new TypeError(
-        `Index is out of bounds [${index}] .:difference .: [${array.length}]`
+      throw new RangeError(
+        `Index is out of bounds ^ [${index}] .: [${array.length}]`
       )
     return array.at(index)
   },
@@ -496,19 +496,20 @@ const tokens = {
       throw new TypeError('First argument of  ^= must be an .: []')
     const index = evaluate(args[1], env)
     if (!Number.isInteger(index))
-      throw new TypeError('Second argument of  ^= must be a number')
+      throw new TypeError('Second argument of ^= must be a number')
     if (!array.isInBounds(Math.abs(index)))
-      throw new TypeError(
-        `Index is out of bounds [${index}] .:difference .: [${array.length}]`
+      throw new RangeError(
+        `Index is out of bounds ^= [${index}] .: [${array.length}]`
       )
     return array.set(index, evaluate(args[2], env))
   },
   ['...']: (args, env) => {
-    if (!args.length) throw new RangeError('Invalid number of arguments to ...')
+    if (!args.length)
+      throw new RangeError('Invalid number of arguments to ... []')
     const [first, ...rest] = args
     const toSpread = evaluate(first, env)
     if (!Brrr.isBrrr(toSpread))
-      throw new SyntaxError('... can only be used on .:')
+      throw new SyntaxError('... can only be used on .: []')
     return toSpread.merge(...rest.map((item) => evaluate(item, env)))
   },
   ['`']: (args, env) => {
@@ -560,20 +561,20 @@ const tokens = {
   },
   ['<-::']: (args, env) => {
     if (!args.length)
-      throw new SyntaxError('Invalid number of arguments for <-:: []')
+      throw new SyntaxError('Invalid number of arguments for <- :: []')
     const obj = evaluate(args.pop(), env)
     if (!(obj instanceof Map))
-      throw new TypeError(`:: ${obj} is not a instance of :: at <-::`)
+      throw new TypeError(`:: ${obj} is not a instance of :: at <-:: []`)
     let names = []
     for (let i = 0; i < args.length; ++i) {
       const word = args[i]
       if (word.type !== 'word')
         throw new SyntaxError(
-          `First argument of <-:: [] must be word but got ${word.type ?? VOID}`
+          `First argument of <- :: [] must be word but got ${word.type ?? VOID}`
         )
       if (word.name.includes('.') || word.name.includes('-'))
         throw new SyntaxError(
-          `Invalid use of operation <-:: [] [variable name must not contain . or -] but got ${name}`
+          `Invalid use of operation <- :: [] [variable name must not contain . or -] but got ${name}`
         )
       names.push(word.name)
     }
@@ -591,7 +592,7 @@ const tokens = {
       throw new SyntaxError('Invalid number of arguments for <-.: []')
     const obj = evaluate(args.pop(), env)
     if (!(obj.constructor.name === 'Brrr'))
-      throw new TypeError(`.: ${obj} is not a instance of .:`)
+      throw new TypeError(`.: ${obj} is not a instance of .: []`)
     let names = []
     for (let i = 0; i < args.length; ++i) {
       const word = args[i]
@@ -614,46 +615,46 @@ const tokens = {
   },
   ['.:filter']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:filter')
+      throw new RangeError('Invalid number of arguments to .: filter[]')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:filter must be an .: []')
+      throw new TypeError('First argument of .: filter[] must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:filter must be an -> []')
+      throw new TypeError('Second argument of .: filter[] must be an -> []')
     return array.filter(callback)
   },
   ['.:reduce>>']: (args, env) => {
     if (args.length !== 3)
-      throw new RangeError('Invalid number of arguments to .:reduce>>')
+      throw new RangeError('Invalid number of arguments to .: [] reduce >> []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:reduce>> must be an .: []')
+      throw new TypeError('First argument of .: reduce >> [] must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:reduce>> must be an -> []')
+      throw new TypeError('Second argument of .: reduce >> [] must be an -> []')
     return array.reduce(callback, evaluate(args[2], env))
   },
   ['.:reduce<<']: (args, env) => {
     if (args.length !== 3)
-      throw new RangeError('Invalid number of arguments to .:reduce<<')
+      throw new RangeError('Invalid number of arguments to .: reduce << []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:reduce<< must be an .: []')
+      throw new TypeError('First argument of .: reduce << [] must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:reduce<< must be an -> []')
+      throw new TypeError('Second argument of .: reduce << [] must be an -> []')
     return array.reduceRight(callback, evaluate(args[2], env))
   },
   ['.:map>>']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:map>>')
+      throw new RangeError('Invalid number of arguments to .: map >> []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:map>> must be an .: []')
+      throw new TypeError('First argument of .: map >> [] must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:map>> must be an -> []')
+      throw new TypeError('Second argument of .: map >> [] must be an -> []')
     const copy = new Brrr()
     for (let i = 0; i < array.length; ++i)
       copy.set(i, callback(array.get(i), i, array))
@@ -661,24 +662,24 @@ const tokens = {
   },
   ['.:flatten']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:map>>')
+      throw new RangeError('Invalid number of arguments to .: map >> []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:map>> must be an .: []')
+      throw new TypeError('First argument of .: map >> [] must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:map>> must be an -> []')
+      throw new TypeError('Second argument of .: map >> [] must be an -> []')
     return array.flatten(callback)
   },
   ['.:map<<']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:map<<')
+      throw new RangeError('Invalid number of arguments to .: map << []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:map<< must be an .: []')
+      throw new TypeError('First argument of .: map << [] must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:map<< must be an -> []')
+      throw new TypeError('Second argument of .: map << [] must be an -> []')
     const copy = new Brrr()
     const len = array.length - 1
     for (let i = len; i >= 0; --i)
@@ -688,350 +689,378 @@ const tokens = {
   ['.:difference']: (args, env) => {
     if (args !== 2) {
       if (args.length < 2)
-        throw new RangeError('Invalid number of arguments to .:difference')
+        throw new RangeError('Invalid number of arguments to .: difference[]')
     }
     const a = evaluate(args[0], env)
     if (!(a.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:difference must be an .: []')
+      throw new TypeError('First argument of .: difference [] must be an .: []')
     const b = evaluate(args[1], env)
     if (!(b.constructor.name === 'Brrr'))
-      throw new TypeError('Second argument of .:difference must be an .: []')
+      throw new TypeError(
+        'Second argument of .: difference [] must be an .: []'
+      )
     return a.difference(b)
   },
   ['.:intersection']: (args, env) => {
     if (args !== 2) {
       if (args.length < 2)
-        throw new RangeError('Invalid number of arguments to .:intersection')
+        throw new RangeError(
+          'Invalid number of arguments to .: intersection []'
+        )
     }
     const a = evaluate(args[0], env)
     if (!(a.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:intersection must be an .: []')
+      throw new TypeError(
+        'First argument of .: intersection [] must be an .: []'
+      )
     const b = evaluate(args[1], env)
     if (!(b.constructor.name === 'Brrr'))
-      throw new TypeError('Second argument of .:intersection must be an .: []')
+      throw new TypeError(
+        'Second argument of .: intersection [] must be an .: []'
+      )
     return a.intersection(b)
   },
   ['.:xor']: (args, env) => {
     if (args !== 2) {
       if (args.length < 2)
-        throw new RangeError('Invalid number of arguments to .:xor')
+        throw new RangeError('Invalid number of arguments to .: xor []')
     }
     const a = evaluate(args[0], env)
     if (!(a.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:xor must be an .: []')
+      throw new TypeError('First argument of .: xor [] must be an .: []')
     const b = evaluate(args[1], env)
     if (!(b.constructor.name === 'Brrr'))
-      throw new TypeError('Second argument of .:xor must be an .: []')
+      throw new TypeError('Second argument of .: xor [] must be an .: []')
     return a.xor(b)
   },
   ['.:union']: (args, env) => {
     if (args !== 2) {
       if (args.length < 2)
-        throw new RangeError('Invalid number of arguments to .:union')
+        throw new RangeError('Invalid number of arguments to .: union []')
     }
     const a = evaluate(args[0], env)
     if (!(a.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:union must be an .: []')
+      throw new TypeError('First argument of .: union [] must be an .: []')
     const b = evaluate(args[1], env)
     if (!(b.constructor.name === 'Brrr'))
-      throw new TypeError('Second argument of .:union must be an .: []')
+      throw new TypeError('Second argument of .: union [] must be an .: []')
     return a.union(b)
   },
   ['.:quick_sort']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:quick_sort')
+      throw new RangeError('Invalid number of arguments to .: quick_sort []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:quick_sort must be an .: []')
+      throw new TypeError('First argument of .: quick_sort [] must be an .: []')
     const dir = evaluate(args[1], env)
     if (dir !== -1 && dir !== 1)
       throw new TypeError(
-        'Second argument of .:quick_sort must be either -1 or 1'
+        'Second argument of .: quick_sort [] must be either -1 or 1'
       )
     return array.quickSort(dir)
   },
   ['.:merge_sort']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:merge_sort')
+      throw new RangeError('Invalid number of arguments to .: merge_sort []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:merge_sort must be an .: []')
+      throw new TypeError('First argument of .: merge_sort [] must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:merge_sort must be an -> []')
+      throw new TypeError(
+        'Second argument of .: merge_sort [] must be an -> []'
+      )
     return array.mergeSort(callback)
   },
   ['.:group']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:group')
+      throw new RangeError('Invalid number of arguments to .: group []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:group must be an .: []')
+      throw new TypeError('First argument of .: group [] must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:group must be an -> []')
+      throw new TypeError('Second argument of .: group [] must be an -> []')
     return array.group(callback)
   },
   ['.:rotate']: (args, env) => {
     if (args.length !== 3)
-      throw new RangeError('Invalid number of arguments to .:rotate')
+      throw new RangeError('Invalid number of arguments to .: rotate []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:rotate must be an .: []')
+      throw new TypeError('First argument of .: rotate [] must be an .: []')
     const n = evaluate(args[1], env)
     if (typeof n !== 'number' || n < 0)
       throw new TypeError(
-        'Second argument of .:rotate must be a positive number'
+        'Second argument of .: rotate [] must be a positive number'
       )
     const dir = evaluate(args[2], env)
     if (dir !== -1 && dir !== 1)
-      throw new TypeError('Third argument of .:rotate must be either -1 or 1')
+      throw new TypeError(
+        'Third argument of .: rotate [] must be either -1 or 1'
+      )
     return array.rotate(n, dir)
   },
   ['.:flat']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:flat')
+      throw new RangeError('Invalid number of arguments to .: flat []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:flat must be an .: []')
+      throw new TypeError('First argument of .: flat [] must be an .: []')
     const level = evaluate(args[1], env)
     if (typeof level !== 'number' || level < 0)
-      throw new TypeError('Second argument of .:flat must be a positive number')
+      throw new TypeError(
+        'Second argument of .: flat [] must be a positive number'
+      )
     return array.flat(level)
   },
   ['.:slice']: (args, env) => {
     if (args.length !== 3)
-      throw new RangeError('Invalid number of arguments to .:slice')
+      throw new RangeError('Invalid number of arguments to .: slice []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:slice must be an .: []')
+      throw new TypeError('First argument of .: slice [] must be an .: []')
     const n1 = evaluate(args[1], env)
     if (typeof n1 !== 'number')
-      throw new TypeError('Second argument of .:slice must be a number')
+      throw new TypeError('Second argument of .: slice [] must be a number')
     const n2 = evaluate(args[2], env)
     if (typeof n2 !== 'number')
-      throw new TypeError('Third argument of .:slice must be a number')
+      throw new TypeError('Third argument of .: slice [] must be a number')
     return array.slice(n1, n2)
   },
   ['*loop']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to *loop')
+      throw new RangeError('Invalid number of arguments to * loop []')
     const n = evaluate(args[0], env)
     if (typeof n !== 'number')
-      throw new TypeError('First argument of *loop must be a number')
+      throw new TypeError('First argument of * loop [] must be a number')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of *loop must be an -> []')
+      throw new TypeError('Second argument of * loop [] must be an -> []')
     let out
     for (let i = 0; i < n; ++i) out = callback(i)
     return out
   },
   ['.:find_index>>']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to >:.')
+      throw new RangeError('Invalid number of arguments to .: find_index >> []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of >:. must be an .: []')
+      throw new TypeError(
+        'First argument of .: find_index >> [] must be an .: []'
+      )
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of >:. must be an -> []')
+      throw new TypeError(
+        'Second argument of.: find_index >> []  must be an -> []'
+      )
     return array.findIndex(callback)
   },
   ['.:find_index<<']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:find_index<<')
+      throw new RangeError('Invalid number of arguments to .: find_index << []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:find_index<< must be an .: []')
+      throw new TypeError(
+        'First argument of .: find_index << [] must be an .: []'
+      )
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:find_index<< must be an -> []')
+      throw new TypeError(
+        'Second argument of .: find_index << [] must be an -> []'
+      )
     return array.findLastIndex(callback)
   },
   ['.:find>>']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:find>>')
+      throw new RangeError('Invalid number of arguments to .: find >> []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:find>> must be an .: []')
+      throw new TypeError('First argument of .: find >> [] must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:find>> must be an -> []')
+      throw new TypeError('Second argument of .: find >> [] must be an -> []')
     return array.find(callback)
   },
   ['.:find<<']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:find<<')
+      throw new RangeError('Invalid number of arguments to .: find << []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:find<< must be an .: []')
+      throw new TypeError('First argument of .: find << [] must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:find<< must be an -> []')
+      throw new TypeError('Second argument of .: find << [] must be an -> []')
     return array.findLast(callback)
   },
   ['.:every']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:every')
+      throw new RangeError('Invalid number of arguments to .: every []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:every must be an .: []')
+      throw new TypeError('First argument of .: every [] must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:every must be an -> []')
+      throw new TypeError('Second argument of .: every [] must be an -> []')
     return +array.every(callback)
   },
   ['.:some']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:some')
+      throw new RangeError('Invalid number of arguments to .: some []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:some must be an .: []')
+      throw new TypeError('First argument of .: some [] must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .:some must be an -> []')
+      throw new TypeError('Second argument of .: some [] must be an -> []')
     return +array.some(callback)
   },
   ['.:first']: (args, env) => {
     if (args.length !== 1)
-      throw new RangeError('Invalid number of arguments to .:first')
+      throw new RangeError('Invalid number of arguments to .: first []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:first must be an .: []')
+      throw new TypeError('First argument of .: first [] must be an .: []')
     return array.first
   },
   ['.:last']: (args, env) => {
     if (args.length !== 1)
-      throw new RangeError('Invalid number of arguments to .:last')
+      throw new RangeError('Invalid number of arguments to .: last []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:last must be an .: []')
+      throw new TypeError('First argument of .: last [] must be an .: []')
     return array.last
   },
   ['.:is_in_bounds']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:is_in_bounds')
+      throw new RangeError('Invalid number of arguments to .: is_in_bounds []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:is_in_bounds must be an .: []')
+      throw new TypeError(
+        'First argument of .: is_in_bounds [] must be an .: []'
+      )
     const index = evaluate(args[1], env)
     return +array.isInBounds(Math.abs(index))
   },
   ['.:append']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:append')
+      throw new RangeError('Invalid number of arguments to .: append []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:append must be an .: []')
+      throw new TypeError('First argument of .: append must be an .: []')
     return array.append(evaluate(args[1], env))
   },
   ['.:add_at']: (args, env) => {
     if (args.length < 3)
-      throw new RangeError('Invalid number of arguments to .:add_at')
+      throw new RangeError('Invalid number of arguments to .: add_at []')
     const [first, second, ...rest] = args
     const array = evaluate(first, env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:add_at must be an .: []')
+      throw new TypeError('First argument of .: add_at must be an .: []')
     const index = evaluate(second, env)
     if (!Number.isInteger(index))
-      throw new TypeError('Second argument of .:add_at must be a number')
+      throw new TypeError('Second argument of .: add_at [] must be a number')
     else if (!array.isInBounds(index))
       throw new RangeError(
-        'Second argument of .:add_at must be withing the bounds of .: []'
+        'Second argument of .: add_at [] must be withing the bounds of .: []'
       )
     return array.addAt(index, ...rest.map((item) => evaluate(item, env)))
   },
   ['.:remove_from']: (args, env) => {
     if (args.length !== 3)
-      throw new RangeError('Invalid number of arguments to .:remove_from')
+      throw new RangeError('Invalid number of arguments to .: remove_from []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:remove_from must be an .: []')
+      throw new TypeError(
+        'First argument of .: remove_from [] must be an .: []'
+      )
     const index = evaluate(args[1], env)
     if (!Number.isInteger(index))
-      throw new TypeError('Second argument of .:remove_from must be a number')
+      throw new TypeError(
+        'Second argument of .: remove_from [] must be a number'
+      )
     else if (!array.isInBounds(index))
       throw new RangeError(
-        'Second argument of .:remove_from must be withing the bounds of .: []'
+        'Second argument of .: remove_from [] must be withing the bounds of .: []'
       )
     const amount = evaluate(args[2], env)
     if (!Number.isInteger(amount) || amount < 0)
       throw new TypeError(
-        'Third argument of .:remove_from must be a number >= 0'
+        'Third argument of .: remove_from [] must be a number >= 0'
       )
     return array.removeFrom(index, amount)
   },
   ['.:prepend']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:prepend')
+      throw new RangeError('Invalid number of arguments to .: prepend []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:prepend must be an .: []')
+      throw new TypeError('First argument of .: prepend [] must be an .: []')
     return array.prepend(evaluate(args[1], env))
   },
   ['.:head']: (args, env) => {
     if (args.length !== 1)
-      throw new RangeError('Invalid number of arguments to .:head')
+      throw new RangeError('Invalid number of arguments to .: head []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:head must be an .: []')
+      throw new TypeError('First argument of .: head [] must be an .: []')
     return array.head()
   },
   ['.:tail']: (args, env) => {
     if (args.length !== 1)
-      throw new RangeError('Invalid number of arguments to .:tail')
+      throw new RangeError('Invalid number of arguments to .: tail []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:tail must be an .: []')
+      throw new TypeError('First argument of .: tail [] must be an .: []')
     return array.tail()
   },
   ['.:cut']: (args, env) => {
     if (args.length !== 1)
-      throw new RangeError('Invalid number of arguments to .:cut')
+      throw new RangeError('Invalid number of arguments to .: cut []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:cut must be an .: []')
+      throw new TypeError('First argument of .: cut [] must be an .: []')
     return array.cut()
   },
   ['.:chop']: (args, env) => {
     if (args.length !== 1)
-      throw new RangeError('Invalid number of arguments to .:chop')
+      throw new RangeError('Invalid number of arguments to .: chop []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:chop must be an .: []')
+      throw new TypeError('First argument of .: chop [] must be an .: []')
     return array.chop()
   },
 
   ['::entries']: (args, env) => {
     if (args.length !== 1)
-      throw new RangeError('Invalid number of arguments to ::entries')
+      throw new RangeError('Invalid number of arguments to :: entries []')
     const map = evaluate(args[0], env)
     if (!(map.constructor.name === 'Map'))
-      throw new TypeError('First argument of ::entries must be an :: []')
+      throw new TypeError('First argument of :: entries [] must be an :: []')
     return Brrr.from([...map.entries()].map(Brrr.from))
   },
   ['::keys']: (args, env) => {
     if (args.length !== 1)
-      throw new RangeError('Invalid number of arguments to ::keys')
+      throw new RangeError('Invalid number of arguments to :: keys []')
     const map = evaluate(args[0], env)
     if (!(map.constructor.name === 'Map'))
-      throw new TypeError('First argument of ::keys must be an :: []')
+      throw new TypeError('First argument of :: keys [] must be an :: []')
     return Brrr.from([...map.keys()])
   },
   ['::values']: (args, env) => {
     if (args.length !== 1)
-      throw new RangeError('Invalid number of arguments to ::values ')
+      throw new RangeError('Invalid number of arguments to :: values []')
     const map = evaluate(args[0], env)
     if (!(map.constructor.name === 'Map'))
-      throw new TypeError('First argument of ::values must be an :: []')
+      throw new TypeError('First argument of :: values [] must be an :: []')
     return Brrr.from([...map.values()])
   },
   ['.:seq']: (args, env) => {
     if (args.length !== 1)
-      throw new RangeError('Invalid number of arguments to .:seq ')
+      throw new RangeError('Invalid number of arguments to .: seq []')
     const n = evaluate(args[0], env)
     if (typeof n !== 'number')
-      throw new TypeError('Second argument of .:seq must be an number')
+      throw new TypeError('Second argument of .: seq [] must be an number')
     return Brrr.from(
       Array.from({ length: n })
         .fill(null)
@@ -1040,59 +1069,63 @@ const tokens = {
   },
   ['.:from_string']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:from_string')
+      throw new RangeError('Invalid number of arguments to .: from_string []')
     const string = evaluate(args[0], env)
     if (typeof string !== 'string')
-      throw new TypeError('First argument of .:from_string must be a string')
+      throw new TypeError(
+        'First argument of .: from_string [] must be a string'
+      )
     const separator = evaluate(args[1], env)
     if (typeof separator !== 'string')
-      throw new TypeError('Second argument of .:from_string must be a string')
+      throw new TypeError(
+        'Second argument of .: from_string [] must be a string'
+      )
     return Brrr.from(string.split(separator))
   },
   ['.:to_string']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:to_string')
+      throw new RangeError('Invalid number of arguments to .: to_string []')
     const array = evaluate(args[0], env)
     if (!Brrr.isBrrr(array))
-      throw new TypeError('First argument of .:to_string must be an .: []')
+      throw new TypeError('First argument of .: to_string [] must be an .: []')
     const separator = evaluate(args[1], env)
     if (typeof separator !== 'string')
-      throw new TypeError('Second argument of .:to_string must be a string')
+      throw new TypeError('Second argument of .: to_string [] must be a string')
     return array.join(separator)
   },
   ['.:chunks']: (args, env) => {
     if (args.length !== 2)
-      throw new RangeError('Invalid number of arguments to .:chunks')
+      throw new RangeError('Invalid number of arguments to .: chunks []')
     const array = evaluate(args[0], env)
     if (!Brrr.isBrrr(array))
-      throw new TypeError('First argument of .:chunks must be an .: []')
+      throw new TypeError('First argument of .: chunks [] must be an .: []')
     const n = evaluate(args[1], env)
     if (typeof n !== 'number')
-      throw new TypeError('Second argument of .:chunks must be an number')
+      throw new TypeError('Second argument of .: chunks [] must be an number')
     return array.partition(n)
   },
   ['.:matrix']: (args, env) => {
     if (args.length < 1)
-      throw new RangeError('Invalid number of arguments to .:matrix')
+      throw new RangeError('Invalid number of arguments to .: matrix []')
     const dimensions = args.map((arg) => evaluate(arg, env))
     if (dimensions.some((d) => !Number.isInteger(d)))
-      throw new TypeError('Argument of .:matrix must be integers')
+      throw new TypeError('Argument of .: matrix [] must be integers')
     return Brrr.matrix(...dimensions)
   },
   ['.:length']: (args, env) => {
     if (args.length !== 1)
-      throw new RangeError('Invalid number of arguments to .:length')
+      throw new RangeError('Invalid number of arguments to .: length []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:length must be an .: []')
+      throw new TypeError('First argument of .: length [] must be an .: []')
     return array.length
   },
   ['::size']: (args, env) => {
     if (args.length !== 1)
-      throw new RangeError('Invalid number of arguments to ::size')
+      throw new RangeError('Invalid number of arguments to :: size []')
     const map = evaluate(args[0], env)
     if (!(map.constructor.name === 'Map'))
-      throw new TypeError('First argument of ::size must be an :: []')
+      throw new TypeError('First argument of :: size [] must be an :: []')
     return map.size
   },
 }
