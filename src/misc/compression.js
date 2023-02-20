@@ -88,6 +88,7 @@ const ABC = [
 const generateCompressionRunes = (start) => {
   return Object.keys(tokens)
     .map((t) => `${t}[`)
+    .sort((a, b) => (a.localeCompare(b) ? -1 : 1))
     .concat(['][', '];', ']];'])
     .map((t, i) => ({ full: t, short: String.fromCharCode(start + i + 191) }))
 }
@@ -109,7 +110,6 @@ export const generateCompressedModules = () => {
     return { full, short }
   })
 }
-
 export const shortModules = generateCompressedModules()
 export const shortRunes = generateCompressionRunes(shortModules.length)
 const dfs = (

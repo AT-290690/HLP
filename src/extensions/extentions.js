@@ -649,6 +649,8 @@ export const LIBRARY = {
       const element = document.createElement('strong')
       return element
     },
+    // remove_children: (doc) => doc.replaceChildren(),
+    replace_children: (doc, childern) => doc.replaceChildren(childern),
     insert_into_container: (container, ...elements) => {
       const frag = document.createDocumentFragment()
       elements.forEach((element) => frag.appendChild(element))
@@ -662,11 +664,13 @@ export const LIBRARY = {
     NAME: 'STYLE',
     make_style: (...styles) => {
       const element = document.createElement('style')
-      element.innerHTML = styles.reduce((acc, [selector, ...style]) => {
+      element.innerHTML = styles.reduce((acc, item) => {
+        const [selector, ...style] = item.items
         acc += `${selector}{${style.join(';')}}`
         return acc
       }, '')
-      document.body.appendChild(element)
+      const container = document.getElementById('application-container')
+      container.appendChild(element)
       return element
     },
     add_class: (element, ...classlist) => {
@@ -713,8 +717,8 @@ export const LIBRARY = {
       `text-align:${{ c: 'center', l: 'left', r: 'right' }[align]};`,
     make_class: (name, attr) => {
       let out = ''
-      for (const a in attr) {
-        out += `${a}: ${attr[a]};`
+      for (const [key, value] of attr) {
+        out += `${key}: ${value};`
       }
       return `.${name} {\n${out}\n}`
     },
