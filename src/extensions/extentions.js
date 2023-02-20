@@ -339,6 +339,8 @@ export const LIBRARY = {
       Brrr.from([...document.getElementsByClassName(tag)]),
     get_elements_by_tag_name: (tag) =>
       Brrr.from([...document.getElementsByTagName(tag)]),
+    get_value: (el) => el.value,
+    get_text_content: (el) => el.textContent,
     make_user_interface: (output = 0) => {
       if (!output) {
         const output = document.getElementById('output')
@@ -737,7 +739,7 @@ export const LIBRARY = {
   EVENT: {
     NAME: 'EVENT',
     on_input_change: (element, callback) => {
-      element.addEventListener('change', (e) => callback(e.target))
+      element.addEventListener('change', (e) => callback(e.target.value))
       return element
     },
     on_mouse_click: (element, callback) => {

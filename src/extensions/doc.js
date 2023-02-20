@@ -48,6 +48,8 @@ export const DOCUMENTATION = {
     NAME: 'DOM',
     append_child: `[parent, child] -> parent`,
     get_body: `[] -> .[document; "body"]`,
+    get_text_content: `[element] -> string`,
+    get_value: `[element] -> string`,
     get_parent_node: `[element] -> . [element; "parentNode"]`,
     make_fragment: `[] -> fragment`,
     get_element_by_id: `[id] -> element`,
