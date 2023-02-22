@@ -90,6 +90,32 @@ export const LIBRARY = {
   },
   MATH: {
     NAME: 'MATH',
+    factorial: (num) => {
+      let rval = 1
+      for (let i = 2; i <= num; i++) rval = rval * i
+      return rval
+    },
+    permutations: (n, k) => {
+      const fact = LIBRARY.MATH.factorial
+      const p = fact(n)
+      const v = fact(n - k)
+      return p / v
+    },
+    permutations_array: (inputArr) => {
+      let result = new Brrr()
+      const permute = (arr, m = new Brrr()) => {
+        if (arr.length === 0) result.push(m)
+        else {
+          for (let i = 0; i < arr.length; i++) {
+            let curr = arr.slice()
+            let next = curr.splice(i, 1)
+            permute(curr.slice(), m.concat(next))
+          }
+        }
+      }
+      permute(inputArr)
+      return result.balance()
+    },
     lerp: (start, end, amt) => (1 - amt) * start + amt * end,
     abs: (num) => Math.abs(num),
     mod: (left, right) => ((left % right) + right) % right,
