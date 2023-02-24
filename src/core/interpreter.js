@@ -16,7 +16,7 @@ export const evaluate = (expr, env) => {
         throw new TypeError(expr.operator.name + ' is not a -> []')
 
       return op.apply(
-        null,
+        undefined,
         expr.args.map((arg) => evaluate(arg, env))
       )
     }

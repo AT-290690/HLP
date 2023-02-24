@@ -92,7 +92,7 @@ const generateCompressionRunes = (start) => {
     .concat(['][', '];', ']];'])
     .map((t, i) => ({ full: t, short: String.fromCharCode(start + i + 191) }))
 }
-export const generateCompressedModules = () => {
+export const generateCompressedModules = (start) => {
   const { NAME, ...lib } = LIBRARY
   const modules = new Set([NAME])
   const dfs = (lib, modules) => {
@@ -106,12 +106,12 @@ export const generateCompressedModules = () => {
   }
   dfs(lib, modules)
   return [...modules].map((full, i) => {
-    const short = String.fromCharCode(i + 191)
+    const short = String.fromCharCode(start + i + 191)
     return { full, short }
   })
 }
-export const shortModules = generateCompressedModules()
-export const shortRunes = generateCompressionRunes(shortModules.length)
+export const shortRunes = generateCompressionRunes(0)
+export const shortModules = generateCompressedModules(shortRunes.length)
 const dfs = (
   tree,
   definitions = new Set(),

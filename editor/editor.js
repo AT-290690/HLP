@@ -112,7 +112,7 @@ const withCommand = (command = editor.getLine(0)) => {
         )
       }
       break
-    case ';; debug':
+    case ';; log':
       {
         const selection = editor.getSelection().trim()
         if (selection) {

@@ -901,7 +901,29 @@ export const LIBRARY = {
       LIBRARY.SKETCH.CANVAS_CONTAINER.innerHTML = ''
       LIBRARY.SKETCH.engine?.removeEventListener('update')
     },
-
+    make_sketch: (width, height, callback, type) => {
+      const placeholder = document.getElementById('placeholder')
+      if (placeholder) {
+        placeholder.style.display = 'none'
+      }
+      LIBRARY.SKETCH.engine?.removeEventListener('update')
+      let container = document.getElementById('canvas-container')
+      if (!container) {
+        container = document.createElement('div')
+        container.setAttribute('id', 'canvas-container')
+        document.body.appendChild(container)
+      }
+      LIBRARY.SKETCH.CANVAS_CONTAINER = container
+      LIBRARY.SKETCH.engine = new Two({
+        type,
+        width,
+        height,
+        autostart: true,
+      }).appendTo(LIBRARY.SKETCH.CANVAS_CONTAINER)
+      callback()
+      LIBRARY.SKETCH.update()
+      return ''
+    },
     make_scene: (width = 100, height = 100, callback, type) => {
       const placeholder = document.getElementById('placeholder')
       if (placeholder) {

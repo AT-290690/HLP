@@ -1,4 +1,4 @@
-;; debug
+;; log
 <- [HTTP; CONSOLE] [LIBRARY];
 <- [hlp; signal; signals] [HTTP];
 <- [console_log] [CONSOLE];

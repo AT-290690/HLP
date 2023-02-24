@@ -1,11 +1,11 @@
-;; debug
+;; window
 <- [SKETCH; MATH] [LIBRARY]; 
 <- [make_scene; make_group; make_rectangle; update; play; draw; 
     insert_into_group; background; width; height; set_position;
     set_fill; set_stroke; no_fill; no_stroke] [SKETCH]; 
 <- [random_int] [MATH];
 
-' [view; next; alive];
+' [view; next; alive; x; y];
 
 := [W; 415; H; 415;
     lifespan; 1000; 
@@ -23,20 +23,17 @@
 
 ~= [loop; -> [count; bounds; : [
   ? [! [% [count; cols]]; += [h; r]]; 
-
+  ' [x; y];
   := [is_alive; random_int [0; 1];
-      
       next_is_alive; random_int [0; 1]; 
-      
       rect; |> [make_rectangle [% [* [count; r]; * [r; cols]]; h; r; r]; 
-        set_fill [^ [COLORS; is_alive]];
-        no_stroke []];
-      
+      set_fill [^ [COLORS; is_alive]];
+      no_stroke []];
       cell; :: [alive; is_alive;
                 next; next_is_alive;
                 view; rect]]; 
   insert_into_group [cells_container; rect]; 
-  .:append [cells; cell]; 
+  .: append [cells; cell]; 
   ? [> [bounds; count]; loop [+= [count]; bounds]]]]];
 loop [0; - [* [rows; cols]; 1]]; cells_container]];
 
@@ -48,23 +45,22 @@ iterate_cells; -> [cells; callback; : [
   := [x; % [i; cols]; 
       cell; get_cell [x; y]]; 
   callback [cell; x; y]]]]]]; 
-
 directions; .: [
-  :: ["x"; 0; "y"; 1]; 
-  :: ["x"; 1; "y"; 0]; 
-  :: ["x"; -1; "y"; 0]; 
-  :: ["x"; 0; "y"; -1]; 
-  :: ["x"; 1; "y"; -1]; 
-  :: ["x"; -1; "y"; -1]; 
-  :: ["x"; 1; "y"; 1]; 
-  :: ["x"; -1; "y"; 1]]; 
+  :: [x; 0; y; 1]; 
+  :: [x; 1; y; 0]; 
+  :: [x; -1; y; 0]; 
+  :: [x; 0; y; -1]; 
+  :: [x; 1; y; -1]; 
+  :: [x; -1; y; -1]; 
+  :: [x; 1; y; 1]; 
+  :: [x; -1; y; 1]]; 
 
-adjacent; -> [x; y; : [
+adjacent; -> [X; Y; : [
 := [sum; 0]; 
 >> [directions; -> [dir; : [
   := [cell; get_cell [
-    + [x; . [dir; "x"]]; 
-    + [y; . [dir; "y"]]]]; 
+    + [X; . [dir; x]]; 
+    + [Y; . [dir; y]]]]; 
   = [sum; + [sum; ? [cell; . [cell; alive]; 0]]]]]]; sum]];
 
 update_state; -> [iterate_cells [cells; -> [cell; x; y; : [
