@@ -105,10 +105,10 @@ switch (flag?.toLowerCase()) {
   case 'l':
     encode(filename)
     break
-  case 'uri':
+  case 'encode':
     encodeUri(filename)
     break
-  case 'deuri':
+  case 'decode':
     decodeUri(filename)
     break
   case 'local':
@@ -139,6 +139,33 @@ switch (flag?.toLowerCase()) {
   case 'run':
   case 'r':
   case 'log':
-  default:
     logResultInterpreted(filename, arg)
+    break
+  case 'help':
+  default:
+    console.log(`
+------------------------------------
+| help                              |
+------------------------------------
+| encode  |   encode base64         |
+------------------------------------
+| decode  |   decode base64         |
+------------------------------------
+| mangle  |   compress only         |
+------------------------------------
+| js      |   log javascript output |
+------------------------------------
+| compile |   compile and run       |
+------------------------------------
+| count   |   bite size             |
+------------------------------------
+| run     |   interpret and run     |
+------------------------------------
+| link    |   create link           |
+------------------------------------
+| local   |   create local link     |
+------------------------------------
+      `)
 }
+if (!filename)
+  logErrorMessage(`Provide a <filename> argument\n\tyarn hlp myfile.l run`)
