@@ -1,6 +1,11 @@
 import { CodeMirror } from './hlp.editor.bundle.js'
-import { run } from '../src/misc/utils.js'
+import { run, runFromInterpreted } from '../src/misc/utils.js'
 import { encodeBase64 } from '../src/misc/compression.js'
+import {
+  extractComments,
+  handleHangingSemi,
+  removeNoCode,
+} from '../src/misc/helpers.js'
 
 const consoleElement = document.getElementById('console')
 const editorContainer = document.getElementById('editor-container')
@@ -80,6 +85,17 @@ droneButton.addEventListener('click', () => {
 const withCommand = (command = editor.getLine(0)) => {
   const value = editor.getValue()
   switch (command.trim()) {
+    case ';; test':
+      extractComments(value)
+        .slice(1)
+        .map((x) => x.split(';; test')[1])
+        .filter(Boolean)
+        .forEach((x) =>
+          extensions.LOGGER(0)(
+            runFromInterpreted(`${handleHangingSemi(removeNoCode(value))};${x}`)
+          )
+        )
+      break
     case ';; app':
       {
         const encoded = encodeURIComponent(encodeBase64(value))

@@ -361,11 +361,6 @@ export const run = (source, extensions) => {
   return exe(sourceCode, extensions)
 }
 
-export const handleHangingSemi = (source) => {
-  const code = source.trim()
-  return code[code.length - 1] === ';' ? code : code + ';'
-}
-
 export const treeShake = (modules) => {
   let lib = ''
   const dfs = (modules, lib, LIBRARY) => {

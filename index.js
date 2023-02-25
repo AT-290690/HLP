@@ -5,6 +5,11 @@ import {
   runFromInterpreted,
 } from './src/misc/utils.js'
 import { encodeBase64, compress, decodeBase64 } from './src/misc/compression.js'
+import {
+  extractComments,
+  handleHangingSemi,
+  removeNoCode,
+} from './src/misc/helpers.js'
 const logBoldMessage = (msg) => console.log('\x1b[1m', msg, '\x1b[0m')
 const logErrorMessage = (msg) =>
   console.log('\x1b[31m', '\x1b[1m', msg, '\x1b[0m')
@@ -22,6 +27,22 @@ const logResultInterpreted = (file, type = 'raw') =>
       )
     )
     .catch((error) => logErrorMessage(error.message))
+const test = (file) =>
+  readFile(`./examples/${file}`, 'utf-8')
+    .then((result) => {
+      extractComments(result)
+        .slice(1)
+        .map((x) => x.split(';; test')[1])
+        .filter(Boolean)
+        .forEach((x) => {
+          const t = runFromInterpreted(
+            `${handleHangingSemi(removeNoCode(result))};${x}`
+          )
+          t ? logSuccessMessage(`${t} ${x}`) : logErrorMessage(`${t} ${x}`)
+        })
+    })
+    .catch((error) => logErrorMessage(error.message))
+
 const logResultCompiled = (file, type = 'raw') =>
   readFile(`./examples/${file}`, 'utf-8')
     .then((result) =>
@@ -79,9 +100,9 @@ const countMangled = async (file) => {
   logWarningMessage(`mangled size: ${compressed.length}`)
 }
 const [, , filename, flag, arg] = process.argv
-switch (flag) {
+switch (flag?.toLowerCase()) {
   case 'link':
-  case 'L':
+  case 'l':
     encode(filename)
     break
   case 'uri':
@@ -94,25 +115,30 @@ switch (flag) {
     encode(filename, arg)
     break
   case 'mangle':
-  case 'M':
+  case 'm':
     mangle(filename)
     break
-  case 'JS':
+  case 'js':
     compile(filename)
     break
-  case 'C':
+  case 'c':
   case 'count':
     count(filename)
     break
-  case 'CM':
+  case 'cm':
     countMangled(filename)
     break
-  case 'COMPILE':
-  case 'CR':
+  case 'compile':
+  case 'cr':
     logResultCompiled(filename, arg)
     break
+  case 't':
+  case 'test':
+    test(filename)
+    break
   case 'run':
-  case 'R':
+  case 'r':
+  case 'log':
   default:
     logResultInterpreted(filename, arg)
 }
