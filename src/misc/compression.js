@@ -84,13 +84,16 @@ const ABC = [
   'Y',
   'Z',
 ]
-
+const OFFSET = 123
 const generateCompressionRunes = (start) => {
   return Object.keys(tokens)
     .map((t) => `${t}[`)
-    .sort((a, b) => (a.localeCompare(b) ? -1 : 1))
-    .concat(['][', '];', ']];'])
-    .map((t, i) => ({ full: t, short: String.fromCharCode(start + i + 191) }))
+    .sort((a, b) => (a.length > b.length ? -1 : 1))
+    .concat(['][', ']];', '];'])
+    .map((t, i) => ({
+      full: t,
+      short: String.fromCharCode(start + i + OFFSET),
+    }))
 }
 export const generateCompressedModules = (start) => {
   const { NAME, ...lib } = LIBRARY
@@ -106,7 +109,7 @@ export const generateCompressedModules = (start) => {
   }
   dfs(lib, modules)
   return [...modules].map((full, i) => {
-    const short = String.fromCharCode(start + i + 191)
+    const short = String.fromCharCode(start + i + OFFSET)
     return { full, short }
   })
 }
