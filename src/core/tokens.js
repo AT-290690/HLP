@@ -73,7 +73,12 @@ const tokens = {
     const b = right ? evaluate(right, env) : 1
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError('Invalid use of += (Not all args are numbers)')
-    return (env[left.name] = a + b)
+    for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
+      if (Object.prototype.hasOwnProperty.call(scope, left.name)) {
+        const value = a + b
+        scope[left.name] = value
+        return value
+      }
   },
   ['-=']: (args, env) => {
     if (args.length > 2)
@@ -83,7 +88,12 @@ const tokens = {
     const b = right ? evaluate(right, env) : 1
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError('Invalid use of -= (Not all args are numbers)')
-    return (env[left.name] = a - b)
+    for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
+      if (Object.prototype.hasOwnProperty.call(scope, left.name)) {
+        const value = a - b
+        scope[left.name] = value
+        return value
+      }
   },
   ['*=']: (args, env) => {
     if (args.length > 2)
@@ -93,7 +103,12 @@ const tokens = {
     const b = right ? evaluate(right, env) : 1
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError('Invalid use of *= (Not all args are numbers)')
-    return (env[left.name] = a * b)
+    for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
+      if (Object.prototype.hasOwnProperty.call(scope, left.name)) {
+        const value = a * b
+        scope[left.name] = value
+        return value
+      }
   },
   ['~']: (args, env) => {
     if (args.length < 2)
