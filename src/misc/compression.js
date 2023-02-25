@@ -1,34 +1,8 @@
 import { removeNoCode, wrapInBody } from './helpers.js'
 import { parse } from '../core/parser.js'
 import { LZUTF8 } from './lz-utf8.js'
-import { STD } from '../extensions/extentions.js'
 import { tokens } from '../core/tokens.js'
-import { runFromInterpreted } from './utils.js'
-
-const LIBRARY = STD.LIBRARY
-LIBRARY.HTTP.signal = (url, callback) =>
-  fetch(url)
-    .then((raw) => raw.text())
-    .then((source) =>
-      callback(
-        runFromInterpreted(decodeBase64(decodeURIComponent(source.trim())))
-      )
-    )
-LIBRARY.HTTP.signals = (urls, callback) =>
-  Promise.all(urls.map((url) => fetch(url).then((raw) => raw.text()))).then(
-    (sources) =>
-      callback(
-        new Map(
-          Object.entries(
-            sources.map((source) =>
-              runFromInterpreted(
-                decodeBase64(decodeURIComponent(source.trim()))
-              )
-            )
-          )
-        )
-      )
-  )
+import { LIBRARY } from '../extensions/extentions.js'
 
 const ABC = [
   'a',

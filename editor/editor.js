@@ -84,7 +84,7 @@ const withCommand = (command = editor.getLine(0)) => {
       {
         const encoded = encodeURIComponent(encodeBase64(value))
         window.open(
-          `https://at-290690.github.io/hlp/?s=` + encoded,
+          `https://at-290690.github.io/hlp/?l=` + encoded,
           'Bit',
           `menubar=no,directories=no,toolbar=no,status=no,scrollbars=no,resize=no,width=600,height=600,left=600,top=150`
         )
@@ -92,7 +92,7 @@ const withCommand = (command = editor.getLine(0)) => {
       break
     case ';; share':
       {
-        const link = `https://at-290690.github.io/hlp/?s=${encodeURIComponent(
+        const link = `https://at-290690.github.io/hlp/?l=${encodeURIComponent(
           encodeBase64(value)
         )}`
         consoleEditor.setValue(link)
@@ -105,7 +105,7 @@ const withCommand = (command = editor.getLine(0)) => {
       {
         const encoded = encodeURIComponent(encodeBase64(value))
         window.open(
-          `${window.location.href.split('/editor/')[0]}/index.html?s=` +
+          `${window.location.href.split('/editor/')[0]}/index.html?l=` +
             encoded,
           'Bit',
           `menubar=no,directories=no,toolbar=no,status=no,scrollbars=no,resize=no,width=600,height=600,left=600,top=150`

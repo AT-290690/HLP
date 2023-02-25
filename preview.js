@@ -24,7 +24,7 @@ ${lib}
   )})()`
 }
 
-const encoding = new URLSearchParams(location.search).get('s')
+const encoding = new URLSearchParams(location.search).get('l')
 window.runFromInterpreted = runFromInterpreted
 window.decodeBase64 = decodeBase64
 window.Brrr = Brrr

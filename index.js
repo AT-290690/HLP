@@ -40,7 +40,7 @@ const encode = async (
   const encoded = encodeURIComponent(
     encodeBase64(await readFile(`./examples/${file}`, 'utf-8'))
   )
-  const link = `${destination}?s=`
+  const link = `${destination}?l=`
   logSuccessMessage(link + encoded)
 }
 const count = async (file) => {

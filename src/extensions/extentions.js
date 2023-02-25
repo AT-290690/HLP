@@ -805,6 +805,18 @@ export const LIBRARY = {
       CANVAS: () => Two.Types.canvas,
       SVG: () => Two.Types.svg,
       WEBGL: () => Two.Types.webgl,
+      make_frame: (linewidth = 1, color = '#6b84b0') => {
+        const two = LIBRARY.SKETCH.engine
+        const rect = two.makeRectangle(
+          two.width / 2,
+          two.height / 2,
+          two.width,
+          two.height
+        )
+        rect.stroke = color
+        rect.linewidth = linewidth
+        rect.noFill()
+      },
       make_grid: (size = 30, linewidth = 1, color = '#6b84b0') => {
         const two = new Two({
           type: Two.Types.canvas,
@@ -921,7 +933,30 @@ export const LIBRARY = {
         autostart: true,
       }).appendTo(LIBRARY.SKETCH.CANVAS_CONTAINER)
       callback()
-      LIBRARY.SKETCH.update()
+      LIBRARY.SKETCH.engine.update()
+      return ''
+    },
+    make_movie: (width, height, callback, type) => {
+      const placeholder = document.getElementById('placeholder')
+      if (placeholder) {
+        placeholder.style.display = 'none'
+      }
+      LIBRARY.SKETCH.engine?.removeEventListener('update')
+      let container = document.getElementById('canvas-container')
+      if (!container) {
+        container = document.createElement('div')
+        container.setAttribute('id', 'canvas-container')
+        document.body.appendChild(container)
+      }
+      LIBRARY.SKETCH.CANVAS_CONTAINER = container
+      LIBRARY.SKETCH.engine = new Two({
+        type,
+        width,
+        height,
+        autostart: true,
+      }).appendTo(LIBRARY.SKETCH.CANVAS_CONTAINER)
+      callback()
+      LIBRARY.SKETCH.engine.play()
       return ''
     },
     make_scene: (width = 100, height = 100, callback, type) => {
