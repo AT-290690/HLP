@@ -31,7 +31,6 @@ const test = (file) =>
   readFile(`./examples/${file}`, 'utf-8')
     .then((result) => {
       extractComments(result)
-        .slice(1)
         .map((x) => x.split(';; test')[1])
         .filter(Boolean)
         .forEach((x) => {
@@ -40,6 +39,24 @@ const test = (file) =>
           )
           t ? logSuccessMessage(`${t} ${x}`) : logErrorMessage(`${t} ${x}`)
         })
+    })
+    .catch((error) => logErrorMessage(error.message))
+const check = (file) =>
+  readFile(`./examples/${file}`, 'utf-8')
+    .then((result) => {
+      extractComments(result)
+        .filter((x) => x.split(`;; check`)[1])
+        .filter(Boolean)
+        .forEach((x) => {
+          const def = handleHangingSemi(x.split(';; check')[1])
+          result = result.replaceAll(x, `__check[${def}; "${def}"];`)
+        })
+      result = `:= [__checks; .: []]; 
+:= [__check; -> [x; d; ? [== [x; 0]; |> [__checks; .: append [d]]]]]; 
+        ${handleHangingSemi(result)} __checks`
+      const out = runFromInterpreted(removeNoCode(result))
+      if (out.length) out.forEach((x) => logErrorMessage(x))
+      else logSuccessMessage('All checks passed!')
     })
     .catch((error) => logErrorMessage(error.message))
 
@@ -140,6 +157,9 @@ switch (flag?.toLowerCase()) {
   case 'r':
   case 'log':
     logResultInterpreted(filename, arg)
+    break
+  case 'check':
+    check(filename)
     break
   case 'help':
   default:

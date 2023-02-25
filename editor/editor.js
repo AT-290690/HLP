@@ -85,6 +85,24 @@ droneButton.addEventListener('click', () => {
 const withCommand = (command = editor.getLine(0)) => {
   const value = editor.getValue()
   switch (command.trim()) {
+    case ';; check':
+      {
+        let result = value
+        extractComments(result)
+          .filter((x) => x.split(`;; check`)[1])
+          .filter(Boolean)
+          .forEach((x) => {
+            const def = handleHangingSemi(x.split(';; check')[1])
+            result = result.replaceAll(x, `__check[${def}; "${def}"];`)
+          })
+        result = `:= [__checks; .: []]; 
+:= [__check; -> [x; d; ? [== [x; 0]; |> [__checks; .: append [d]]]]]; 
+      ${handleHangingSemi(result)} __checks`
+        const out = runFromInterpreted(removeNoCode(result))
+        if (out.length) out.forEach((x) => extensions.LOGGER(0)(x.trim()))
+        else extensions.LOGGER(0)('All checks passed!')
+      }
+      break
     case ';; test':
       extractComments(value)
         .slice(1)
