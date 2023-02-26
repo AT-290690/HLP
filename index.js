@@ -49,14 +49,15 @@ const check = (file) =>
         .filter(Boolean)
         .forEach((x) => {
           const def = handleHangingSemi(x.split(';; check')[1])
-          result = result.replaceAll(x, `__check[${def}; "${def}"];`)
+          result = result.replaceAll(x, `!throw[${def}; "${def}"];`)
         })
-      result = `:= [__checks; .: []]; 
-:= [__check; -> [x; d; ? [== [x; 0]; |> [__checks; .: append [d]]]]]; 
-        ${handleHangingSemi(result)} __checks`
-      const out = runFromInterpreted(removeNoCode(result))
-      if (out.length) out.forEach((x) => logErrorMessage(x))
-      else logSuccessMessage('All checks passed!')
+
+      try {
+        runFromInterpreted(result)
+        logSuccessMessage('All checks passed!')
+      } catch (err) {
+        logErrorMessage(err.message)
+      }
     })
     .catch((error) => logErrorMessage(error.message))
 

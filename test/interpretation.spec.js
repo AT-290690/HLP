@@ -1,4 +1,4 @@
-import { equal, deepEqual, throws, strictEqual, deepStrictEqual } from 'assert'
+import { throws, strictEqual, deepStrictEqual } from 'assert'
 import { runFromInterpreted } from '../src/misc/utils.js'
 describe('interpretation should work as expected', () => {
   it('definitions', () => {
@@ -13,6 +13,10 @@ describe('interpretation should work as expected', () => {
       [10, 23]
     )
     throws(() => runFromInterpreted(`/ [29; 0]`), RangeError)
+    throws(
+      () => runFromInterpreted(`:= [x; 1]; !throw[> [x; 1]; "Smaller "]`),
+      Error
+    )
   })
   it(':: ::keys ::entries ::values ::size .? should work', () => {
     deepStrictEqual(

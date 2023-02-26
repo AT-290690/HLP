@@ -93,14 +93,14 @@ const withCommand = (command = editor.getLine(0)) => {
           .filter(Boolean)
           .forEach((x) => {
             const def = handleHangingSemi(x.split(';; check')[1])
-            result = result.replaceAll(x, `__check[${def}; "${def}"];`)
+            result = result.replaceAll(x, `!throw[${def}; "${def}"];`)
           })
-        result = `:= [__checks; .: []]; 
-:= [__check; -> [x; d; ? [== [x; 0]; |> [__checks; .: append [d]]]]]; 
-      ${handleHangingSemi(result)} __checks`
-        const out = runFromInterpreted(removeNoCode(result))
-        if (out.length) out.forEach((x) => extensions.LOGGER(0)(x.trim()))
-        else extensions.LOGGER(0)('All checks passed!')
+        try {
+          runFromInterpreted(result)
+          consoleEditor.setValue('All checks passed!')
+        } catch (err) {
+          consoleEditor.setValue(err.message)
+        }
       }
       break
     case ';; test':

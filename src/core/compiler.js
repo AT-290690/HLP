@@ -398,6 +398,16 @@ const compile = () => {
             tree.args[1],
             locals
           )});`
+        case '?==':
+          return `_checkType(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case '!throw':
+          return `_throw(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
         case '::entries':
           return `_mapEntries(${dfs(tree.args[0], locals)});`
         case '.:add_at': {

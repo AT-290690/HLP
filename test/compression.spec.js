@@ -40,7 +40,13 @@ describe('compression should work as expected', () => {
           runFromCompiled(source).items
         )
       ))
-
+  it('not throw but compile throw', () => {
+    ;[`:= [x; 1]; !throw[> [x; 0]; "Smaller"]; x`]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        strictEqual(runFromInterpreted(source), runFromCompiled(source))
+      )
+  })
   it('fib sum', () =>
     [
       `;; calculating fib sequance

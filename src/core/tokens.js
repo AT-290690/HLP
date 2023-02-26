@@ -550,6 +550,17 @@ const tokens = {
     return VOID
   },
   ['|>']: (args, env) => evaluate(args[0], env),
+  ['!throw']: (args, env) => {
+    if (!evaluate(args[0], env))
+      throw new Error(`${evaluate(args[1], env)} failed!`)
+  },
+  ['?==']: (args, env) => {
+    if (!args.length || args.length > 2)
+      throw new SyntaxError('Invalid number of arguments for ?!= []')
+    const entity = evaluate(args[0], env)
+    const type = evaluate(args[1], env)
+    return +(entity.constructor.name === type.constructor.name)
+  },
   ['~=']: (args, env) => {
     if (!args.length || args.length > 2)
       throw new SyntaxError('Invalid number of arguments for ~= []')
