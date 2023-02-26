@@ -529,7 +529,7 @@ const tokens = {
   },
   ['`']: (args, env) => {
     const value = evaluate(args[0], env)
-    if (typeof value === 'string') return Number(value)
+    if (typeof value === 'string' || value == undefined) return Number(value)
     else if (typeof value === 'number') return value.toString()
     else throw new TypeError('Can only cast number or string at ` []')
   },

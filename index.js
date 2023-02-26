@@ -1,4 +1,3 @@
-import { readFile } from 'fs/promises'
 import {
   compilePlainJs,
   runFromCompiled,
@@ -10,6 +9,7 @@ import {
   handleHangingSemi,
   removeNoCode,
 } from './src/misc/helpers.js'
+import { readdirSync, readFileSync, writeFileSync } from 'fs'
 const logBoldMessage = (msg) => console.log('\x1b[1m', msg, '\x1b[0m')
 const logErrorMessage = (msg) =>
   console.log('\x1b[31m', '\x1b[1m', msg, '\x1b[0m')
@@ -18,149 +18,150 @@ const logSuccessMessage = (msg) =>
 const logWarningMessage = (msg) =>
   console.log('\x1b[33m', '\x1b[1m', msg, '\x1b[0m')
 const logResultInterpreted = (file, type = 'raw') =>
-  readFile(`./examples/${file}`, 'utf-8')
-    .then((result) =>
-      logBoldMessage(
-        type == 'items'
-          ? runFromInterpreted(result).items
-          : runFromInterpreted(result)
-      )
-    )
-    .catch((error) => logErrorMessage(error.message))
+  logBoldMessage(
+    type == 'items' ? runFromInterpreted(file).items : runFromInterpreted(file)
+  )
 const test = (file) =>
-  readFile(`./examples/${file}`, 'utf-8')
-    .then((result) => {
-      extractComments(result)
-        .map((x) => x.split(';; test')[1])
-        .filter(Boolean)
-        .forEach((x) => {
-          const t = runFromInterpreted(
-            `${handleHangingSemi(removeNoCode(result))};${x}`
-          )
-          t ? logSuccessMessage(`${t} ${x}`) : logErrorMessage(`${t} ${x}`)
-        })
+  extractComments(file)
+    .map((x) => x.split(';; test')[1])
+    .filter(Boolean)
+    .forEach((x) => {
+      const t = runFromInterpreted(
+        `${handleHangingSemi(removeNoCode(file))};${x}`
+      )
+      t ? logSuccessMessage(`${t} ${x}`) : logErrorMessage(`${t} ${x}`)
     })
-    .catch((error) => logErrorMessage(error.message))
-const check = (file) =>
-  readFile(`./examples/${file}`, 'utf-8')
-    .then((result) => {
-      extractComments(result)
-        .filter((x) => x.split(`;; check`)[1]?.trim())
-        .filter(Boolean)
-        .forEach((x) => {
-          const def = handleHangingSemi(x.split(';; check')[1])
-          result = result.replaceAll(x, `!throw[${def}; "${def}"];`)
-        })
-
-      try {
-        runFromInterpreted(result)
-        logSuccessMessage('All checks passed!')
-      } catch (err) {
-        logErrorMessage(err.message)
-      }
+const check = (file) => {
+  extractComments(file)
+    .filter((x) => x.split(`;; check`)[1]?.trim())
+    .filter(Boolean)
+    .forEach((x) => {
+      const def = handleHangingSemi(x.split(';; check')[1])
+      file = file.replaceAll(x, `!throw[${def}; "${def}"];`)
     })
-    .catch((error) => logErrorMessage(error.message))
+  try {
+    runFromInterpreted(file)
+    logSuccessMessage('All checks passed!')
+  } catch (err) {
+    logErrorMessage(err.message)
+  }
+}
 
 const logResultCompiled = (file, type = 'raw') =>
-  readFile(`./examples/${file}`, 'utf-8')
-    .then((result) =>
-      logBoldMessage(
-        type == 'items'
-          ? runFromCompiled(result).items
-          : runFromCompiled(result)
-      )
-    )
-    .catch((error) => logErrorMessage(error.message))
+  logBoldMessage(
+    type == 'items' ? runFromCompiled(file).items : runFromCompiled(file)
+  )
 
 const encode = async (
   file,
   destination = 'https://at-290690.github.io/hlp'
 ) => {
-  const encoded = encodeURIComponent(
-    encodeBase64(await readFile(`./examples/${file}`, 'utf-8'))
-  )
+  const encoded = encodeURIComponent(encodeBase64(file))
   const link = `${destination}?l=`
   logSuccessMessage(link + encoded)
 }
 const count = async (file) => {
-  const encoded = encodeURIComponent(
-    encodeBase64(await readFile(`./examples/${file}`, 'utf-8'))
-  )
+  const encoded = encodeURIComponent(encodeBase64(file))
   logWarningMessage(`compressed size: ${encoded.length}`)
 }
 const encodeUri = async (file) => {
-  const encoded = encodeURIComponent(
-    encodeBase64(await readFile(`./examples/${file}`, 'utf-8'))
-  )
+  const encoded = encodeURIComponent(encodeBase64(file))
   logWarningMessage(encoded)
 }
 const decodeUri = async (file) => {
-  const dencoded = decodeBase64(
-    decodeURIComponent(await readFile(`./examples/${file}`, 'utf-8'))
-  )
+  const dencoded = decodeBase64(decodeURIComponent(file))
   logWarningMessage(dencoded)
 }
 const compile = async (file) => {
   try {
-    logWarningMessage(
-      compilePlainJs(await readFile(`./examples/${file}`, 'utf-8'))
-    )
+    logWarningMessage(compilePlainJs(file))
   } catch (error) {
     logErrorMessage(error.message)
   }
 }
 const mangle = async (file) => {
-  const compressed = compress(await readFile(`./examples/${file}`, 'utf-8'))
+  const compressed = compress(file)
   logSuccessMessage(compressed)
 }
 const countMangled = async (file) => {
-  const compressed = compress(await readFile(`./examples/${file}`, 'utf-8'))
+  const compressed = compress(file)
   logWarningMessage(`mangled size: ${compressed.length}`)
 }
+const buildProject = (dir, arg) => {
+  let cat = []
+  readdirSync(dir).forEach((file) =>
+    file.split('.').pop() === 'l'
+      ? cat.push(handleHangingSemi(file.trim()))
+      : undefined
+  )
+  writeFileSync(arg, cat.join(`;\n\n`))
+}
+const withBundle = (file) => {
+  const imports = extractComments(file)
+    .map((x) => x.split(';; import')[1]?.trim())
+    .filter(Boolean)
+
+  if (imports) {
+    const files = imports.map((f) => readFileSync(f.trim(), 'utf-8'))
+    files.push(handleHangingSemi(file.trim()) + ';')
+    return files
+      .map((f) => handleHangingSemi(f.trim()) + ';')
+      .join('\n\n')
+      .trim()
+  } else {
+    return file
+  }
+}
+
 const [, , filename, flag, arg] = process.argv
+const file = withBundle(readFileSync(filename, 'utf-8'))
 switch (flag?.toLowerCase()) {
+  case 'build':
+    buildProject(filename, arg)
+    break
   case 'link':
   case 'l':
-    encode(filename)
+    encode(file)
     break
   case 'encode':
-    encodeUri(filename)
+    encodeUri(file)
     break
   case 'decode':
-    decodeUri(filename)
+    decodeUri(file)
     break
   case 'local':
-    encode(filename, arg)
+    encode(file, arg)
     break
   case 'mangle':
   case 'm':
-    mangle(filename)
+    mangle(file)
     break
   case 'js':
-    compile(filename)
+    compile(file)
     break
   case 'c':
   case 'count':
-    count(filename)
+    count(file)
     break
   case 'cm':
-    countMangled(filename)
+    countMangled(file)
     break
   case 'compile':
   case 'cr':
-    logResultCompiled(filename, arg)
+    logResultCompiled(file, arg)
     break
   case 't':
   case 'test':
-    test(filename)
+    test(file)
     break
   case 'run':
   case 'r':
   case 'log':
-    logResultInterpreted(filename, arg)
+    logResultInterpreted(file, arg)
     break
   case 'check':
-    check(filename)
+  case 'y':
+    check(file)
     break
   case 'help':
   default:

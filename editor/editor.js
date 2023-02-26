@@ -85,7 +85,7 @@ droneButton.addEventListener('click', () => {
 const withCommand = (command = editor.getLine(0)) => {
   const value = editor.getValue()
   switch (command.trim()) {
-    case ';; check':
+    case ';; validate':
       {
         let result = value
         extractComments(result)
@@ -97,22 +97,26 @@ const withCommand = (command = editor.getLine(0)) => {
           })
         try {
           runFromInterpreted(result)
-          consoleEditor.setValue('All checks passed!')
+          extensions.LOGGER(0)('All checks passed!')
         } catch (err) {
-          consoleEditor.setValue(err.message)
+          extensions.LOGGER(0)(err.message.trim())
         }
       }
       break
-    case ';; test':
-      extractComments(value)
-        .slice(1)
-        .map((x) => x.split(';; test')[1])
-        .filter(Boolean)
-        .forEach((x) =>
-          extensions.LOGGER(0)(
+    case ';; assert':
+      {
+        const res = extractComments(value)
+          .map((x) => x.split(';; test')[1]?.trim())
+          .filter(Boolean)
+          .map((x) =>
             runFromInterpreted(`${handleHangingSemi(removeNoCode(value))};${x}`)
           )
-        )
+        if (res.every((x) => !!x)) extensions.LOGGER(0)('All tests passed!')
+        else
+          extensions.LOGGER(0)(
+            `Tests: ${res.map((x) => (x ? '+' : '-')).join(' ')}`
+          )
+      }
       break
     case ';; app':
       {
@@ -174,7 +178,11 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault()
     e.stopPropagation()
     consoleEditor.setValue('')
-    withCommand()
+    editor
+      .getLine(0)
+      .split(';; ')
+      .map((x) => `;; ${x.trim()}`)
+      .forEach((cmd) => withCommand(cmd))
     // consoleEditor.setValue(encoded)
   } else if (e.key === 'Escape') {
     e.preventDefault()
