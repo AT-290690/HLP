@@ -319,7 +319,7 @@ const findParent = (ast) => {
   return out
 }
 
-export const runFromInterpreted = (source) => run(removeNoCode(source))
+export const runFromInterpreted = (source) => run(source)
 export const runFromCompiled = (source) => eval(compileModule(source))
 
 export const exe = (source, extensions) => {
