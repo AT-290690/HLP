@@ -89,7 +89,7 @@ const withCommand = (command = editor.getLine(0)) => {
       {
         let result = value
         extractComments(result)
-          .filter((x) => x.split(`;; check`)[1])
+          .filter((x) => x.split(`;; check`)[1]?.trim())
           .filter(Boolean)
           .forEach((x) => {
             const def = handleHangingSemi(x.split(';; check')[1])

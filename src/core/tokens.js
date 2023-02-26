@@ -14,7 +14,7 @@ const tokens = {
       throw new RangeError('Invalid number of arguments to +')
     const operands = args.map((a) => evaluate(a, env))
     if (operands.some((n) => typeof n !== 'number'))
-      throw new TypeError('Invalid use of + (Not all args are numbers)')
+      throw new TypeError('Invalid use of + [] (Not all args are numbers)')
     const [first, ...rest] = operands
     return rest.reduce((acc, x) => (acc += x), first)
   },
@@ -23,7 +23,7 @@ const tokens = {
       throw new RangeError('Invalid number of arguments to -')
     const operands = args.map((a) => evaluate(a, env))
     if (operands.some((n) => typeof n !== 'number'))
-      throw new TypeError('Invalid use of - (Not all args are numbers)')
+      throw new TypeError('Invalid use of - [] (Not all args are numbers)')
     const [first, ...rest] = operands
     return rest.reduce((acc, x) => (acc -= x), first)
   },
@@ -32,7 +32,7 @@ const tokens = {
       throw new RangeError('Invalid number of arguments to *')
     const operands = args.map((a) => evaluate(a, env))
     if (operands.some((n) => typeof n !== 'number'))
-      throw new TypeError('Invalid use of * (Not all args are numbers)')
+      throw new TypeError('Invalid use of * [] (Not all args are numbers)')
     const [first, ...rest] = operands
     return rest.reduce((acc, x) => (acc *= x), first)
   },
@@ -41,7 +41,7 @@ const tokens = {
       throw new RangeError('Invalid number of arguments to :')
     const operands = args.map((a) => evaluate(a, env))
     if (operands.some((n) => typeof n !== 'number'))
-      throw new TypeError('Invalid use of : (Not all args are numbers)')
+      throw new TypeError('Invalid use of : [] (Not all args are numbers)')
     const [first, ...rest] = operands
     if (rest.includes(0))
       throw new RangeError('Invalid operation to : (devision by zero)')
@@ -52,7 +52,7 @@ const tokens = {
       throw new RangeError('Invalid number of arguments to %')
     const operands = args.map((a) => evaluate(a, env))
     if (operands.some((n) => typeof n !== 'number'))
-      throw new TypeError('Invalid use of % (Not all args are numbers)')
+      throw new TypeError('Invalid use of % [] (Not all args are numbers)')
     const [left, right] = operands
     return left % right
   },
@@ -62,7 +62,7 @@ const tokens = {
     const rounder = args.length === 1 ? 0 : evaluate(args[1], env)
     const operand = evaluate(args[0], env)
     if (typeof operand !== 'number' || typeof rounder !== 'number')
-      throw new TypeError('Invalid use of | (Not all args are numbers)')
+      throw new TypeError('Invalid use of | [] (Not all args are numbers)')
     return +operand.toFixed(rounder)
   },
   ['+=']: (args, env) => {
@@ -72,7 +72,7 @@ const tokens = {
     const a = evaluate(left, env)
     const b = right ? evaluate(right, env) : 1
     if (typeof a !== 'number' || typeof b !== 'number')
-      throw new TypeError('Invalid use of += (Not all args are numbers)')
+      throw new TypeError('Invalid use of += [] (Not all args are numbers)')
     for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
       if (Object.prototype.hasOwnProperty.call(scope, left.name)) {
         const value = a + b
@@ -87,7 +87,7 @@ const tokens = {
     const a = evaluate(left, env)
     const b = right ? evaluate(right, env) : 1
     if (typeof a !== 'number' || typeof b !== 'number')
-      throw new TypeError('Invalid use of -= (Not all args are numbers)')
+      throw new TypeError('Invalid use of -= [] (Not all args are numbers)')
     for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
       if (Object.prototype.hasOwnProperty.call(scope, left.name)) {
         const value = a - b
@@ -102,7 +102,7 @@ const tokens = {
     const a = evaluate(left, env)
     const b = right ? evaluate(right, env) : 1
     if (typeof a !== 'number' || typeof b !== 'number')
-      throw new TypeError('Invalid use of *= (Not all args are numbers)')
+      throw new TypeError('Invalid use of *= [] (Not all args are numbers)')
     for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
       if (Object.prototype.hasOwnProperty.call(scope, left.name)) {
         const value = a * b
@@ -115,13 +115,13 @@ const tokens = {
       throw new RangeError('Invalid number of arguments to ~')
     const operands = args.map((a) => evaluate(a, env))
     if (operands.some((n) => typeof n !== 'string'))
-      throw new TypeError('Invalid use of ~ (Not all args are strings)')
+      throw new TypeError('Invalid use of ~ [] (Not all args are strings)')
     const [first, ...rest] = operands
     return rest.reduce((acc, x) => (acc += x), first)
   },
   ['?']: (args, env) => {
     if (args.length > 3 || args.length <= 1)
-      throw new RangeError('Invalid number of arguments to ?')
+      throw new RangeError('Invalid number of arguments to ? []')
     if (!!evaluate(args[0], env)) return evaluate(args[1], env)
     else if (args[2]) return evaluate(args[2], env)
     else return 0
@@ -292,7 +292,7 @@ const tokens = {
         const key = extract(item, env)
         if (typeof key !== 'string') {
           throw new SyntaxError(
-            `Invalid use of operation :: (Only strings can be used as keys) setting ${key} `
+            `Invalid use of operation :: [] (Only strings can be used as keys) setting ${key} `
           )
         } else if (key.length > MAX_KEY) {
           throw new RangeError(
@@ -478,11 +478,11 @@ const tokens = {
     args.forEach(({ name, type }) => {
       if (type !== 'word')
         throw new SyntaxError(
-          `Invalid use of operation ' setting ${name} (Arguments must be words)`
+          `Invalid use of operation ' [] setting ${name} (Arguments must be words)`
         )
       if (name.includes('.') || name.includes('-'))
         throw new SyntaxError(
-          `Invalid use of operation ' (variable name must not contain . or -)`
+          `Invalid use of operation ' [] (variable name must not contain . or -)`
         )
       env[name] = name
     })

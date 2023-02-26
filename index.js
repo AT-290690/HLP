@@ -45,7 +45,7 @@ const check = (file) =>
   readFile(`./examples/${file}`, 'utf-8')
     .then((result) => {
       extractComments(result)
-        .filter((x) => x.split(`;; check`)[1])
+        .filter((x) => x.split(`;; check`)[1]?.trim())
         .filter(Boolean)
         .forEach((x) => {
           const def = handleHangingSemi(x.split(';; check')[1])
