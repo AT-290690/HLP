@@ -29,7 +29,7 @@ window.runFromInterpreted = runFromInterpreted
 window.decodeBase64 = decodeBase64
 window.Brrr = Brrr
 const std = document.createElement('script')
-std.innerHTML = `const VOID = null; const LOGGER = () => () => {}; ${languageUtilsString}`
+std.innerHTML = `const VOID = 0; const LOGGER = () => () => {}; ${languageUtilsString}`
 document.body.appendChild(std)
 const script = document.createElement('script')
 if (encoding) script.innerHTML += buildScript(encoding)

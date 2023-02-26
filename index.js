@@ -23,7 +23,7 @@ const logResultInterpreted = (file, type = 'raw') =>
   )
 const test = (file) =>
   extractComments(file)
-    .map((x) => x.split(';; test')[1])
+    .map((x) => x.split(';; * test')[1])
     .filter(Boolean)
     .forEach((x) => {
       const t = runFromInterpreted(
@@ -33,10 +33,10 @@ const test = (file) =>
     })
 const check = (file) => {
   extractComments(file)
-    .filter((x) => x.split(`;; check`)[1]?.trim())
+    .filter((x) => x.split(`;; * check`)[1]?.trim())
     .filter(Boolean)
     .forEach((x) => {
-      const def = handleHangingSemi(x.split(';; check')[1])
+      const def = handleHangingSemi(x.split(';; * check')[1])
       file = file.replaceAll(x, `!throw[${def}; "${def}"];`)
     })
   try {
@@ -98,7 +98,7 @@ const buildProject = (dir, arg) => {
 }
 const withBundle = (file) => {
   const imports = extractComments(file)
-    .map((x) => x.split(';; import')[1]?.trim())
+    .map((x) => x.split(';; * import')[1]?.trim())
     .filter(Boolean)
 
   if (imports) {

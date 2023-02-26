@@ -89,10 +89,10 @@ const withCommand = (command = editor.getLine(0)) => {
       {
         let result = value
         extractComments(result)
-          .filter((x) => x.split(`;; check`)[1]?.trim())
+          .filter((x) => x.split(`;; * check`)[1]?.trim())
           .filter(Boolean)
           .forEach((x) => {
-            const def = handleHangingSemi(x.split(';; check')[1])
+            const def = handleHangingSemi(x.split(';; * check')[1])
             result = result.replaceAll(x, `!throw[${def}; "${def}"];`)
           })
         try {
@@ -106,7 +106,7 @@ const withCommand = (command = editor.getLine(0)) => {
     case ';; assert':
       {
         const res = extractComments(value)
-          .map((x) => x.split(';; test')[1]?.trim())
+          .map((x) => x.split(';; * test')[1]?.trim())
           .filter(Boolean)
           .map((x) =>
             runFromInterpreted(`${handleHangingSemi(removeNoCode(value))};${x}`)
