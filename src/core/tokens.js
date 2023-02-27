@@ -370,7 +370,7 @@ const tokens = {
     if (args[0].type === 'apply' || args[0].type === 'value') {
       const entity = evaluate(args[0], env)
       if (entity == undefined || !entity.has(prop[0]))
-        throw new RangeError(`:: ${entity.name} doesnt have a . of ${prop[0]}`)
+        throw new RangeError(`:: [${entity.name}] doesnt have a . [${prop[0]}]`)
       const entityProperty = entity.get(prop[0])
       if (typeof entityProperty === 'function') {
         const caller = entity
@@ -390,7 +390,7 @@ const tokens = {
             )
           if (!scope[entityName].has(prop[0]))
             throw new RangeError(
-              `:: ${entityName} doesnt have a . of ${prop[0]}`
+              `:: [${entityName}] doesnt have a . [${prop[0]}]`
             )
           const entityProperty = scope[entityName].get(prop[0])
           if (typeof entityProperty === 'function') {
