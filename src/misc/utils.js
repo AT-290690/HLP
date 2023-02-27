@@ -5,299 +5,10 @@ import { tokens } from '../core/tokens.js'
 import { STD, protolessModule } from '../extensions/extentions.js'
 import { removeNoCode, wrapInBody } from './helpers.js'
 import Brrr from '../extensions/Brrr.js'
-export const languageUtilsString = `const _tco = func => (...args) => { let result = func(...args); while (typeof result === 'function') { result = result(); }; return result },
-_spreadArr = (args) => {
-  if (Brrr.isBrrr(args[0])) {
-    const [first, ...rest] = args
-    return first.merge(...rest)
-  } else return args.reduce((acc, item) => ({ ...acc, ...item }), {})
-}, _cast = (value) => typeof value === "string" || value == undefined ? Number(value) : value.toString(),_difference = (a, b) => a.difference(b), _intersection = (a, b) => a.intersection(b), _xor = (a, b) => a.xor(b), _union = (a, b) => a.union(b), _fill = (n) => Brrr.from(Array.from({ length: n }).fill(null).map((_, i) => i)),  _findIndexLeft = (a, cb) => a.findIndex(cb), _findIndexRight = (a, cb) => a.findLastIndex(cb), 
-_throw = (a, b) => { if (!a) { throw new Error(b + ' failed!') } }, _checkType = (a, b) => a.constructor.name === b.constructor.name, _mapEntries = (map) => Brrr.from([...map.entries()].map(Brrr.from)), _mapKeys = (map) => Brrr.from([...map.keys()]), _mapValues = (map) => Brrr.from([...map.values()]), _mapGet = (map, key) => map.get(key), _mapSize = (map) => map.size,
-_mapRemove = (map, key) => { map.delete(key); return map }, _mapSet = (map, key, value) => { map.set(key, value); return map }, _mapHas = (map, key) => map.has(key), _scanLeft = (a, cb) => { for (let i = 0; i < a.length; ++i) cb(a.get(i), i, a); return a },
-_scanRight = (a, cb) => { for (let i = a.length - 1; i >= 0; --i) cb(a.get(i), i, a); return a }, _mapLeft = (a, cb, copy = new Brrr()) => { for (let i = 0; i < a.length; ++i) copy.set(i, cb(a.at(i), i, a)); return copy.balance() },
-_mapRight = (a, cb, copy = new Brrr()) => { for (let i = a.length - 1; i >= 0; --i) copy.set(i, cb(a.at(i), i, a)); return copy.balance() } , _filter = (a, cb) => a.filter(cb) , _reduceLeft = (a, cb, out = []) => a.reduce(cb, out),
-_reduceRight = (a, cb, out = []) => a.reduceRight(cb, out), _findLeft = (a, cb) => a.find(cb), _findRight = (a, cb) => a.findLast(cb), _repeat = (n, cb) => { let out; for (let i = 0; i < n; ++i) out = cb(i); return out }, 
-_every = (a, cb) => a.every(cb), _some = (a, cb) => a.some(cb), _append = (a, value) => a.append(value), _prepend = (a, value) => a.prepend(value), _head = (a) => a.head(), _tail = (a) => a.tail(), _cut = (a) => a.cut(), 
-_chop = (a) => a.chop(), _slice = (a, n1, n2) => a.slice(n1, n2), _length = (a) => a.length, _split = (string, separator) => Brrr.from(string.split(separator)), _join = (arr, separator) => arr.join(separator), _arrAt = (a, i) => a.at(i), _arrGet = (a, i) => a.get(i), _arrSet = (a, i, value) => a.set(i, value), _arrInBounds = (a, i) => a.isInBounds(Math.abs(i)), 
-_partition = (a, parts) => a.partition(parts), _mSort = (a, cb) => a.mergeSort(cb), _qSort = (a, dir) => a.quickSort(dir), _grp = (a, cb) => a.group(cb), _rot = (a, n, dir) => a.rotate(n, dir), _flatMap = (a, cb) => a.flatten(cb), _call = (x, cb) => cb(x),
-_flat = (a, n) => a.flat(n), call = (x, fn) => fn(x), printout = (...args) => console.log(...args), protolessModule = methods => { const env = Object.create(null); for (const method in methods) env[method] = methods[method]; return env }, _addAt = (a, i, v) => a.addAt(i, ...v), _removeFrom = (a, i, n) => a.removeFrom(i, n);`
-export const brrrHelpers = `
-/**  Helper functions */
-/** 
-  If Type(x) is different from Type(y), return false.
-  If Type(x) is Number, then
-  If x is NaN and y is NaN, return true.
-  If x is +0 and y is -0, return true.
-  If x is -0 and y is +0, return true.
-  If x is the same Number value as y, return true.
-  Return false.
-  Return SameValueNonNumber(x, y).
-*/
-const _sameValueZero = (x, y) => x === y || (Number.isNaN(x) && Number.isNaN(y))
-const _clamp = (num, min, max) => Math.min(Math.max(num, min), max)
-const _isIterable = iter =>
-  iter === null || iter === undefined
-    ? false
-    : typeof iter[Symbol.iterator] === 'function'
-
-const _tailCallOptimisedRecursion =
-  func =>
-  (...args) => {
-    let result = func(...args)
-    while (typeof result === 'function') result = result()
-    return result
-  }
-
-const _flatten = (collection, levels, flat) =>
-  collection.reduce((acc, current) => {
-    if (Brrr.isBrrr(current)) acc.push(...flat(current, levels))
-    else acc.push(current)
-    return acc
-  }, [])
-
-const _toMatrix = (...args) => {
-  if (args.length === 0) return
-  const dimensions = new Brrr().with(...args)
-  const dim = dimensions.chop()
-  const arr = new Brrr()
-  for (let i = 0; i < dim; ++i) arr.set(i, _toMatrix(...dimensions))
-  return arr
-}
-
-const _toArrayDeep = entity => {
-  return Brrr.isBrrr(entity)
-    ? entity
-        .map(item =>
-          Brrr.isBrrr(item)
-            ? item.some(Brrr.isBrrr)
-              ? _toArrayDeep(item)
-              : item.toArray()
-            : item
-        )
-        .toArray()
-    : entity
-}
-
-const _toObjectDeep = entity => {
-  return Brrr.isBrrr(entity)
-    ? entity
-        .map(item =>
-          Brrr.isBrrr(item)
-            ? item.some(Brrr.isBrrr)
-              ? _toObjectDeep(item)
-              : item.toObject()
-            : item
-        )
-        .toObject()
-    : entity
-}
-const _toShapeDeep = (entity, out = []) => {
-  if (Brrr.isBrrr(entity.get(0))) {
-    entity.forEach(item => {
-      out.push(_toShapeDeep(item))
-    })
-  } else {
-    out = [entity.length]
-  }
-  return out
-}
-
-const _quickSortAsc = (items, left, right) => {
-  if (items.length > 1) {
-    let pivot = items.get(((right + left) / 2) | 0.5),
-      i = left,
-      j = right
-    while (i <= j) {
-      while (items.get(i) < pivot) ++i
-      while (items.get(j) > pivot) j--
-      if (i <= j) {
-        items.swap(i, j)
-        ++i
-        j--
-      }
-    }
-    if (left < i - 1) _quickSortAsc(items, left, i - 1)
-    if (i < right) _quickSortAsc(items, i, right)
-  }
-  return items
-}
-
-const _quickSortDesc = (items, left, right) => {
-  if (items.length > 1) {
-    let pivot = items.get(((right + left) / 2) | 0.5),
-      i = left,
-      j = right
-    while (i <= j) {
-      while (items.get(i) > pivot) ++i
-      while (items.get(j) < pivot) j--
-      if (i <= j) {
-        items.swap(i, j)
-        ++i
-        j--
-      }
-    }
-    if (left < i - 1) _quickSortDesc(items, left, i - 1)
-    if (i < right) _quickSortDesc(items, i, right)
-  }
-  return items
-}
-
-const _merge = (left, right, callback) => {
-  const arr = []
-  while (left.length && right.length) {
-    callback(right.at(0), left.at(0)) > 0
-      ? arr.push(left.chop())
-      : arr.push(right.chop())
-  }
-
-  for (let i = 0; i < left.length; ++i) {
-    arr.push(left.get(i))
-  }
-  for (let i = 0; i < right.length; ++i) {
-    arr.push(right.get(i))
-  }
-  const out = new Brrr()
-  const half = (arr.length / 2) | 0.5
-  for (let i = half - 1; i >= 0; --i) out.prepend(arr[i])
-  for (let i = half; i < arr.length; ++i) out.append(arr[i])
-  return out
-}
-
-const _mergeSort = (array, callback) => {
-  const half = (array.length / 2) | 0.5
-  if (array.length < 2) {
-    return array
-  }
-  const left = array.splice(0, half)
-  return _merge(
-    _mergeSort(left, callback),
-    _mergeSort(array, callback),
-    callback
-  )
-}
-
-const _binarySearch = _tailCallOptimisedRecursion(
-  (arr, target, by, greather, start, end) => {
-    if (start > end) return undefined
-    const index = ((start + end) / 2) | 0.5
-    const current = arr.get(index)
-    if (current === undefined) return undefined
-    const identity = by(current)
-    if (identity === target) return current
-    if (greather(current))
-      return _binarySearch(arr, target, by, greather, start, index - 1)
-    else return _binarySearch(arr, target, by, greather, index + 1, end)
-  }
-)
-const _Identity = current => current
-class _Group {
-  constructor() {
-    this.items = {}
-  }
-  get(key) {
-    return this.items[key]
-  }
-  set(key, value) {
-    this.items[key] = value
-    return this
-  }
-  get values() {
-    return Object.values(this.items)
-  }
-  get keys() {
-    return Object.keys(this.items)
-  }
-  has(key) {
-    return key in this.items
-  }
-  forEntries(callback) {
-    for (let key in this.items) {
-      callback([key, this.items[key]], this.items)
-    }
-    return this
-  }
-  forEach(callback) {
-    for (let key in this.items) {
-      callback(this.items[key], key)
-    }
-    return this
-  }
-  map(callback) {
-    for (let key in this.items) {
-      this.items[key] = callback(this.items[key], key, this.items)
-    }
-    return this
-  }
-}
-
-const _isEqual = (a, b) => {
-  if (a === b) return true
-  if (a && b && typeof a == 'object' && typeof b == 'object') {
-    if (a.constructor !== b.constructor) return false
-    let length, i, keys
-    if (Brrr.isBrrr(a) && Brrr.isBrrr(b)) {
-      length = a.length
-      if (length != b.length) return false
-      for (i = length; i-- !== 0; )
-        if (!_isEqual(a.get(i), b.get(i))) return false
-      return true
-    }
-    if (Array.isArray(a)) {
-      length = a.length
-      if (length != b.length) return false
-      for (i = length; i-- !== 0; ) if (!_isEqual(a[i], b[i])) return false
-      return true
-    }
-    if (a instanceof Map && b instanceof Map) {
-      if (a.size !== b.size) return false
-      for (i of a.entries()) if (!b.has(i[0])) return false
-      for (i of a.entries()) if (!_isEqual(i[1], b.get(i[0]))) return false
-      return true
-    }
-    if (a instanceof Set && b instanceof Set) {
-      if (a.size !== b.size) return false
-      for (i of a.entries()) if (!b.has(i[0])) return false
-      return true
-    }
-    if (ArrayBuffer.isView(a) && ArrayBuffer.isView(b)) {
-      length = a.length
-      if (length != b.length) return false
-      for (i = length; i-- !== 0; ) if (a[i] !== b[i]) return false
-      return true
-    }
-    if (a.constructor === RegExp)
-      return a.source === b.source && a.flags === b.flags
-    if (a.valueOf !== Object.prototype.valueOf)
-      return a.valueOf() === b.valueOf()
-    if (a.toString !== Object.prototype.toString)
-      return a.toString() === b.toString()
-    keys = Object.keys(a)
-    length = keys.length
-    if (length !== Object.keys(b).length) return false
-    for (i = length; i-- !== 0; )
-      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false
-    for (i = length; i-- !== 0; ) {
-      let key = keys[i]
-      if (!_isEqual(a[key], b[key])) return false
-    }
-    return true
-  }
-  // true if both NaN, false otherwise
-  return a !== a && b !== b
-}
-
-class _Shadow {
-  isShortCircuited() {
-    return true
-  }
-}
-for (const method of Brrr.from([
-  ...Object.getOwnPropertyNames(Brrr),
-  ...Object.getOwnPropertyNames(Brrr.prototype),
-]).without('prototype', 'isShortCircuited', 'constructor').items) {
-  _Shadow.prototype[method] = () => _shadow
-}
-const _shadow = Object.freeze(new _Shadow())`
+export const languageUtilsString = `
+const _sameValueZero=(t,e)=>t===e||Number.isNaN(t)&&Number.isNaN(e),_clamp=(t,e,r)=>Math.min(Math.max(t,e),r),_isIterable=t=>null!=t&&"function"==typeof t[Symbol.iterator],_tailCallOptimisedRecursion=t=>(...e)=>{let r=t(...e);for(;"function"==typeof r;)r=r();return r},_flatten=(t,e,r)=>t.reduce((t,i)=>(Brrr.isBrrr(i)?t.push(...r(i,e)):t.push(i),t),[]),_toMatrix=(...t)=>{if(0===t.length)return;let e=new Brrr().with(...t),r=e.chop(),i=new Brrr;for(let s=0;s<r;++s)i.set(s,_toMatrix(...e));return i},_toArrayDeep=t=>Brrr.isBrrr(t)?t.map(t=>Brrr.isBrrr(t)?t.some(Brrr.isBrrr)?_toArrayDeep(t):t.toArray():t).toArray():t,_toObjectDeep=t=>Brrr.isBrrr(t)?t.map(t=>Brrr.isBrrr(t)?t.some(Brrr.isBrrr)?_toObjectDeep(t):t.toObject():t).toObject():t,_toShapeDeep=(t,e=[])=>(Brrr.isBrrr(t.get(0))?t.forEach(t=>{e.push(_toShapeDeep(t))}):e=[t.length],e),_quickSortAsc=(t,e,r)=>{if(t.length>1){let i=t.get((r+e)/2|.5),s=e,o=r;for(;s<=o;){for(;t.get(s)<i;)++s;for(;t.get(o)>i;)o--;s<=o&&(t.swap(s,o),++s,o--)}e<s-1&&_quickSortAsc(t,e,s-1),s<r&&_quickSortAsc(t,s,r)}return t},_quickSortDesc=(t,e,r)=>{if(t.length>1){let i=t.get((r+e)/2|.5),s=e,o=r;for(;s<=o;){for(;t.get(s)>i;)++s;for(;t.get(o)<i;)o--;s<=o&&(t.swap(s,o),++s,o--)}e<s-1&&_quickSortDesc(t,e,s-1),s<r&&_quickSortDesc(t,s,r)}return t},_merge=(t,e,r)=>{let i=[];for(;t.length&&e.length;)r(e.at(0),t.at(0))>0?i.push(t.chop()):i.push(e.chop());for(let s=0;s<t.length;++s)i.push(t.get(s));for(let o=0;o<e.length;++o)i.push(e.get(o));let n=new Brrr,u=i.length/2|.5;for(let f=u-1;f>=0;--f)n.prepend(i[f]);for(let h=u;h<i.length;++h)n.append(i[h]);return n},_mergeSort=(t,e)=>{let r=t.length/2|.5;if(t.length<2)return t;let i=t.splice(0,r);return _merge(_mergeSort(i,e),_mergeSort(t,e),e)},_binarySearch=_tailCallOptimisedRecursion((t,e,r,i,s,o)=>{if(s>o)return;let n=(s+o)/2|.5,u=t.get(n);if(void 0===u)return;let f=r(u);return f===e?u:i(u)?_binarySearch(t,e,r,i,s,n-1):_binarySearch(t,e,r,i,n+1,o)}),_Identity=t=>t;class _Group{constructor(){this.items={}}get(t){return this.items[t]}set(t,e){return this.items[t]=e,this}get values(){return Object.values(this.items)}get keys(){return Object.keys(this.items)}has(t){return t in this.items}forEntries(t){for(let e in this.items)t([e,this.items[e]],this.items);return this}forEach(t){for(let e in this.items)t(this.items[e],e);return this}map(t){for(let e in this.items)this.items[e]=t(this.items[e],e,this.items);return this}}const _isEqual=(t,e)=>{if(t===e)return!0;if(t&&e&&"object"==typeof t&&"object"==typeof e){if(t.constructor!==e.constructor)return!1;let r,i,s;if(Brrr.isBrrr(t)&&Brrr.isBrrr(e)){if((r=t.length)!=e.length)return!1;for(i=r;0!=i--;)if(!_isEqual(t.get(i),e.get(i)))return!1;return!0}if(Array.isArray(t)){if((r=t.length)!=e.length)return!1;for(i=r;0!=i--;)if(!_isEqual(t[i],e[i]))return!1;return!0}if(t instanceof Map&&e instanceof Map){if(t.size!==e.size)return!1;for(i of t.entries())if(!e.has(i[0]))return!1;for(i of t.entries())if(!_isEqual(i[1],e.get(i[0])))return!1;return!0}if(t instanceof Set&&e instanceof Set){if(t.size!==e.size)return!1;for(i of t.entries())if(!e.has(i[0]))return!1;return!0}if(ArrayBuffer.isView(t)&&ArrayBuffer.isView(e)){if((r=t.length)!=e.length)return!1;for(i=r;0!=i--;)if(t[i]!==e[i])return!1;return!0}if(t.constructor===RegExp)return t.source===e.source&&t.flags===e.flags;if(t.valueOf!==Object.prototype.valueOf)return t.valueOf()===e.valueOf();if(t.toString!==Object.prototype.toString)return t.toString()===e.toString();if((r=(s=Object.keys(t)).length)!==Object.keys(e).length)return!1;for(i=r;0!=i--;)if(!Object.prototype.hasOwnProperty.call(e,s[i]))return!1;for(i=r;0!=i--;){let o=s[i];if(!_isEqual(t[o],e[o]))return!1}return!0}return t!=t&&e!=e};class _Shadow{isShortCircuited(){return!0}}for(const method of Brrr.from([...Object.getOwnPropertyNames(Brrr),...Object.getOwnPropertyNames(Brrr.prototype),]).without("prototype","isShortCircuited","constructor").items)_Shadow.prototype[method]=()=>_shadow;const _shadow=Object.freeze(new _Shadow);
+const _tco=e=>(...t)=>{let r=e(...t);for(;"function"==typeof r;)r=r();return r},_spreadArr=e=>{if(!Brrr.isBrrr(e[0]))return e.reduce((e,t)=>({...e,...t}),{});{let[t,...r]=e;return t.merge(...r)}},_cast=e=>"string"==typeof e||void 0==e?Number(e):e.toString(),_difference=(e,t)=>e.difference(t),_intersection=(e,t)=>e.intersection(t),_xor=(e,t)=>e.xor(t),_union=(e,t)=>e.union(t),_fill=e=>Brrr.from(Array.from({length:e}).fill(null).map((e,t)=>t)),_findIndexLeft=(e,t)=>e.findIndex(t),_findIndexRight=(e,t)=>e.findLastIndex(t),_throw=(e,t)=>{if(!e)throw Error(t+" failed!")},_checkType=(e,t)=>e.constructor.name===t.constructor.name,_mapEntries=e=>Brrr.from([...e.entries()].map(Brrr.from)),_mapKeys=e=>Brrr.from([...e.keys()]),_mapValues=e=>Brrr.from([...e.values()]),_mapGet=(e,t)=>e.get(t),_mapSize=e=>e.size,_mapRemove=(e,t)=>(e.delete(t),e),_mapSet=(e,t,r)=>(e.set(t,r),e),_mapHas=(e,t)=>e.has(t),_scanLeft=(e,t)=>{for(let r=0;r<e.length;++r)t(e.get(r),r,e);return e},_scanRight=(e,t)=>{for(let r=e.length-1;r>=0;--r)t(e.get(r),r,e);return e},_mapLeft=(e,t,r=new Brrr)=>{for(let n=0;n<e.length;++n)r.set(n,t(e.at(n),n,e));return r.balance()},_mapRight=(e,t,r=new Brrr)=>{for(let n=e.length-1;n>=0;--n)r.set(n,t(e.at(n),n,e));return r.balance()},_filter=(e,t)=>e.filter(t),_reduceLeft=(e,t,r=[])=>e.reduce(t,r),_reduceRight=(e,t,r=[])=>e.reduceRight(t,r),_findLeft=(e,t)=>e.find(t),_findRight=(e,t)=>e.findLast(t),_repeat=(e,t)=>{let r;for(let n=0;n<e;++n)r=t(n);return r},_every=(e,t)=>e.every(t),_some=(e,t)=>e.some(t),_append=(e,t)=>e.append(t),_prepend=(e,t)=>e.prepend(t),_head=e=>e.head(),_tail=e=>e.tail(),_cut=e=>e.cut(),_chop=e=>e.chop(),_slice=(e,t,r)=>e.slice(t,r),_length=e=>e.length,_split=(e,t)=>Brrr.from(e.split(t)),_join=(e,t)=>e.join(t),_arrAt=(e,t)=>e.at(t),_arrGet=(e,t)=>e.get(t),_arrSet=(e,t,r)=>e.set(t,r),_arrInBounds=(e,t)=>e.isInBounds(Math.abs(t)),_partition=(e,t)=>e.partition(t),_mSort=(e,t)=>e.mergeSort(t),_qSort=(e,t)=>e.quickSort(t),_grp=(e,t)=>e.group(t),_rot=(e,t,r)=>e.rotate(t,r),_flatMap=(e,t)=>e.flatten(t),_call=(e,t)=>t(e),_flat=(e,t)=>e.flat(t),call=(e,t)=>t(e),printout=(...e)=>console.log(...e),protolessModule=e=>{let t=Object.create(null);for(let r in e)t[r]=e[r];return t},_addAt=(e,t,r)=>e.addAt(t,...r),_removeFrom=(e,t,r)=>e.removeFrom(t,r);
+`
 export const logBoldMessage = (msg) => console.log('\x1b[1m', msg)
 export const logErrorMessage = (msg) =>
   console.log('\x1b[31m', '\x1b[1m', msg, '\x1b[0m')
@@ -319,16 +30,20 @@ const findParent = (ast) => {
   return out
 }
 
-export const runFromInterpreted = (source) => run(source)
+export const runFromInterpreted = (source, extensions) =>
+  exe(
+    handleUnbalancedParens(removeNoCode(source.toString().trim())),
+    STD,
+    extensions
+  )
 export const runFromCompiled = (source) => eval(compileModule(source))
 
-export const exe = (source, extensions) => {
-  if (extensions) for (const ext in extensions) STD[ext] = extensions[ext]
-  const ENV = protolessModule(STD)
+export const exe = (source, std = {}, extensions = {}) => {
+  for (const ext in extensions) std[ext] = extensions[ext]
+  const ENV = protolessModule(std)
   ENV[';;runes'] = protolessModule(tokens)
   const AST = parse(wrapInBody(source))
-  const { result } = runFromAST(AST, ENV)
-  return result
+  return runFromAST(AST, ENV).result
 }
 export const isBalancedParenthesis = (sourceCode) => {
   let count = 0
@@ -337,7 +52,7 @@ export const isBalancedParenthesis = (sourceCode) => {
   const pairs = { ']': '[' }
   for (let i = 0; i < str.length; ++i)
     if (str[i] === '[') stack.push(str[i])
-    else if (str[i] in pairs) if (stack.pop() !== pairs[str[i]]) count++
+    else if (str[i] in pairs) if (stack.pop() !== pairs[str[i]]) ++count
   return { str, diff: count - stack.length }
 }
 export const handleUnbalancedParens = (sourceCode) => {
@@ -348,17 +63,7 @@ export const handleUnbalancedParens = (sourceCode) => {
         parenMatcher.diff
       } "]"`
     )
-}
-// -export const run = source => {
-//   -  const sourceCode = removeNoCode(source.toString().trim())
-//   -  handleUnbalancedParens(sourceCode)
-//   -  return exe(sourceCode)
-//   -}
-//   +expo
-export const run = (source, extensions) => {
-  const sourceCode = removeNoCode(source.toString().trim())
-  handleUnbalancedParens(sourceCode)
-  return exe(sourceCode, extensions)
+  return sourceCode
 }
 
 export const treeShake = (modules) => {
@@ -403,7 +108,6 @@ export const compileModule = (source) => {
   const lib = treeShake(modules)
   return `const VOID = 0;
 ${Brrr.toString()}
-${brrrHelpers}
 ${languageUtilsString}
 ${lib};
 ${top}${program}`
@@ -414,15 +118,7 @@ export const compilePlainJs = (source) => {
   return `const VOID = 0;
 ${top}${program}`
 }
-export const compileBuild = (source) => {
-  const inlined = wrapInBody(removeNoCode(source))
-  const { top, program, modules } = compileToJs(parse(inlined))
-  const lib = treeShake(modules)
-  return `const VOID = 0;
-${languageUtilsString}
-${lib};
-${top}async function entry(){${program.substring(6, program.length - 4)}}`
-}
+
 export const compileHtml = (
   source,
   scripts = `<script
@@ -437,7 +133,6 @@ src="./src/misc/two.min.js"
 ${scripts}
 <script>
 ${Brrr.toString()}
-${brrrHelpers}
 const VOID = 0;
 ${languageUtilsString}
 </script>
@@ -466,28 +161,6 @@ ${scripts}
  </script>
 </body>`
 }
-export const interpredHtml = (
-  source,
-  utils = '../language/misc/utils.js',
-  scripts = `<script
-  src="./src/misc/two.min.js"
-  ></script>`
-) => {
-  const inlined = wrapInBody(removeNoCode(source))
-  return `<style>body { background: black } </style>
-  ${scripts}
-<script type="module">
-${Brrr.toString()}
-${brrrHelpers}
-import { exe } from '${utils}'; 
-  try { 
-    exe('${inlined}') 
-  } catch(err) {
-    console.error(err.message) 
-  }
-</script>
-</body>`
-}
 
 export const compileExecutable = (source, ctx) => {
   const inlined = wrapInBody(removeNoCode(source))
@@ -500,7 +173,6 @@ export const compileExecutable = (source, ctx) => {
   const lib = treeShake(modules)
   return `const VOID = 0;
   ${Brrr.toString()}
-  ${brrrHelpers}
   ${languageUtilsString}
   ${lib};
   ${top}${program}`

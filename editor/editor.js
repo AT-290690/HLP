@@ -1,5 +1,5 @@
 import { CodeMirror } from './hlp.editor.bundle.js'
-import { run, runFromInterpreted } from '../src/misc/utils.js'
+import { runFromInterpreted } from '../src/misc/utils.js'
 import { encodeBase64 } from '../src/misc/compression.js'
 import {
   extractComments,
@@ -57,10 +57,10 @@ const droneIntel = (icon) => {
   icon.style.visibility = 'visible'
   setTimeout(() => (icon.style.visibility = 'hidden'), 500)
 }
-const exe = async (source) => {
+const execute = async (source) => {
   try {
     consoleElement.classList.remove('error_line')
-    const result = run(source, extensions)
+    const result = runFromInterpreted(source, extensions)
     droneButton.classList.remove('shake')
     droneIntel(execIcon)
     return result
@@ -170,13 +170,13 @@ const withCommand = (command = editor.getLine(0)) => {
           }; ""]${isEndingWithSemi ? ';' : ''}`
           editor.replaceSelection(out)
 
-          exe(`:=[__debug_log; LOGGER[0]]; ${editor.getValue().trim()}`)
+          execute(`:=[__debug_log; LOGGER[0]]; ${editor.getValue().trim()}`)
           editor.setValue(value)
-        } else exe(`:=[__debug_log; LOGGER[0]]; __debug_log[:[${value}]]`)
+        } else execute(`:=[__debug_log; LOGGER[0]]; __debug_log[:[${value}]]`)
       }
       break
     default:
-      exe(value)
+      execute(value)
       break
   }
 }

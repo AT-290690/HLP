@@ -1,5 +1,6 @@
 import {
   compilePlainJs,
+  exe,
   runFromCompiled,
   runFromInterpreted,
 } from './src/misc/utils.js'
@@ -169,6 +170,13 @@ switch (flag?.toLowerCase()) {
   case 'check':
   case 'y':
     check(file)
+    break
+  case 'basic':
+    {
+      exe(removeNoCode(file.toString().trim()), {
+        utils: { log: (msg) => console.log(msg), items: (a) => a.items },
+      })
+    }
     break
   case 'help':
   default:

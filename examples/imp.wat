@@ -1,6 +1,6 @@
-;; @import ./examples/package/modules/max_sum.l
-;; @import ./examples/even_odd.l
-;; @import ./examples/power_of_2_array.l
+;; @import ./examples/package/modules/max_sum.wat
+;; @import ./examples/even_odd.wat
+;; @import ./examples/power_of_2_array.wat
 
 ;; given an array of numbers [arr]
 ;; raise the numbers to the power of two

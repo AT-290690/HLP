@@ -17,4 +17,3 @@
         invert_binary_tree [. [node; left]];
         invert_binary_tree [. [node; right]];
       ]; node]]]];
-      
