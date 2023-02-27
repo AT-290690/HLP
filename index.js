@@ -21,16 +21,23 @@ const logResultInterpreted = (file, type = 'raw') =>
   logBoldMessage(
     type == 'items' ? runFromInterpreted(file).items : runFromInterpreted(file)
   )
-const test = (file) =>
+const test = (file) => {
+  const mocks = extractComments(file)
+    .map((x) => x.split(';; * mock')[1]?.trim())
+    .filter(Boolean)
+    .map((x) => handleHangingSemi(x) + ';')
+    .join('\n')
   extractComments(file)
-    .map((x) => x.split(';; * test')[1])
+    .map((x) => x.split(';; * test')[1]?.trim())
     .filter(Boolean)
     .forEach((x) => {
       const t = runFromInterpreted(
-        `${handleHangingSemi(removeNoCode(file))};${x}`
+        `${handleHangingSemi(removeNoCode(file))};${mocks}${x}`
       )
       t ? logSuccessMessage(`${t} ${x}`) : logErrorMessage(`${t} ${x}`)
     })
+}
+
 const check = (file) => {
   extractComments(file)
     .filter((x) => x.split(`;; * check`)[1]?.trim())

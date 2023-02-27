@@ -105,11 +105,19 @@ const withCommand = (command = editor.getLine(0)) => {
       break
     case ';; assert':
       {
+        const mocks = extractComments(value)
+          .map((x) => x.split(';; * mock')[1]?.trim())
+          .filter(Boolean)
+          .map((x) => handleHangingSemi(x) + ';')
+          .join('\n')
+        console.log(mocks)
         const res = extractComments(value)
           .map((x) => x.split(';; * test')[1]?.trim())
           .filter(Boolean)
           .map((x) =>
-            runFromInterpreted(`${handleHangingSemi(removeNoCode(value))};${x}`)
+            runFromInterpreted(
+              `${handleHangingSemi(removeNoCode(value))};${mocks}${x}`
+            )
           )
         if (res.every((x) => !!x)) extensions.LOGGER(0)('All tests passed!')
         else
