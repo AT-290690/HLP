@@ -183,155 +183,152 @@ const compile = () => {
         }
 
         case '*loop':
-          return `_repeat(${dfs(tree.args[0], locals)},${dfs(
+          return `Inventory._repeat(${dfs(tree.args[0], locals)},${dfs(
             tree.args[1],
             locals
           )});`
         case '===': {
           const [first, ...rest] = tree.args
-          return `_every(Brrr.of(${rest
+          return `Inventory.of(${rest
             .map((x) => dfs(x, locals))
-            .join(',')}), x => Brrr.of(${dfs(
+            .join(',')}).every(x => Inventory.of(${dfs(
             first,
             locals
-          )}).isEqual(Brrr.of(x)));`
+          )}).isEqual(Inventory.of(x)));`
         }
         case '!==': {
           const [first, ...rest] = tree.args
-          return `_every(Brrr.of(${rest
+          return `Inventory.of(${rest
             .map((x) => dfs(x, locals))
-            .join(',')}), x => !Brrr.of(${dfs(
+            .join(',')}).every(x => !Inventory.of(${dfs(
             first,
             locals
-          )}).isEqual(Brrr.of(x)));`
+          )}).isEqual(Inventory.of(x)));`
         }
         case '`':
-          return `_cast(${dfs(tree.args[0], locals)})`
+          return `Inventory._cast(${dfs(tree.args[0], locals)})`
         case '.:difference':
-          return `_difference(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.difference(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:intersection':
-          return `_intersection(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.intersection(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:xor':
-          return `_xor(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.xor(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:union':
-          return `_union(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.union(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:seq':
-          return `_fill(${dfs(tree.args[0], locals)});`
+          return `Inventory._fill(${dfs(tree.args[0], locals)});`
         case '.:find>>':
-          return `_findLeft(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.find(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:find<<':
-          return `_findRight(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.findLast(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:every':
-          return `_every(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.every(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:some':
-          return `_some(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.some(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:find_index>>':
-          return `_findIndexLeft(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.findIndex(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:find_index<<':
-          return `_findIndexRight(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.findLastIndex(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:first':
-          return `_arrAt(${dfs(tree.args[0], locals)}, 0);`
+          return `${dfs(tree.args[0], locals)}.get(0);`
         case '.:last':
-          return `_arrAt(${dfs(tree.args[0], locals)}, -1);`
+          return `${dfs(tree.args[0], locals)}.at(-1);`
         case '^':
-          return `_arrAt(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.at(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:is_in_bounds':
-          return `_arrInBounds(${dfs(tree.args[0], locals)}, ${dfs(
-            tree.args[1],
-            locals
-          )});`
-        case ':':
-          return `_arrGet(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.isInBounds(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:matrix':
-          return `Brrr.matrix(${tree.args
+          return `Inventory.matrix(${tree.args
             .map((x) => dfs(x, locals))
             .join(',')});`
         case '.:':
           return (
-            'Brrr.of(' + tree.args.map((x) => dfs(x, locals)).join(',') + ')'
+            'Inventory.of(' +
+            tree.args.map((x) => dfs(x, locals)).join(',') +
+            ')'
           )
         case '^=':
-          return `_arrSet(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.set(${dfs(
             tree.args[1],
             locals
           )}, ${dfs(tree.args[2], locals)});`
         case '.:append':
-          return `_append(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.append(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:prepend':
-          return `_prepend(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.prepend(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:head':
-          return `_head(${dfs(tree.args[0], locals)});`
+          return `${dfs(tree.args[0], locals)}.head();`
         case '.:tail':
-          return `_tail(${dfs(tree.args[0], locals)});`
+          return `${dfs(tree.args[0], locals)}.tail();`
         case '.:cut':
-          return `_cut(${dfs(tree.args[0], locals)});`
+          return `${dfs(tree.args[0], locals)}.cut();`
         case '.:chop':
-          return `_chop(${dfs(tree.args[0], locals)});`
+          return `${dfs(tree.args[0], locals)}.chop();`
         case '.:from_string':
-          return `_split(${dfs(tree.args[0], locals)}, ${dfs(
+          return `Inventory._split(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )});`
         case '.:to_string':
-          return `_join(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.join(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:chunks':
-          return `_partition(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.partition(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:length':
-          return `_length(${dfs(tree.args[0], locals)});`
+          return `${dfs(tree.args[0], locals)}.length;`
         case '::size':
-          return `_mapSize(${dfs(tree.args[0], locals)});`
+          return `${dfs(tree.args[0], locals)}.size;`
         case 'tco':
-          return '_tco(' + dfs(tree.args[0], locals) + ');'
+          return 'Inventory._tco(' + dfs(tree.args[0], locals) + ');'
         case '...':
-          return `_spreadArr([${tree.args
+          return `Inventory._spreadArr([${tree.args
             .map((x) => dfs(x, locals))
             .join(',')}]);`
         case '|>': {
@@ -339,19 +336,19 @@ const compile = () => {
         }
 
         case '.:quick_sort': {
-          return `_qSort(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.quickSort(${dfs(
             tree.args[1],
             locals
           )});`
         }
         case '.:merge_sort': {
-          return `_mSort(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.mergeSort(${dfs(
             tree.args[1],
             locals
           )});`
         }
         case '.:group': {
-          return `_grp(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.group(${dfs(
             tree.args[1],
             locals
           )});`
@@ -385,107 +382,107 @@ const compile = () => {
           });`
         }
         case '.?':
-          return `_mapHas(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.has(${dfs(
             tree.args[1],
             locals
           )});`
         case '.':
-          return `_mapGet(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.get(${dfs(
             tree.args[1],
             locals
           )});`
         case '.=':
-          return `_mapSet(${dfs(tree.args[0], locals)}, ${dfs(
+          return `Inventory._mapSet(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )}, ${dfs(tree.args[2], locals)});`
         case '.!=':
-          return `_mapRemove(${dfs(tree.args[0], locals)}, ${dfs(
+          return `Inventory._mapRemove(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )});`
         case '?==':
-          return `_checkType(${dfs(tree.args[0], locals)}, ${dfs(
+          return `Inventory._checkType(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )});`
         case '!throw':
-          return `_throw(${dfs(tree.args[0], locals)}, ${dfs(
+          return `Inventory._throw(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )});`
         case '::entries':
-          return `_mapEntries(${dfs(tree.args[0], locals)});`
+          return `Inventory._mapEntries(${dfs(tree.args[0], locals)});`
         case '.:add_at': {
           const [first, second, ...rest] = tree.args.map((item) =>
             dfs(item, locals)
           )
-          return `_addAt(${first}, ${second}, [${rest}]);`
+          return `${first}.addAt(${second}, ...${rest});`
         }
         case '.:remove_from':
-          return `_removeFrom(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.removeFrom(${dfs(
             tree.args[1],
             locals
           )}, ${dfs(tree.args[2], locals)});`
         case '::values':
-          return `_mapValues(${dfs(tree.args[0], locals)});`
+          return `Inventory._mapValues(${dfs(tree.args[0], locals)});`
         case '::keys':
-          return `_mapKeys(${dfs(tree.args[0], locals)});`
+          return `Inventory._mapKeys(${dfs(tree.args[0], locals)});`
         case '.:rotate':
-          return `_rot(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.rotate(${dfs(
             tree.args[1],
             locals
           )}, ${dfs(tree.args[2], locals)});`
         case '.:slice':
-          return `_slice(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.slice(${dfs(
             tree.args[1],
             locals
           )}, ${dfs(tree.args[2], locals)});`
         case '.:flat':
-          return `_flat(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.flat(${dfs(
             tree.args[1],
             locals
           )});`
         case '>>':
-          return `_scanLeft(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.scan(${dfs(
             tree.args[1],
             locals
-          )});`
+          )}, 1);`
         case '<<':
-          return `_scanRight(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.scan(${dfs(
             tree.args[1],
             locals
-          )});`
+          )}, -1);`
         case '.:map>>':
-          return `_mapLeft(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.map(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:map<<':
-          return `_mapRight(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.mapRight(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:flatten':
-          return `_flatMap(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.flatten(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:filter':
-          return `_filter(${dfs(tree.args[0], locals)}, ${dfs(
+          return `${dfs(tree.args[0], locals)}.filter(${dfs(
             tree.args[1],
             locals
           )});`
         case '.:reduce>>': {
           const [array, callback, out] = tree.args.map((x) => dfs(x, locals))
-          return `_reduceLeft(${array}, ${callback}, ${out});`
+          return `${array}.reduce(${callback}, ${out});`
         }
         case '.:reduce<<': {
           const [array, callback, out] = tree.args.map((x) => dfs(x, locals))
-          return `_reduceRight(${array}, ${callback}, ${out});`
+          return `${array}.reduceRight(${callback}, ${out});`
         }
         case '=>': {
-          return `_call(${dfs(tree.args[0], locals)}, ${dfs(
+          return `Inventory._call(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )});`

@@ -1,13 +1,9 @@
 import { decodeBase64 } from './src/misc/compression.js'
 import { compileToJs } from './src/core/compiler.js'
-import {
-  treeShake,
-  languageUtilsString,
-  runFromInterpreted,
-} from './src/misc/utils.js'
+import { treeShake, runFromInterpreted } from './src/misc/utils.js'
 import { wrapInBody, removeNoCode } from './src/misc/helpers.js'
 import { parse } from './src/core/parser.js'
-import Brrr from './src/extensions/Brrr.js'
+import Inventory from './src/extensions/Inventory.js'
 
 const buildScript = (encoding) => {
   const inlined = wrapInBody(
@@ -27,9 +23,9 @@ ${lib}
 const encoding = new URLSearchParams(location.search).get('l')
 window.runFromInterpreted = runFromInterpreted
 window.decodeBase64 = decodeBase64
-window.Brrr = Brrr
+window.Inventory = Inventory
 const std = document.createElement('script')
-std.innerHTML = `const VOID = 0; const LOGGER = () => () => {}; ${languageUtilsString}`
+std.innerHTML = `const VOID = 0; const LOGGER = () => () => {};`
 document.body.appendChild(std)
 const script = document.createElement('script')
 if (encoding) script.innerHTML += buildScript(encoding)

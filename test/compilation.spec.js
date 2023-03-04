@@ -548,12 +548,57 @@ describe('compilation should work as expected', () => {
       `:= [fn; -> [x; : [
     ;; @check ?== [x; 1];
     * [x; 2]]]]; fn [3];`,
-      `:[1; 2; 3]`,
-      `:[1]`,
+      `: [1; 2; 3]`,
+      `: [1]`,
       `:= [f; -> [x; y; : [*[x; y]]]]; f[3; 4]`,
       `:= [x; : [1]]; x`,
       `:= [x; : [1; 2; 3]]; x`,
     ].forEach((source) =>
       strictEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it('Algorithms should work', () =>
+    [
+      `|>[.: [1;2;3;4]; 
+          .: map >> [-> [x; * [x; 2]]];
+          .: filter [-> [x; == [% [x; 2]; 0]]];
+          .: reduce >> [-> [acc; x; + [acc; x]]; 1]
+        ]`,
+      `|>[.: [1;2;3;4;5;6;7]; 
+        .: chunks [2];
+        .: flat [1];
+        .: reduce >> [-> [acc; x; + [acc; x]]; 1]
+      ]`,
+      `|>[.: [1;2;3;4;5;6;7]; 
+      .: chunks [2];
+      .: flatten [-> [x; * [x; 2]]];
+      .: reduce << [-> [acc; x; + [acc; x]]; 1]
+    ]`,
+      `|>["1,2,3,4,5,6"; 
+    .: from_string [","];
+    .: map >> [-> [x; ~[x; "0"]]];
+    .: to_string [","];
+  ]`,
+      `|>["1,2,3,4,5,6"; 
+    .: from_string [","];
+    .: map << [-> [x; ~[x; "0"]]];
+    .: to_string [","];
+  ]`,
+      `|>["1,2,3,4,5,6"; 
+    .: from_string [","];
+    .: map << [-> [x; ~[x; "0"]]];
+    .: slice [2; 4];
+    .: to_string [","];
+  ]`,
+      `+ [.: length [.: [1;2;3;4]]; :: size [:: ["x";1; "y"; 2]]]`,
+    ].forEach((source) =>
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it(`=== and !== should work`, () =>
+    [
+      `===[.: [1;2;3]; .: [1;2;3]]`,
+      `!== [.: [1;2;3]; .: [1;2;3]]`,
+      `.: quick_sort [.: [10; 23; 1; 4; 0; 1; 3]; -1]`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
 })

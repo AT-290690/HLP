@@ -704,4 +704,11 @@ describe('interpretation should work as expected', () => {
       * [x; 2]]]]; fn [3];`),
       6
     ))
+
+  it(`=== and !== should work`, () => {
+    strictEqual(runFromInterpreted(`===[.:[1;2;3]; .:[1;2;3]]`), 1)
+    strictEqual(runFromInterpreted(`=== [.:[1;"2";3]; .:[1;2;3]]`), 0)
+    strictEqual(runFromInterpreted(`!== [.:[1;2;3]; .:[1;2;3]]`), 0)
+    strictEqual(runFromInterpreted(`!== [.:[1;"2";3]; .:[1;2;3]]`), 1)
+  })
 })

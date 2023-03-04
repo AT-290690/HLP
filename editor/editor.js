@@ -27,7 +27,7 @@ const extensions = {
               : typeof msg === 'function'
               ? '-> []'
               : JSON.stringify(
-                  msg.constructor.name === 'Brrr'
+                  msg.constructor.name === 'Inventory'
                     ? msg.items
                     : msg.constructor.name === 'Map'
                     ? Object.fromEntries(msg)

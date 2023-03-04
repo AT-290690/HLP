@@ -1,13 +1,12 @@
 /*
-  Optimal Array Data Structure with 
   O (1) insertions at start
   O (1) insertions at end
   O (1) deletionss at start
   O (1) deletionss at end
   O (1) random access
 */
-export default class Brrr {
-  #left = [Brrr.#negativeZeroSymbol]
+export default class Inventory {
+  #left = [Inventory.#negativeZeroSymbol]
   #right = []
 
   get offsetLeft() {
@@ -38,7 +37,7 @@ export default class Brrr {
   }
 
   get items() {
-    return Brrr._toArrayDeep(this)
+    return Inventory._toArrayDeep(this)
   }
 
   get reflection() {
@@ -50,7 +49,7 @@ export default class Brrr {
    * @example [[[2], [[3], [2], [1]], [6]], [3]]
    */
   get shape() {
-    return Brrr._toShapeDeep(this)
+    return Inventory._toShapeDeep(this)
   }
 
   with(...initial) {
@@ -125,7 +124,7 @@ export default class Brrr {
   }
 
   isEqual(other) {
-    return Brrr._isEqual(this, other)
+    return Inventory._isEqual(this, other)
   }
 
   balance() {
@@ -173,17 +172,17 @@ export default class Brrr {
   static #negativeZeroSymbol = Symbol('-0')
 
   static of(...items) {
-    return Brrr.from(items)
+    return Inventory.from(items)
   }
 
   static isBrrr(entity) {
-    return entity instanceof Brrr
+    return entity instanceof Inventory
   }
 
   static from(iterable) {
-    if (!Brrr._isIterable(iterable))
+    if (!Inventory._isIterable(iterable))
       throw new Error('TypeError: From input is not iterable')
-    const out = new Brrr()
+    const out = new Inventory()
     const half = (iterable.length / 2) | 0.5
     for (let i = half - 1; i >= 0; --i) out.#addToLeft(iterable[i])
     for (let i = half; i < iterable.length; ++i) out.#addToRight(iterable[i])
@@ -191,15 +190,15 @@ export default class Brrr {
   }
 
   static matrix(...dimensions) {
-    return Brrr._toMatrix(...dimensions)
+    return Inventory._toMatrix(...dimensions)
   }
 
   static zeroes(size) {
-    return Brrr.from(new Array(size).fill(0))
+    return Inventory.from(new Array(size).fill(0))
   }
 
   static ones(size) {
-    return Brrr.from(new Array(size).fill(1))
+    return Inventory.from(new Array(size).fill(1))
   }
 
   at(index) {
@@ -247,7 +246,7 @@ export default class Brrr {
     start = start < 0 ? Math.max(length + start, 0) : Math.min(start, length)
     end = end < 0 ? Math.max(length + end, 0) : Math.min(end, length)
 
-    const slice = new Brrr()
+    const slice = new Inventory()
     const sliceLen = Math.max(end - start, 0)
     const half = (sliceLen / 2) | 0.5
     for (let i = half - 1; i >= 0; --i) slice.#addToLeft(this.get(start + i))
@@ -266,7 +265,7 @@ export default class Brrr {
     const start = Math.abs(dir)
     deleteCount = deleteCount ?? this.length - start
     deleteCount = Math.min(deleteCount, this.length - start)
-    const deleted = new Brrr()
+    const deleted = new Inventory()
     if (this.offsetLeft + start > 0) {
       const len = this.length - start - deleteCount
       this.rotateRight(len)
@@ -309,7 +308,7 @@ export default class Brrr {
 
   includes(val, fromIndex = 0) {
     for (let i = fromIndex, len = this.length; i < len; ++i)
-      if (Brrr._sameValueZero(this.get(i), val)) return true
+      if (Inventory._sameValueZero(this.get(i), val)) return true
     return false
   }
   /**
@@ -317,7 +316,7 @@ export default class Brrr {
    * @param predicate
    * find calls predicate once for each element of the array, in ascending order, until it finds one where predicate returns true. If such an element is found, find immediately returns that element value. Otherwise, find returns undefined.
    */
-  find(callback = Brrr._Identity, startIndex = 0) {
+  find(callback = Inventory._Identity, startIndex = 0) {
     for (let i = startIndex, len = this.length; i < len; ++i) {
       if (i >= this.length) return
       const current = this.get(i)
@@ -325,7 +324,7 @@ export default class Brrr {
     }
   }
 
-  findLast(callback = Brrr._Identity, startIndex = 0) {
+  findLast(callback = Inventory._Identity, startIndex = 0) {
     for (let i = this.length - 1 - startIndex; i >= 0; --i) {
       if (i >= this.length) return
       const current = this.get(i)
@@ -340,7 +339,7 @@ export default class Brrr {
    * until the predicate returns a value which is coercible to the Boolean value true,
    * or until the end of the array.
    */
-  some(callback = Brrr._Identity) {
+  some(callback = Inventory._Identity) {
     for (let i = 0, len = this.length; i < len; ++i)
       if (callback(this.get(i), i, this)) return true
     return false
@@ -350,13 +349,13 @@ export default class Brrr {
    * @param predicate
    * A function that accepts up to three arguments. The every method calls the predicate function for each element in the array until the predicate returns a value which is coercible to the Boolean value false, or until the end of the array.
    */
-  every(callback = Brrr._Identity) {
+  every(callback = Inventory._Identity) {
     for (let i = 0, len = this.length; i < len; ++i)
       if (i >= this.length || !callback(this.get(i), i, this)) return false
     return true
   }
 
-  findIndex(callback = Brrr._Identity, startIndex = 0) {
+  findIndex(callback = Inventory._Identity, startIndex = 0) {
     for (let i = startIndex, len = this.length; i < len; ++i) {
       const current = this.get(i)
       if (callback(current, i, this)) return i
@@ -364,7 +363,7 @@ export default class Brrr {
     return -1
   }
 
-  findLastIndex(callback = Brrr._Identity, startIndex = 0) {
+  findLastIndex(callback = Inventory._Identity, startIndex = 0) {
     for (let i = this.length - 1 - startIndex; i >= 0; --i) {
       const current = this.get(i)
       if (callback(current, i, this)) return i
@@ -378,7 +377,7 @@ export default class Brrr {
    * The map method calls the callbackfn function one time for each element in the array.
    */
   map(callback) {
-    const result = new Brrr()
+    const result = new Inventory()
     const half = (this.length / 2) | 0.5
     for (let i = half - 1; i >= 0; --i)
       result.#addToLeft(callback(this.get(i), i, this))
@@ -386,13 +385,25 @@ export default class Brrr {
       result.#addToRight(callback(this.get(i), i, this))
     return result
   }
-
+  mapRight(callback) {
+    const result = new Inventory()
+    const half = (this.length / 2) | 0.5
+    for (let i = half - 1; i >= 0; --i)
+      result.#addToRight(callback(this.get(i), i, this))
+    for (let i = half, len = this.length; i < len; ++i)
+      result.#addToLeft(callback(this.get(i), i, this))
+    return result
+  }
   mapMut(callback) {
     for (let i = 0, len = this.length; i < len; ++i)
       this.set(i, callback(this.get(i), i, this))
     return this
   }
-
+  mapMutRight(callback) {
+    for (let i = this.length; i >= 0; --i)
+      this.set(i, callback(this.get(i), i, this))
+    return this
+  }
   forEach(callback) {
     for (let i = 0, len = this.length; i < len; ++i)
       callback(this.get(i), i, this)
@@ -424,24 +435,24 @@ export default class Brrr {
    * @param predicate — A function that accepts up to three arguments.
    * The filter method calls the predicate function one time for each element in the array.
    */
-  filter(callback = Brrr._Identity) {
+  filter(callback = Inventory._Identity) {
     const out = []
     for (let i = 0, len = this.length; i < len; ++i) {
       const current = this.get(i)
       const predicat = callback(current, i, this)
       if (predicat) out.push(current)
     }
-    return Brrr.from(out)
+    return Inventory.from(out)
   }
 
-  reject(callback = Brrr._Identity) {
+  reject(callback = Inventory._Identity) {
     const out = []
     for (let i = 0, len = this.length; i < len; ++i) {
       const current = this.get(i)
       const predicat = !callback(current, i, this)
       if (predicat) out.push(current)
     }
-    return Brrr.from(out)
+    return Inventory.from(out)
   }
   /**
    * Reverses the elements in an array in place.
@@ -465,15 +476,15 @@ export default class Brrr {
    * @param callback - (item, index, arr )
    * @returns Object
    * @example
-   * Brrr.with(1,2,3,4).group((item) => (item % 2 == 0 ? "even" : "odd")
+   * Inventory.with(1,2,3,4).group((item) => (item % 2 == 0 ? "even" : "odd")
    * // retunrs (this is array view)
    * {"odd":[1,3],"even":[2,4]}
    */
-  group(callback = Brrr._Identity) {
+  group(callback = Inventory._Identity) {
     const out = this.reduce((acc, item, index, arr) => {
       const key = callback(item, index, arr)
       if (acc.has(key)) acc.get(key).append(item)
-      else acc.set(key, new Brrr(key).with(item))
+      else acc.set(key, new Inventory(key).with(item))
       return acc
     }, new Map())
     out.forEach((item) => item.balance())
@@ -488,7 +499,7 @@ export default class Brrr {
    * (a, b) => (a < b ? -1 : 1)
    * */
   mergeSort(callback = (a, b) => (a < b ? -1 : 1)) {
-    return Brrr._mergeSort(this, callback)
+    return Inventory._mergeSort(this, callback)
   }
   /**
    * perform quick sort - requires extra memory
@@ -500,8 +511,8 @@ export default class Brrr {
    * */
   quickSort(order) {
     return order === -1
-      ? Brrr._quickSortDesc(this, 0, this.length - 1)
-      : Brrr._quickSortAsc(this, 0, this.length - 1)
+      ? Inventory._quickSortDesc(this, 0, this.length - 1)
+      : Inventory._quickSortAsc(this, 0, this.length - 1)
   }
 
   join(separator = ',') {
@@ -520,7 +531,7 @@ export default class Brrr {
   }
 
   concat(second) {
-    return Brrr.from([...this, ...second])
+    return Inventory.from([...this, ...second])
   }
   /**
    * Returns a new array with all sub-array elements concatenated
@@ -530,20 +541,20 @@ export default class Brrr {
   flat(levels = 1) {
     const flat =
       levels === Infinity
-        ? (collection) => Brrr._flatten(collection, levels, flat)
+        ? (collection) => Inventory._flatten(collection, levels, flat)
         : (collection, levels) => {
             levels--
             return levels === -1
               ? collection
-              : Brrr._flatten(collection, levels, flat)
+              : Inventory._flatten(collection, levels, flat)
           }
-    return Brrr.from(flat(this, levels))
+    return Inventory.from(flat(this, levels))
   }
 
   flatten(callback) {
-    return Brrr.from(
+    return Inventory.from(
       this.reduce((acc, current, index, self) => {
-        if (Brrr.isBrrr(current))
+        if (Inventory.isBrrr(current))
           current.forEach((item, i, a) => acc.push(callback(item, i, a)))
         else acc.push(callback(current, index, self))
         return acc
@@ -597,11 +608,11 @@ export default class Brrr {
    * @param deep — convert nested structures to JavaScript Array
    */
   toArray(deep = false) {
-    return deep ? Brrr._toArrayDeep(this) : [...this]
+    return deep ? Inventory._toArrayDeep(this) : [...this]
   }
 
   async toPromise() {
-    return Brrr.from(await Promise.all(this.items))
+    return Inventory.from(await Promise.all(this.items))
   }
 
   append(item) {
@@ -670,7 +681,7 @@ export default class Brrr {
     [1, 2, 3].take(0); // => []
    */
   take(n = 1) {
-    const slice = new Brrr()
+    const slice = new Inventory()
     const sliceLen = Math.min(n, this.length)
     const half = (sliceLen / 2) | 0.5
     for (let i = half - 1; i >= 0; --i) slice.#addToLeft(this.get(i))
@@ -682,7 +693,7 @@ export default class Brrr {
    */
   takeRight(n = 1) {
     const length = this.length
-    const slice = new Brrr()
+    const slice = new Inventory()
     const sliceLen = Math.min(n, length)
     const half = (sliceLen / 2) | 0.5
     for (let i = half - 1; i >= 0; --i)
@@ -692,7 +703,7 @@ export default class Brrr {
     return slice
   }
 
-  to(callback, initial = new Brrr()) {
+  to(callback, initial = new Inventory()) {
     for (let i = 0, len = this.length; i < len; ++i)
       initial = callback(initial, this.get(i), i, this)
     return initial
@@ -725,7 +736,8 @@ export default class Brrr {
   // Creates an array excluding all given values using SameValueZero for equality comparisons.
   without(...excludes) {
     return this.filter(
-      (item) => !excludes.some((exclude) => Brrr._sameValueZero(item, exclude))
+      (item) =>
+        !excludes.some((exclude) => Inventory._sameValueZero(item, exclude))
     )
   }
 
@@ -735,7 +747,7 @@ export default class Brrr {
 
   union(b) {
     const a = this
-    const out = new Brrr()
+    const out = new Inventory()
     const A = new Set(a.toArray())
     const B = new Set(b.toArray())
     A.forEach((item) => out.#addToRight(item))
@@ -746,7 +758,7 @@ export default class Brrr {
 
   xor(b) {
     const a = this
-    const out = new Brrr()
+    const out = new Inventory()
     const A = new Set(a.toArray())
     const B = new Set(b.toArray())
     B.forEach((item) => !A.has(item) && out.#addToRight(item))
@@ -757,7 +769,7 @@ export default class Brrr {
 
   intersection(b) {
     const a = this
-    const out = new Brrr()
+    const out = new Inventory()
     const A = new Set(a.toArray())
     const B = new Set(b.toArray())
     B.forEach((item) => A.has(item) && out.#addToRight(item))
@@ -767,7 +779,7 @@ export default class Brrr {
 
   difference(b) {
     const a = this
-    const out = new Brrr()
+    const out = new Inventory()
     const A = new Set(a.toArray())
     const B = new Set(b.toArray())
     A.forEach((item) => !B.has(item) && out.#addToRight(item))
@@ -778,7 +790,7 @@ export default class Brrr {
   partition(groups = 1) {
     const res = this.reduce((acc, _, index, arr) => {
       if (index % groups === 0) {
-        const part = new Brrr()
+        const part = new Inventory()
         const half = (groups / 2) | 0.5
         for (let i = half - 1; i >= 0; --i) {
           const current = arr.get(index + i)
@@ -791,14 +803,14 @@ export default class Brrr {
         acc.#addToRight(part)
       }
       return acc
-    }, new Brrr())
+    }, new Inventory())
     res.balance()
     return res
   }
 
   unique() {
     const set = new Set()
-    return Brrr.from(
+    return Inventory.from(
       this.reduce((acc, item) => {
         if (!set.has(item)) {
           set.add(item)
@@ -823,7 +835,7 @@ export default class Brrr {
         extra.push(item)
       }
     })
-    return Brrr.from(out.concat(extra))
+    return Inventory.from(out.concat(extra))
   }
 
   swap(i1, i2) {
@@ -844,7 +856,7 @@ export default class Brrr {
   }
 
   copy() {
-    return Brrr.from([...this])
+    return Inventory.from([...this])
   }
 
   scan(callback, dir = 1) {
@@ -865,11 +877,11 @@ export default class Brrr {
   }
 
   getInBounds(index) {
-    return this.get(Brrr._clamp(index, 0, this.length - 1))
+    return this.get(Inventory._clamp(index, 0, this.length - 1))
   }
 
   setInBounds(index, value) {
-    return this.set(Brrr._clamp(index, 0, this.length - 1), value)
+    return this.set(Inventory._clamp(index, 0, this.length - 1), value)
   }
 
   getInWrap(index) {
@@ -909,8 +921,8 @@ export default class Brrr {
    * current => current.key // identity
    * current => identity(current) > target // greather
    * */
-  search(target, identity = Brrr._Identity, greather) {
-    return Brrr._binarySearch(
+  search(target, identity = Inventory._Identity, greather) {
+    return Inventory._binarySearch(
       this,
       target,
       identity,
@@ -952,26 +964,26 @@ export default class Brrr {
 
   static _flatten(collection, levels, flat) {
     return collection.reduce((acc, current) => {
-      if (Brrr.isBrrr(current)) acc.push(...flat(current, levels))
+      if (Inventory.isBrrr(current)) acc.push(...flat(current, levels))
       else acc.push(current)
       return acc
     }, [])
   }
   _toMatrix(...args) {
     if (args.length === 0) return
-    const dimensions = new Brrr().with(...args)
+    const dimensions = new Inventory().with(...args)
     const dim = dimensions.chop()
-    const arr = new Brrr()
-    for (let i = 0; i < dim; ++i) arr.set(i, Brrr._toMatrix(...dimensions))
+    const arr = new Inventory()
+    for (let i = 0; i < dim; ++i) arr.set(i, Inventory._toMatrix(...dimensions))
     return arr
   }
   static _toArrayDeep(entity) {
-    return Brrr.isBrrr(entity)
+    return Inventory.isBrrr(entity)
       ? entity
           .map((item) =>
-            Brrr.isBrrr(item)
-              ? item.some(Brrr.isBrrr)
-                ? Brrr._toArrayDeep(item)
+            Inventory.isBrrr(item)
+              ? item.some(Inventory.isBrrr)
+                ? Inventory._toArrayDeep(item)
                 : item.toArray()
               : item
           )
@@ -979,9 +991,9 @@ export default class Brrr {
       : entity
   }
   static _toShapeDeep(entity, out = []) {
-    if (Brrr.isBrrr(entity.get(0))) {
+    if (Inventory.isBrrr(entity.get(0))) {
       entity.forEach((item) => {
-        out.push(Brrr._toShapeDeep(item))
+        out.push(Inventory._toShapeDeep(item))
       })
     } else {
       out = [entity.length]
@@ -1002,8 +1014,8 @@ export default class Brrr {
           j--
         }
       }
-      if (left < i - 1) Brrr._quickSortAsc(items, left, i - 1)
-      if (i < right) Brrr._quickSortAsc(items, i, right)
+      if (left < i - 1) Inventory._quickSortAsc(items, left, i - 1)
+      if (i < right) Inventory._quickSortAsc(items, i, right)
     }
     return items
   }
@@ -1022,8 +1034,8 @@ export default class Brrr {
           j--
         }
       }
-      if (left < i - 1) Brrr._quickSortDesc(items, left, i - 1)
-      if (i < right) Brrr._quickSortDesc(items, i, right)
+      if (left < i - 1) Inventory._quickSortDesc(items, left, i - 1)
+      if (i < right) Inventory._quickSortDesc(items, i, right)
     }
     return items
   }
@@ -1041,7 +1053,7 @@ export default class Brrr {
     for (let i = 0; i < right.length; ++i) {
       arr.push(right.get(i))
     }
-    const out = new Brrr()
+    const out = new Inventory()
     const half = (arr.length / 2) | 0.5
     for (let i = half - 1; i >= 0; --i) out.prepend(arr[i])
     for (let i = half; i < arr.length; ++i) out.append(arr[i])
@@ -1053,9 +1065,9 @@ export default class Brrr {
       return array
     }
     const left = array.splice(0, half)
-    return Brrr._merge(
-      Brrr._mergeSort(left, callback),
-      Brrr._mergeSort(array, callback),
+    return Inventory._merge(
+      Inventory._mergeSort(left, callback),
+      Inventory._mergeSort(array, callback),
       callback
     )
   }
@@ -1067,8 +1079,16 @@ export default class Brrr {
     const identity = by(current)
     if (identity === target) return current
     if (greather(current))
-      return Brrr._binarySearch(arr, target, by, greather, start, index - 1)
-    else return Brrr._binarySearch(arr, target, by, greather, index + 1, end)
+      return Inventory._binarySearch(
+        arr,
+        target,
+        by,
+        greather,
+        start,
+        index - 1
+      )
+    else
+      return Inventory._binarySearch(arr, target, by, greather, index + 1, end)
   }
   static _Identity(current) {
     return current
@@ -1078,25 +1098,25 @@ export default class Brrr {
     if (a && b && typeof a == 'object' && typeof b == 'object') {
       if (a.constructor !== b.constructor) return false
       let length, i, keys
-      if (Brrr.isBrrr(a) && Brrr.isBrrr(b)) {
+      if (Inventory.isBrrr(a) && Inventory.isBrrr(b)) {
         length = a.length
         if (length != b.length) return false
         for (i = length; i-- !== 0; )
-          if (!Brrr._isEqual(a.get(i), b.get(i))) return false
+          if (!Inventory._isEqual(a.get(i), b.get(i))) return false
         return true
       }
       if (Array.isArray(a)) {
         length = a.length
         if (length != b.length) return false
         for (i = length; i-- !== 0; )
-          if (!Brrr._isEqual(a[i], b[i])) return false
+          if (!Inventory._isEqual(a[i], b[i])) return false
         return true
       }
       if (a instanceof Map && b instanceof Map) {
         if (a.size !== b.size) return false
         for (i of a.entries()) if (!b.has(i[0])) return false
         for (i of a.entries())
-          if (!Brrr._isEqual(i[1], b.get(i[0]))) return false
+          if (!Inventory._isEqual(i[1], b.get(i[0]))) return false
         return true
       }
       if (a instanceof Set && b instanceof Set) {
@@ -1123,11 +1143,51 @@ export default class Brrr {
         if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false
       for (i = length; i-- !== 0; ) {
         let key = keys[i]
-        if (!Brrr._isEqual(a[key], b[key])) return false
+        if (!Inventory._isEqual(a[key], b[key])) return false
       }
       return true
     }
     // true if both NaN, false otherwise
     return a !== a && b !== b
   }
+
+  static _tco =
+    (e) =>
+    (...t) => {
+      let r = e(...t)
+      for (; 'function' == typeof r; ) r = r()
+      return r
+    }
+  static _spreadArr = (e) => {
+    if (!Inventory.isBrrr(e[0])) return e.reduce((e, t) => ({ ...e, ...t }), {})
+    {
+      let [t, ...r] = e
+      return t.merge(...r)
+    }
+  }
+  static _cast = (e) =>
+    'string' == typeof e || void 0 == e ? Number(e) : e.toString()
+  static _fill = (e) =>
+    Inventory.from(
+      Array.from({ length: e })
+        .fill(null)
+        .map((e, t) => t)
+    )
+  static _throw = (e, t) => {
+    if (!e) throw Error(t + ' failed!')
+  }
+  static _checkType = (e, t) => e.constructor.name === t.constructor.name
+  static _mapEntries = (e) =>
+    Inventory.from([...e.entries()].map(Inventory.from))
+  static _mapKeys = (e) => Inventory.from([...e.keys()])
+  static _mapValues = (e) => Inventory.from([...e.values()])
+  static _mapRemove = (e, t) => (e.delete(t), e)
+  static _mapSet = (e, t, r) => (e.set(t, r), e)
+  static _repeat = (e, t) => {
+    let r
+    for (let n = 0; n < e; ++n) r = t(n)
+    return r
+  }
+  static _split = (e, t) => Inventory.from(e.split(t))
+  static _call = (e, t) => t(e)
 }

@@ -1,10 +1,10 @@
-import Brrr from '../src/extensions/Brrr.js'
+import Inventory from '../src/extensions/Inventory.js'
 import { equal, deepEqual } from 'assert'
 
 describe('arrays should work as expected', () => {
   it('.get and .at should access the correct element', () => {
     const arr = Array.from([1, 2, 3])
-    const binArr = Brrr.from(arr)
+    const binArr = Inventory.from(arr)
 
     deepEqual(arr[0], binArr.get(0))
     deepEqual(arr[1], binArr.get(1))
@@ -21,7 +21,7 @@ describe('arrays should work as expected', () => {
 
   it('.push, .pop, .unshift, .shift, .set should modify the collection the same', () => {
     const arr = Array.from([1, 2, 3])
-    const binArr = Brrr.from(arr)
+    const binArr = Inventory.from(arr)
 
     deepEqual([...binArr], arr)
 
@@ -41,7 +41,7 @@ describe('arrays should work as expected', () => {
 
   it('.length should modify the collection the same', () => {
     const arr = Array.from([1, 2, 3])
-    const binArr = Brrr.from(arr)
+    const binArr = Inventory.from(arr)
     deepEqual(arr.length, binArr.length)
     binArr.length = 2
     arr.length = 2
@@ -55,7 +55,10 @@ describe('arrays should work as expected', () => {
     }
     const array1 = [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
-    deepEqual(array1.filter(isPrime), Brrr.from(array1).filter(isPrime).items)
+    deepEqual(
+      array1.filter(isPrime),
+      Inventory.from(array1).filter(isPrime).items
+    )
 
     let arrayInvalidEntries = 0
     let brrryArrayInvalidEntries = 0
@@ -76,7 +79,7 @@ describe('arrays should work as expected', () => {
         arrayInvalidEntries++
         return false
       }),
-      Brrr.from(array2).filter((item) => {
+      Inventory.from(array2).filter((item) => {
         if (Number.isFinite(item.id) && item.id !== 0) return true
         brrryArrayInvalidEntries++
         return false
@@ -85,7 +88,7 @@ describe('arrays should work as expected', () => {
     deepEqual(arrayInvalidEntries, brrryArrayInvalidEntries)
 
     const fruits = ['apple', 'banana', 'grapes', 'mango', 'orange']
-    const brrryFruits = Brrr.from(fruits)
+    const brrryFruits = Inventory.from(fruits)
 
     const filterItems = (arr, query) =>
       arr.filter((el) => el.toLowerCase().includes(query.toLowerCase()))
@@ -94,30 +97,30 @@ describe('arrays should work as expected', () => {
 
     const numbers = [1, 2, 3, 4, 5]
     deepEqual(
-      Brrr.from(numbers).filter((x) => x % 2 === 0).items,
+      Inventory.from(numbers).filter((x) => x % 2 === 0).items,
       numbers.filter((x) => x % 2 === 0)
     )
     deepEqual(
-      Brrr.from(numbers).filter((x) => x % 2 === 0).items,
+      Inventory.from(numbers).filter((x) => x % 2 === 0).items,
       numbers.filter((x) => x % 2 === 0)
     )
     deepEqual(
-      Brrr.from([]).filter((x) => x % 2 === 0).items,
+      Inventory.from([]).filter((x) => x % 2 === 0).items,
       [].filter((x) => x % 2 === 0)
     )
     deepEqual(
-      Brrr.from(numbers).filter((x, i) => x === i + 1).items,
+      Inventory.from(numbers).filter((x, i) => x === i + 1).items,
       numbers.filter((x, i) => x === i + 1)
     )
     deepEqual(
-      Brrr.from(numbers).filter((x, i, arr) => x === arr.get(i)).items,
+      Inventory.from(numbers).filter((x, i, arr) => x === arr.get(i)).items,
       numbers.filter((x, i, arr) => x === arr[i])
     )
   })
 
   it('operations 1 .map, .filter, .mergeSort, .reverse, .slice, .reduce, .flat should modify the collection the same', () => {
     const arr = [4, 1, 1, 2, 3, 8, 7]
-    const binArr = Brrr.from(arr)
+    const binArr = Inventory.from(arr)
 
     const rasultBrrryArray = binArr
       .map((i) => i * i)
@@ -137,14 +140,14 @@ describe('arrays should work as expected', () => {
     deepEqual(resultArray.length, rasultBrrryArray.length)
 
     const flatBinArr = rasultBrrryArray.concat(
-      Brrr.from([
+      Inventory.from([
         51,
         12,
         33,
-        Brrr.from([
-          Brrr.from([1, 2, 3, 4, 5, Brrr.from([1, 2, 3, 4]), 1]),
-          Brrr.from([2, 3, 4, 5]),
-          Brrr.from([23, Brrr.from([222, 33, 1, 2])]),
+        Inventory.from([
+          Inventory.from([1, 2, 3, 4, 5, Inventory.from([1, 2, 3, 4]), 1]),
+          Inventory.from([2, 3, 4, 5]),
+          Inventory.from([23, Inventory.from([222, 33, 1, 2])]),
         ]),
       ]).flat(3)
     )
@@ -178,12 +181,25 @@ describe('arrays should work as expected', () => {
       ],
     ]
 
-    const infiniteBinNest = Brrr.from([
-      Brrr.from([
-        Brrr.from([Brrr.from([1, 2, 3, 4]), Brrr.from([1, 2, 3, 4]), 3, 4]),
-        Brrr.from([1, Brrr.from([1, 2, Brrr.from([1, 2, 3, 4]), 4]), 3, 4]),
+    const infiniteBinNest = Inventory.from([
+      Inventory.from([
+        Inventory.from([
+          Inventory.from([1, 2, 3, 4]),
+          Inventory.from([1, 2, 3, 4]),
+          3,
+          4,
+        ]),
+        Inventory.from([
+          1,
+          Inventory.from([1, 2, Inventory.from([1, 2, 3, 4]), 4]),
+          3,
+          4,
+        ]),
       ]),
-      Brrr.from([Brrr.from([1, 2, 3, 4]), Brrr.from([1, 2, 3, 4])]),
+      Inventory.from([
+        Inventory.from([1, 2, 3, 4]),
+        Inventory.from([1, 2, 3, 4]),
+      ]),
     ])
 
     deepEqual(
@@ -199,7 +215,7 @@ describe('arrays should work as expected', () => {
 
   it('operations 2 .map, .filter, .mergeSort, .reverse, .slice, .reduce, .flat should modify the collection the same', () => {
     const arr = [4, 1, 1, 2, 3, 8, 7]
-    const binArr = Brrr.from(arr)
+    const binArr = Inventory.from(arr)
 
     const rasultBrrryArray = binArr
       .map((i) => i ** i)
@@ -218,27 +234,27 @@ describe('arrays should work as expected', () => {
   })
   it('.flat, flatten should work the same way', () => {
     const arr = [4, 1, 1, 2, 3, 8, 7]
-    const binArr = Brrr.from(arr)
+    const binArr = Inventory.from(arr)
     const rasultBrrryArray = binArr.map((i) => i ** i + 10 - 2)
     const resultArray = arr.map((i) => i ** i + 10 - 2)
     const flatBinArr = rasultBrrryArray.concat(
-      Brrr.from([
+      Inventory.from([
         51,
         12,
         33,
-        Brrr.from([
-          Brrr.from([
+        Inventory.from([
+          Inventory.from([
             1,
             2,
             3,
             4,
             5,
             rasultBrrryArray,
-            [...Brrr.from([1, 2, 3, 4]).reverse().splice(1, 2)],
+            [...Inventory.from([1, 2, 3, 4]).reverse().splice(1, 2)],
             1,
           ]),
-          Brrr.from([2, 3, 4, 5]).slice(2, 4),
-          Brrr.from([23, Brrr.from([222, 33, 1, 2])]),
+          Inventory.from([2, 3, 4, 5]).slice(2, 4),
+          Inventory.from([23, Inventory.from([222, 33, 1, 2])]),
         ]),
       ])
         .reverse()
@@ -264,9 +280,9 @@ describe('arrays should work as expected', () => {
     deepEqual(flatArr.length, flatBinArr.length)
 
     const flatMapArray = [[1, 2, 3, 4], [1, 2, 3, 4].reverse()]
-    const flatMapBrrryArray = Brrr.from([
-      Brrr.from([1, 2, 3, 4]),
-      Brrr.from([1, 2, 3, 4]).reverse(),
+    const flatMapBrrryArray = Inventory.from([
+      Inventory.from([1, 2, 3, 4]),
+      Inventory.from([1, 2, 3, 4]).reverse(),
     ])
 
     deepEqual(
@@ -275,48 +291,53 @@ describe('arrays should work as expected', () => {
     )
     deepEqual(
       [1, 2, [3, 4]].flat(),
-      new Brrr().with(1, 2, new Brrr().with(3, 4)).flat().items
+      new Inventory().with(1, 2, new Inventory().with(3, 4)).flat().items
     )
 
     deepEqual(
       [1, 2, [3, 4, [5, 6]]].flat(),
-      new Brrr().with(1, 2, new Brrr().with(3, 4, new Brrr().with(5, 6))).flat()
-        .items
+      new Inventory()
+        .with(1, 2, new Inventory().with(3, 4, new Inventory().with(5, 6)))
+        .flat().items
     )
     deepEqual(
       [1, 2, [3, 4, [5, 6]]].flat(2),
-      new Brrr()
-        .with(1, 2, new Brrr().with(3, 4, new Brrr().with(5, 6)))
+      new Inventory()
+        .with(1, 2, new Inventory().with(3, 4, new Inventory().with(5, 6)))
         .flat(2).items
     )
     deepEqual(
       [1, 2, [3, 4, [5, 6, [7, 8, [9, 10]]]]].flat(Infinity),
-      new Brrr()
+      new Inventory()
         .with(
           1,
           2,
-          new Brrr().with(
+          new Inventory().with(
             3,
             4,
-            new Brrr().with(5, 6, new Brrr().with(7, 8, new Brrr().with(9, 10)))
+            new Inventory().with(
+              5,
+              6,
+              new Inventory().with(7, 8, new Inventory().with(9, 10))
+            )
           )
         )
         .flat(Infinity).items
     )
     // ignore this case for now
     // deepEqual([1, 2, , 4, 5].flat(),
-    //   Brrr.from([1, 2, , 4, 5]).flat().items
+    //   Inventory.from([1, 2, , 4, 5]).flat().items
     // )
   })
   it('.reverse should modify the collection the same', () => {
     const arr1 = [4, 1, 1, 2, 3, 8, 7]
-    const binArr1 = Brrr.from(arr1)
+    const binArr1 = Inventory.from(arr1)
     deepEqual(binArr1.reverse().items, arr1.reverse())
     deepEqual(binArr1.reverse().reverse().items, arr1.reverse().reverse())
     deepEqual(arr1.length, binArr1.length)
 
     const arr2 = [4, 1, 1, 2, 3, 8, 7, 8]
-    const binArr2 = Brrr.from(arr2)
+    const binArr2 = Inventory.from(arr2)
     deepEqual(binArr2.reverse().items, arr2.reverse())
     deepEqual(binArr2.reverse().reverse().items, arr2.reverse().reverse())
     deepEqual(binArr2.length, arr2.length)
@@ -324,7 +345,7 @@ describe('arrays should work as expected', () => {
 
   it('.slice should create a new collection from the same range', () => {
     const numbers = [1, 2, 3, 4, 5]
-    const brrr = Brrr.from(numbers)
+    const brrr = Inventory.from(numbers)
     deepEqual(brrr.slice().items, numbers.slice())
     deepEqual(brrr.slice(2).items, numbers.slice(2))
     deepEqual(brrr.slice(0, 3).items, numbers.slice(0, 3))
@@ -332,7 +353,7 @@ describe('arrays should work as expected', () => {
     deepEqual(brrr.slice(2, 1).items, numbers.slice(2, 1))
 
     const arr = [4, 1, 1, 2, 3, 8, 7]
-    const binArr = Brrr.from(arr)
+    const binArr = Inventory.from(arr)
     deepEqual(binArr.slice(1).items, arr.slice(1))
     deepEqual(binArr.slice(1, 2).items, arr.slice(1, 2))
     deepEqual(binArr.slice(3).items, arr.slice(3))
@@ -348,7 +369,7 @@ describe('arrays should work as expected', () => {
       'kiwi',
       'papaya',
     ]
-    const brrrFruites = Brrr.from(favFruits)
+    const brrrFruites = Inventory.from(favFruits)
     deepEqual(brrrFruites.slice(-5, -1).items, favFruits.slice(-5, -1))
     deepEqual(brrrFruites.slice(-2, -1).items, favFruits.slice(-2, -1))
     deepEqual(brrrFruites.slice(-1, -1).items, favFruits.slice(-1, -1))
@@ -358,7 +379,7 @@ describe('arrays should work as expected', () => {
 
   it('.splice should modify the array in place', () => {
     const months = ['Jan', 'March', 'April', 'June']
-    const binMonths = Brrr.from(months)
+    const binMonths = Inventory.from(months)
     deepEqual(months.splice(1, 0, 'Feb'), [...binMonths.splice(1, 0, 'Feb')])
     deepEqual(months, [...binMonths])
     deepEqual(months.length, binMonths.length)
@@ -367,7 +388,7 @@ describe('arrays should work as expected', () => {
     deepEqual(months.length, binMonths.length)
 
     const arr = [1, 2, 3, 4, 5, 6]
-    const binArr = Brrr.from(arr)
+    const binArr = Inventory.from(arr)
 
     deepEqual(arr.splice(2, 3, 'a', 'b', 'c'), [
       ...binArr.splice(2, 3, 'a', 'b', 'c'),
@@ -378,7 +399,7 @@ describe('arrays should work as expected', () => {
 
   it('.addTo shoud update the size of the array if index is bigger than the current array size', () => {
     const arr = [4, 1, 1, 2, 3, 8, 7]
-    const binArr = Brrr.from(arr)
+    const binArr = Inventory.from(arr)
     arr[20] = 10
     binArr.addTo(20, 10)
     deepEqual(Array.from(arr), binArr.items)
@@ -389,7 +410,7 @@ describe('arrays should work as expected', () => {
   it('.join should return deepEqualed array', () => {
     const string = '0101010101.01010101010101000.010101001.01.0101001.010.101'
     equal(
-      Brrr.from(string)
+      Inventory.from(string)
         .filter((x) => x !== '.')
         .join('.'),
       Array.from(string)
@@ -400,17 +421,20 @@ describe('arrays should work as expected', () => {
 
   it('.includes should return deepEqualed array', () => {
     const arr = ['apple', 'orange', 'peach', 'lemon']
-    const binArr = Brrr.from(arr)
+    const binArr = Inventory.from(arr)
     equal(binArr.includes('orange'), arr.includes('orange'))
     equal(binArr.includes('lemon'), arr.includes('lemon'))
     equal(binArr.includes('pomegranate'), arr.includes('pomegranate'))
 
-    equal([1, 2, 3].includes(2), Brrr.from([1, 2, 3]).includes(2))
-    equal([1, 2, 3].includes(4), Brrr.from([1, 2, 3]).includes(4))
-    equal([1, 2, 3].includes(3, 3), Brrr.from([1, 2, 3]).includes(3, 3))
-    equal([1, 2, 3].includes(3, -1), Brrr.from([1, 2, 3]).includes(3, -1))
-    equal([1, 2, NaN].includes(NaN), Brrr.from([1, 2, NaN]).includes(NaN))
-    equal(['1', '2', '3'].includes(3), Brrr.from(['1', '2', '3']).includes(3))
+    equal([1, 2, 3].includes(2), Inventory.from([1, 2, 3]).includes(2))
+    equal([1, 2, 3].includes(4), Inventory.from([1, 2, 3]).includes(4))
+    equal([1, 2, 3].includes(3, 3), Inventory.from([1, 2, 3]).includes(3, 3))
+    equal([1, 2, 3].includes(3, -1), Inventory.from([1, 2, 3]).includes(3, -1))
+    equal([1, 2, NaN].includes(NaN), Inventory.from([1, 2, NaN]).includes(NaN))
+    equal(
+      ['1', '2', '3'].includes(3),
+      Inventory.from(['1', '2', '3']).includes(3)
+    )
   })
 
   it('.find should return deepEqualed array', () => {
@@ -419,7 +443,7 @@ describe('arrays should work as expected', () => {
       return num > 1
     }
     const arr = ['apple', 'orange', 'peach', 'lemon']
-    const binArr = Brrr.from(arr)
+    const binArr = Inventory.from(arr)
     equal(
       binArr.find((item) => item === 'orange'),
       arr.find((item) => item === 'orange')
@@ -438,8 +462,8 @@ describe('arrays should work as expected', () => {
 
     const lastArr1 = [4, 6, 8, 12]
     const lastArr2 = [4, 5, 7, 8, 9, 11, 12]
-    const lastBin1 = Brrr.from(lastArr1)
-    const lastBin2 = Brrr.from(lastArr2)
+    const lastBin1 = Inventory.from(lastArr1)
+    const lastBin2 = Inventory.from(lastArr2)
     // Todo use Array.prototype.findLast once it is available in node
     deepEqual([...lastArr1].reverse().find(isPrime), lastBin1.findLast(isPrime)) // undefined, not found
     deepEqual([...lastArr2].reverse().find(isPrime), lastBin2.findLast(isPrime)) // 11
@@ -455,24 +479,24 @@ describe('arrays should work as expected', () => {
 
   it('.splice should return deepEqualed array', () => {
     const arr1 = ['angel', 'clown', 'mandarin', 'sturgeon']
-    const ba1 = Brrr.from(arr1)
+    const ba1 = Inventory.from(arr1)
     deepEqual(arr1.splice(2, 0, 'drum'), ba1.splice(2, 0, 'drum').items)
     deepEqual(arr1, ba1.items)
 
     const arr2 = ['angel', 'clown', 'mandarin', 'sturgeon']
-    const ba2 = Brrr.from(arr2)
+    const ba2 = Inventory.from(arr2)
     deepEqual(
       ba2.splice(2, 0, 'drum', 'guitar').items,
       arr2.splice(2, 0, 'drum', 'guitar')
     )
     deepEqual(arr2, ba2.items)
     const arr3 = ['angel', 'clown', 'drum', 'mandarin', 'sturgeon']
-    const ba3 = Brrr.from(arr3)
+    const ba3 = Inventory.from(arr3)
     deepEqual(ba3.splice(3, 1).items, arr3.splice(3, 1))
     deepEqual(arr3, ba3.items)
 
     const arr4 = ['angel', 'clown', 'trumpet', 'sturgeon']
-    const ba4 = Brrr.from(arr4)
+    const ba4 = Inventory.from(arr4)
     deepEqual(
       ba4.splice(0, 2, 'parrot', 'anemone', 'blue').items,
       arr4.splice(0, 2, 'parrot', 'anemone', 'blue')
@@ -480,22 +504,22 @@ describe('arrays should work as expected', () => {
     deepEqual(arr4, ba4.items)
 
     const arr5 = ['parrot', 'anemone', 'blue', 'trumpet', 'sturgeon']
-    const ba5 = Brrr.from(arr5)
+    const ba5 = Inventory.from(arr5)
     deepEqual(ba5.splice(2, 2).items, arr5.splice(2, 2))
     deepEqual(arr5, ba5.items)
 
     const arr6 = ['angel', 'clown', 'mandarin', 'sturgeon']
-    const ba6 = Brrr.from(arr6)
+    const ba6 = Inventory.from(arr6)
     deepEqual(ba6.splice(2).items, arr6.splice(2))
     deepEqual(arr6, ba6.items)
 
     const arr7 = ['angel', 'clown', 'mandarin', 'sturgeon']
-    const ba7 = Brrr.from(arr7)
+    const ba7 = Inventory.from(arr7)
     deepEqual(ba7.splice(-2, 1).items, arr7.splice(-2, 1))
     deepEqual(arr7, ba7.items)
 
     const arr8 = ['angel', 'clown', 'drum', 'sturgeon']
-    const ba8 = Brrr.from(arr8)
+    const ba8 = Inventory.from(arr8)
 
     deepEqual(arr8.splice(2, 1, 'trumpet'), ba8.splice(2, 1, 'trumpet').items)
     deepEqual(arr8, ba8.items)
@@ -504,11 +528,11 @@ describe('arrays should work as expected', () => {
   it('.every should work like array.every', () => {
     const isBigEnough = (element) => element >= 10
     equal(
-      Brrr.from([12, 5, 8, 130, 44]).every(isBigEnough),
+      Inventory.from([12, 5, 8, 130, 44]).every(isBigEnough),
       [12, 5, 8, 130, 44].every(isBigEnough)
     )
     equal(
-      Brrr.from([12, 54, 18, 130, 44]).every(isBigEnough),
+      Inventory.from([12, 54, 18, 130, 44]).every(isBigEnough),
       [12, 54, 18, 130, 44].every(isBigEnough)
     )
 
@@ -516,20 +540,26 @@ describe('arrays should work as expected', () => {
       array2.every((element) => array1.includes(element))
 
     equal(
-      isSubset(Brrr.from([1, 2, 3, 4, 5, 6, 7]), Brrr.from([5, 7, 6])),
+      isSubset(
+        Inventory.from([1, 2, 3, 4, 5, 6, 7]),
+        Inventory.from([5, 7, 6])
+      ),
       isSubset([1, 2, 3, 4, 5, 6, 7], [5, 7, 6])
     ) // true
     equal(
-      isSubset(Brrr.from([1, 2, 3, 4, 5, 6, 7]), Brrr.from([5, 8, 7])),
+      isSubset(
+        Inventory.from([1, 2, 3, 4, 5, 6, 7]),
+        Inventory.from([5, 8, 7])
+      ),
       isSubset([1, 2, 3, 4, 5, 6, 7], [5, 8, 7])
     ) // false
 
     equal(
-      Brrr.from([1, undefined, 3]).every((x) => x !== undefined),
+      Inventory.from([1, undefined, 3]).every((x) => x !== undefined),
       [1, undefined, 3].every((x) => x !== undefined)
     ) // true
     equal(
-      Brrr.from([2, undefined, 3]).every((x) => x === 2),
+      Inventory.from([2, undefined, 3]).every((x) => x === 2),
       [2, undefined, 2].every((x) => x === 2)
     ) // true
     // ---------------
@@ -542,7 +572,7 @@ describe('arrays should work as expected', () => {
       out1 += `[${arr}][${index}] -> ${elem}`
       return elem < 2
     })
-    const brrr = Brrr.from([1, 2, 3, 4])
+    const brrr = Inventory.from([1, 2, 3, 4])
     let out2 = ''
     brrr.every((elem, index, arr) => {
       arr.set(index + 1, arr.get(index + 1) - 1)
@@ -566,7 +596,7 @@ describe('arrays should work as expected', () => {
       out3 += `[${arr}][${index}] -> ${elem}`
       return elem < 4
     })
-    const brrr2 = Brrr.from([1, 2, 3])
+    const brrr2 = Inventory.from([1, 2, 3])
     let out4 = ''
     brrr2.every((elem, index, arr) => {
       arr.push('new')
@@ -590,7 +620,7 @@ describe('arrays should work as expected', () => {
       return elem < 4
     })
 
-    const brrr3 = Brrr.from([1, 2, 3, 4])
+    const brrr3 = Inventory.from([1, 2, 3, 4])
     let out6 = ''
     brrr3.every((elem, index, arr) => {
       arr.pop()
@@ -609,44 +639,44 @@ describe('arrays should work as expected', () => {
     const numbers = [1, 2, 3, 4, 5]
 
     equal(
-      Brrr.from(numbers).every((x) => x > 0),
+      Inventory.from(numbers).every((x) => x > 0),
       numbers.every((x) => x > 0)
     )
     equal(
-      Brrr.from(numbers).every((x) => x % 2 === 0),
+      Inventory.from(numbers).every((x) => x % 2 === 0),
       numbers.every((x) => x % 2 === 0)
     )
     equal(
-      Brrr.from([]).every((x) => x % 2 === 0),
+      Inventory.from([]).every((x) => x % 2 === 0),
       [].every((x) => x % 2 === 0)
     )
     equal(
-      Brrr.from(numbers).every((x, i) => x === i + 1),
+      Inventory.from(numbers).every((x, i) => x === i + 1),
       numbers.every((x, i) => x === i + 1)
     )
     equal(
-      Brrr.from(numbers).every((x, i, arr) => x === arr.get(i)),
+      Inventory.from(numbers).every((x, i, arr) => x === arr.get(i)),
       numbers.every((x, i, arr) => x === arr[i])
     )
 
     equal(
-      Brrr.from(numbers).some((x) => x > 0),
+      Inventory.from(numbers).some((x) => x > 0),
       numbers.some((x) => x > 0)
     )
     equal(
-      Brrr.from(numbers).some((x) => x % 2 === 0),
+      Inventory.from(numbers).some((x) => x % 2 === 0),
       numbers.some((x) => x % 2 === 0)
     )
     equal(
-      Brrr.from([]).some((x) => x % 2 === 0),
+      Inventory.from([]).some((x) => x % 2 === 0),
       [].some((x) => x % 2 === 0)
     )
     equal(
-      Brrr.from(numbers).some((x, i) => x === i + 1),
+      Inventory.from(numbers).some((x, i) => x === i + 1),
       numbers.some((x, i) => x === i + 1)
     )
     equal(
-      Brrr.from(numbers).some((x, i, arr) => x === arr.get(i)),
+      Inventory.from(numbers).some((x, i, arr) => x === arr.get(i)),
       numbers.some((x, i, arr) => x === arr[i])
     )
   })
@@ -656,61 +686,62 @@ describe('arrays should work as expected', () => {
   }
   equal(
     [2, 5, 8, 1, 4].some(isBiggerThan10),
-    Brrr.from([2, 5, 8, 1, 4]).some(isBiggerThan10)
+    Inventory.from([2, 5, 8, 1, 4]).some(isBiggerThan10)
   ) // false
   equal(
     [12, 5, 8, 1, 4].some(isBiggerThan10),
-    Brrr.from([12, 5, 8, 1, 4]).some(isBiggerThan10)
+    Inventory.from([12, 5, 8, 1, 4]).some(isBiggerThan10)
   ) // true
   equal(
     [2, 5, 8, 1, 4].some((x) => x > 10),
-    Brrr.from([2, 5, 8, 1, 4]).some((x) => x > 10)
+    Inventory.from([2, 5, 8, 1, 4]).some((x) => x > 10)
   ) // false
   equal(
     [12, 5, 8, 1, 4].some((x) => x > 10),
-    Brrr.from([12, 5, 8, 1, 4]).some((x) => x > 10)
+    Inventory.from([12, 5, 8, 1, 4]).some((x) => x > 10)
   ) // true
   it('.rotate should work', () => {
     const arr1 = [1, 2, 3]
-    deepEqual(Brrr.from(arr1).copy().rotate(0, 1).items, [1, 2, 3])
-    deepEqual(Brrr.from(arr1).copy().rotate(1, 1).items, [3, 1, 2])
-    deepEqual(Brrr.from(arr1).copy().rotate(2, 1).items, [2, 3, 1])
-    deepEqual(Brrr.from(arr1).copy().rotate(3, 1).items, [1, 2, 3])
-    deepEqual(Brrr.from(arr1).copy().rotate(4, 1).items, [3, 1, 2])
-    deepEqual(Brrr.from(arr1).copy().rotate(6, 1).items, [1, 2, 3])
-    deepEqual(Brrr.from(arr1).copy().rotate(0, -1).items, [1, 2, 3])
-    deepEqual(Brrr.from(arr1).copy().rotate(1, -1).items, [2, 3, 1])
-    deepEqual(Brrr.from(arr1).copy().rotate(2, -1).items, [3, 1, 2])
-    deepEqual(Brrr.from(arr1).copy().rotate(3, -1).items, [1, 2, 3])
-    deepEqual(Brrr.from(arr1).copy().rotate(4, -1).items, [2, 3, 1])
-    deepEqual(Brrr.from(arr1).copy().rotate(6, -1).items, [1, 2, 3])
+    deepEqual(Inventory.from(arr1).copy().rotate(0, 1).items, [1, 2, 3])
+    deepEqual(Inventory.from(arr1).copy().rotate(1, 1).items, [3, 1, 2])
+    deepEqual(Inventory.from(arr1).copy().rotate(2, 1).items, [2, 3, 1])
+    deepEqual(Inventory.from(arr1).copy().rotate(3, 1).items, [1, 2, 3])
+    deepEqual(Inventory.from(arr1).copy().rotate(4, 1).items, [3, 1, 2])
+    deepEqual(Inventory.from(arr1).copy().rotate(6, 1).items, [1, 2, 3])
+    deepEqual(Inventory.from(arr1).copy().rotate(0, -1).items, [1, 2, 3])
+    deepEqual(Inventory.from(arr1).copy().rotate(1, -1).items, [2, 3, 1])
+    deepEqual(Inventory.from(arr1).copy().rotate(2, -1).items, [3, 1, 2])
+    deepEqual(Inventory.from(arr1).copy().rotate(3, -1).items, [1, 2, 3])
+    deepEqual(Inventory.from(arr1).copy().rotate(4, -1).items, [2, 3, 1])
+    deepEqual(Inventory.from(arr1).copy().rotate(6, -1).items, [1, 2, 3])
 
     const arr2 = [1, 2, 3, 4]
 
-    deepEqual(Brrr.from(arr2).copy().rotate(0, 1).items, [1, 2, 3, 4])
-    deepEqual(Brrr.from(arr2).copy().rotate(1, 1).items, [4, 1, 2, 3])
-    deepEqual(Brrr.from(arr2).copy().rotate(2, 1).items, [3, 4, 1, 2])
-    deepEqual(Brrr.from(arr2).copy().rotate(3, 1).items, [2, 3, 4, 1])
-    deepEqual(Brrr.from(arr2).copy().rotate(4, 1).items, [1, 2, 3, 4])
+    deepEqual(Inventory.from(arr2).copy().rotate(0, 1).items, [1, 2, 3, 4])
+    deepEqual(Inventory.from(arr2).copy().rotate(1, 1).items, [4, 1, 2, 3])
+    deepEqual(Inventory.from(arr2).copy().rotate(2, 1).items, [3, 4, 1, 2])
+    deepEqual(Inventory.from(arr2).copy().rotate(3, 1).items, [2, 3, 4, 1])
+    deepEqual(Inventory.from(arr2).copy().rotate(4, 1).items, [1, 2, 3, 4])
   })
 
   it('.compact should work', () => {
     deepEqual(
-      new Brrr().with(1, 0, 0, 4, '', false, undefined, 3, 4).compact().items,
+      new Inventory().with(1, 0, 0, 4, '', false, undefined, 3, 4).compact()
+        .items,
       [1, 4, 3, 4]
     )
   })
 
   it('.unique should work', () => {
     deepEqual(
-      new Brrr().with(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3).unique().items,
+      new Inventory().with(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3).unique().items,
       [1, 2, 3]
     )
   })
 
   it('.duplicates should work', () => {
     deepEqual(
-      new Brrr()
+      new Inventory()
         .with(1, 2, 2, 0, 2, 5, 2, 9, 3, 3, 3, 4, 8, 9)
         .duplicates()
         .mergeSort().items,
@@ -720,7 +751,7 @@ describe('arrays should work as expected', () => {
 
   it('.partition should work', () => {
     deepEqual(
-      new Brrr().with(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3).partition(3).items,
+      new Inventory().with(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3).partition(3).items,
       [
         [1, 1, 1],
         [1, 2, 2],
@@ -731,33 +762,33 @@ describe('arrays should work as expected', () => {
   })
 
   it('Set methods should work', () => {
-    const a1 = new Brrr().with(1, 2, 3, 4)
-    const b1 = new Brrr().with(8, 9, 3, 2, 4)
+    const a1 = new Inventory().with(1, 2, 3, 4)
+    const b1 = new Inventory().with(8, 9, 3, 2, 4)
     deepEqual(a1.xor(b1).items, [8, 9, 1])
 
-    const a2 = new Brrr().with(1, 2, 3, 4)
-    const b2 = new Brrr().with(8, 9, 3, 2, 4)
+    const a2 = new Inventory().with(1, 2, 3, 4)
+    const b2 = new Inventory().with(8, 9, 3, 2, 4)
     deepEqual(a2.difference(b2).items, [1])
 
-    const a3 = new Brrr().with(1, 2, 3, 4)
-    const b3 = new Brrr().with(8, 9, 3, 2, 4)
+    const a3 = new Inventory().with(1, 2, 3, 4)
+    const b3 = new Inventory().with(8, 9, 3, 2, 4)
     deepEqual(a3.union(b3).items, [1, 2, 3, 4, 8, 9, 3, 2, 4])
 
-    const a4 = new Brrr().with(1, 2, 3, 4)
-    const b4 = new Brrr().with(8, 9, 3, 2, 4)
+    const a4 = new Inventory().with(1, 2, 3, 4)
+    const b4 = new Inventory().with(8, 9, 3, 2, 4)
     deepEqual(a4.intersection(b4).items, [3, 2, 4])
 
-    const a5 = new Brrr().with(1, 2, 3, 4)
-    const b5 = new Brrr().with(8, 9, 3, 2, 4)
+    const a5 = new Inventory().with(1, 2, 3, 4)
+    const b5 = new Inventory().with(8, 9, 3, 2, 4)
     deepEqual(a5.union(b5).unique().items, [1, 2, 3, 4, 8, 9])
 
-    const a6 = new Brrr().with(1, 2, 3, 4, 5, 8)
-    const b6 = new Brrr().with(8, 9, 3, 2, 4)
+    const a6 = new Inventory().with(1, 2, 3, 4, 5, 8)
+    const b6 = new Inventory().with(8, 9, 3, 2, 4)
     deepEqual(a6.unique().union(b6.unique()).xor(b6).items, [1, 5])
   })
 
   it('.swap should work', () => {
-    const arr = new Brrr().with(1, 2, 3)
+    const arr = new Inventory().with(1, 2, 3)
     arr.swap(0, 2)
     deepEqual([...arr], [3, 2, 1])
     arr.swap(0, 2)
@@ -766,7 +797,7 @@ describe('arrays should work as expected', () => {
 
   it('.scan should work', () => {
     const out = []
-    new Brrr()
+    new Inventory()
       .with(1, 2, 3)
       .scan((x) => out.push(x))
       .scan((x) => out.push(x * 2))
@@ -775,7 +806,7 @@ describe('arrays should work as expected', () => {
   })
 
   it('.append, .prepend, .tail, .head, .insertLeft, .insertRight should work', () => {
-    const arr = new Brrr().with(1, 2, 3)
+    const arr = new Inventory().with(1, 2, 3)
     deepEqual(
       arr.append(4).append(5).prepend(0).prepend(-1).prepend(-2).items,
       [-2, -1, 0, 1, 2, 3, 4, 5]
@@ -788,13 +819,13 @@ describe('arrays should work as expected', () => {
     equal(arr.chop(), 1)
     equal(arr.chop(), 2)
     deepEqual(
-      new Brrr().insertLeft(-2, -1).insertRight(0, 1, 2, 3, 4).items,
+      new Inventory().insertLeft(-2, -1).insertRight(0, 1, 2, 3, 4).items,
       [-2, -1, 0, 1, 2, 3, 4]
     )
   })
 
   it('.balance should work', () => {
-    const arr = new Brrr().with(6, 6, 6)
+    const arr = new Inventory().with(6, 6, 6)
     arr.push(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
     arr.unshift(-3, -4)
     equal(arr.length, 18)
@@ -805,51 +836,61 @@ describe('arrays should work as expected', () => {
 
   it('.removeFrom and .addAt should work', () => {
     deepEqual(
-      new Brrr().with(-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5).removeFrom(0, 0)
-        .items,
+      new Inventory()
+        .with(-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5)
+        .removeFrom(0, 0).items,
       [-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5]
     )
     deepEqual(
-      new Brrr().with(-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5).removeFrom(0, 1)
-        .items,
+      new Inventory()
+        .with(-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5)
+        .removeFrom(0, 1).items,
       [-1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5]
     )
     deepEqual(
-      new Brrr().with(-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5).removeFrom(0, 2)
-        .items,
+      new Inventory()
+        .with(-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5)
+        .removeFrom(0, 2).items,
       [0, 1, 2, 3, 4, 5, 2, 3, 4, 5]
     )
     deepEqual(
-      new Brrr().with(-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5).removeFrom(1, 1)
-        .items,
+      new Inventory()
+        .with(-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5)
+        .removeFrom(1, 1).items,
       [-2, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5]
     )
     deepEqual(
-      new Brrr().with(-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5).removeFrom(2, 1)
-        .items,
+      new Inventory()
+        .with(-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5)
+        .removeFrom(2, 1).items,
       [-2, -1, 1, 2, 3, 4, 5, 2, 3, 4, 5]
     )
     deepEqual(
-      new Brrr().with(-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5).removeFrom(2, 4)
-        .items,
+      new Inventory()
+        .with(-2, -1, 0, 1, 2, 3, 4, 5, 2, 3, 4, 5)
+        .removeFrom(2, 4).items,
       [-2, -1, 4, 5, 2, 3, 4, 5]
     )
     const arr = [1, 2, 3, 4, 5, 6, 7]
-    deepEqual(Brrr.from(arr).copy().removeFrom(1, 3).items, [1, 5, 6, 7])
-    deepEqual(Brrr.from(arr).copy().removeFrom(1, arr.length).items, [1])
-    deepEqual(Brrr.from(arr).copy().removeFrom(3, 1).items, [1, 2, 3, 5, 6, 7])
+    deepEqual(Inventory.from(arr).copy().removeFrom(1, 3).items, [1, 5, 6, 7])
+    deepEqual(Inventory.from(arr).copy().removeFrom(1, arr.length).items, [1])
     deepEqual(
-      Brrr.from(arr).copy().removeFrom(3, 0).items,
+      Inventory.from(arr).copy().removeFrom(3, 1).items,
+      [1, 2, 3, 5, 6, 7]
+    )
+    deepEqual(
+      Inventory.from(arr).copy().removeFrom(3, 0).items,
       [1, 2, 3, 4, 5, 6, 7]
     )
-    deepEqual(Brrr.from(arr).copy().removeFrom(0, arr.length).items, [])
+    deepEqual(Inventory.from(arr).copy().removeFrom(0, arr.length).items, [])
 
     deepEqual(
-      Brrr.of(1, 2, 3, 4).addAt(2, '#1', '#2', '#3').removeFrom(1, 3).items,
+      Inventory.of(1, 2, 3, 4).addAt(2, '#1', '#2', '#3').removeFrom(1, 3)
+        .items,
       [1, '#3', 3, 4]
     )
 
-    deepEqual(Brrr.of(1, 2, 3, 4).addAt(3, '#1', '#2', '#3').items, [
+    deepEqual(Inventory.of(1, 2, 3, 4).addAt(3, '#1', '#2', '#3').items, [
       1,
       2,
       3,
@@ -858,7 +899,7 @@ describe('arrays should work as expected', () => {
       '#3',
       4,
     ])
-    deepEqual(Brrr.of(1, 2, 3, 4).addAt(4, '#1', '#2', '#3').items, [
+    deepEqual(Inventory.of(1, 2, 3, 4).addAt(4, '#1', '#2', '#3').items, [
       1,
       2,
       3,
@@ -867,7 +908,7 @@ describe('arrays should work as expected', () => {
       '#2',
       '#3',
     ])
-    deepEqual(Brrr.of(1, 2, 3, 4).addAt(0, '#1', '#2', '#3').items, [
+    deepEqual(Inventory.of(1, 2, 3, 4).addAt(0, '#1', '#2', '#3').items, [
       '#1',
       '#2',
       '#3',
@@ -877,7 +918,7 @@ describe('arrays should work as expected', () => {
       4,
     ])
     deepEqual(
-      Brrr.of(1, 2, 3, 4)
+      Inventory.of(1, 2, 3, 4)
         .addAt(2, '#1', '#2', '#3', '#4')
         .addAt(1, '#0')
         .removeFrom(1, 1)
@@ -885,38 +926,38 @@ describe('arrays should work as expected', () => {
       [1, 2, 3, 4]
     )
 
-    deepEqual(Brrr.of(1, 2, 3, 4).removeFrom(3, 1).items, [1, 2, 3])
-    deepEqual(Brrr.of(1, 2, 3, 4).removeFrom(3, 5).items, [1, 2, 3])
+    deepEqual(Inventory.of(1, 2, 3, 4).removeFrom(3, 1).items, [1, 2, 3])
+    deepEqual(Inventory.of(1, 2, 3, 4).removeFrom(3, 5).items, [1, 2, 3])
   })
 
   it('.group should work', () => {
-    const group = new Brrr()
+    const group = new Inventory()
       .with(1, 2, 3, 4, 4, 5, 8, 9, 1, 2, 32, 222, 2)
       .group((item) => (item % 2 == 0 ? 'even' : 'odd'))
 
     deepEqual(
       group,
       new Map([
-        ['odd', Brrr.of(1, 3, 5, 9, 1)],
-        ['even', Brrr.of(2, 4, 4, 8, 2, 32, 222, 2)],
+        ['odd', Inventory.of(1, 3, 5, 9, 1)],
+        ['even', Inventory.of(2, 4, 4, 8, 2, 32, 222, 2)],
       ])
     )
   })
 
   it('.isSorted should work', () => {
-    equal(Brrr.of(1, 2, 3, 4, 5).isSorted(), true)
-    equal(Brrr.of(1, 2, 8, 9, 9).isSorted(), true)
-    equal(Brrr.of(1, 2, 2, 3, 2).isSorted(), false)
-    equal(Brrr.of('a', 'b', 'c').isSorted(), true)
-    equal(Brrr.of('a', 'c', 'b').isSorted(), false)
-    equal(Brrr.of('c', 'b', 'a').isSorted(), false)
-    equal(Brrr.of('c', 'b', 'a').isSorted(false), true)
-    equal(Brrr.of(1, 2, 3, 4).quickSort(1).isSorted(1), true)
-    equal(Brrr.of(1, 2, 3, 4).quickSort(-1).isSorted(-1), true)
-    equal(Brrr.of(1, 2, 3, 4).quickSort(1).isSorted(-1), false)
-    equal(Brrr.of(1, 2, 3, 4).quickSort(-1).isSorted(1), false)
+    equal(Inventory.of(1, 2, 3, 4, 5).isSorted(), true)
+    equal(Inventory.of(1, 2, 8, 9, 9).isSorted(), true)
+    equal(Inventory.of(1, 2, 2, 3, 2).isSorted(), false)
+    equal(Inventory.of('a', 'b', 'c').isSorted(), true)
+    equal(Inventory.of('a', 'c', 'b').isSorted(), false)
+    equal(Inventory.of('c', 'b', 'a').isSorted(), false)
+    equal(Inventory.of('c', 'b', 'a').isSorted(false), true)
+    equal(Inventory.of(1, 2, 3, 4).quickSort(1).isSorted(1), true)
+    equal(Inventory.of(1, 2, 3, 4).quickSort(-1).isSorted(-1), true)
+    equal(Inventory.of(1, 2, 3, 4).quickSort(1).isSorted(-1), false)
+    equal(Inventory.of(1, 2, 3, 4).quickSort(-1).isSorted(1), false)
     equal(
-      Brrr.from([
+      Inventory.from([
         { key: 'a', value: 1 },
         { key: 'b', value: 2 },
         { key: 'c', value: 4 },
@@ -926,7 +967,7 @@ describe('arrays should work as expected', () => {
       true
     )
     equal(
-      Brrr.from([
+      Inventory.from([
         { key: 'b', value: 1 },
         { key: 'a', value: 8 },
         { key: 'c', value: 9 },
@@ -939,23 +980,23 @@ describe('arrays should work as expected', () => {
 
   it('.quickSort should work', () => {
     deepEqual(
-      Brrr.from([3, 1, 8, 5, 9, 1, 2, 4]).quickSort(1).items,
+      Inventory.from([3, 1, 8, 5, 9, 1, 2, 4]).quickSort(1).items,
       [1, 1, 2, 3, 4, 5, 8, 9]
     )
     deepEqual(
-      Brrr.from([3, 1, 8, 5, 9, 1, 2, 4]).quickSort(-1).items,
+      Inventory.from([3, 1, 8, 5, 9, 1, 2, 4]).quickSort(-1).items,
       [1, 1, 2, 3, 4, 5, 8, 9].reverse()
     )
   })
 
   it('.search should work', () => {
-    equal(Brrr.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).search(3), 3)
-    equal(Brrr.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).search(9), 9)
-    equal(Brrr.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).search(11), undefined)
+    equal(Inventory.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).search(3), 3)
+    equal(Inventory.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).search(9), 9)
+    equal(Inventory.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).search(11), undefined)
     const searchKey = 'd'
     const objectTarget = { key: searchKey, value: 7 }
     deepEqual(
-      Brrr.from([
+      Inventory.from([
         { key: 'f', value: 14 },
         { key: 'g', value: 24 },
         { key: 'g', value: 14 },
@@ -974,7 +1015,7 @@ describe('arrays should work as expected', () => {
 
     const input = [1, 2, 3, 2, 3, 7, 1, 2, 3, 2, 3, 7, 13]
     deepEqual(
-      new Brrr()
+      new Inventory()
         .with(...input)
         .unique()
         .map((x, i) => ({ key: x + '-' + i, x }))
@@ -987,7 +1028,7 @@ describe('arrays should work as expected', () => {
       { key: '3-2', x: 3 }
     )
     deepEqual(
-      new Brrr()
+      new Inventory()
         .with(...input)
         .unique()
         .map((x, i) => ({ key: x + '-' + i, x }))
@@ -1002,7 +1043,7 @@ describe('arrays should work as expected', () => {
 
     const dateTarget = new Date('1970-01-01T00:00:00.002Z')
     deepEqual(
-      new Brrr()
+      new Inventory()
         .with(...input)
         .unique()
         .map((x, i) => ({ date: new Date(i), x }))
@@ -1018,14 +1059,14 @@ describe('arrays should work as expected', () => {
 
   it('.without should work', () => {
     const items = [2, 1, 2, 3]
-    const binArr = Brrr.from(items)
+    const binArr = Inventory.from(items)
     deepEqual(binArr.without(1, 2).items, [3])
     deepEqual(binArr.without(1).items, [2, 2, 3])
     deepEqual(binArr.without(3).items, [2, 1, 2])
   })
 
   it('.isInBouds and .getInBounds should work', () => {
-    const binArr = new Brrr().with(0, 1, 2, 3)
+    const binArr = new Inventory().with(0, 1, 2, 3)
     equal(binArr.isInBounds(4), false)
     equal(binArr.isInBounds(-1), false)
     equal(binArr.isInBounds(2), true)
@@ -1036,18 +1077,18 @@ describe('arrays should work as expected', () => {
   })
 
   it('.take and .takeRight should work', () => {
-    deepEqual(Brrr.from([1, 2, 3]).take().items, [1])
-    deepEqual(Brrr.from([1, 2, 3]).take(2).items, [1, 2])
-    deepEqual(Brrr.from([1, 2, 3]).take(5).items, [1, 2, 3])
-    deepEqual(Brrr.from([]).take(0).items, [])
+    deepEqual(Inventory.from([1, 2, 3]).take().items, [1])
+    deepEqual(Inventory.from([1, 2, 3]).take(2).items, [1, 2])
+    deepEqual(Inventory.from([1, 2, 3]).take(5).items, [1, 2, 3])
+    deepEqual(Inventory.from([]).take(0).items, [])
 
-    deepEqual(Brrr.from([1, 2, 3]).takeRight().items, [3])
-    deepEqual(Brrr.from([2, 3]).takeRight(2).items, [2, 3])
-    deepEqual(Brrr.from([1, 2, 3]).takeRight(5).items, [1, 2, 3])
-    deepEqual(Brrr.from([]).takeRight(0).items, [])
+    deepEqual(Inventory.from([1, 2, 3]).takeRight().items, [3])
+    deepEqual(Inventory.from([2, 3]).takeRight(2).items, [2, 3])
+    deepEqual(Inventory.from([1, 2, 3]).takeRight(5).items, [1, 2, 3])
+    deepEqual(Inventory.from([]).takeRight(0).items, [])
   })
   it('.swapRemove should work', () => {
-    const arr = new Brrr().with(1, 2, 3, 4, 5)
+    const arr = new Inventory().with(1, 2, 3, 4, 5)
     arr.swapRemoveLeft(2)
     deepEqual(arr.items, [2, 3, 1, 5])
     arr.swapRemoveRight(2)
@@ -1055,7 +1096,7 @@ describe('arrays should work as expected', () => {
   })
   it('.to should work', () => {
     equal(
-      Brrr.from('(())')
+      Inventory.from('(())')
         .to((acc, x) =>
           x === '('
             ? acc.prepend(x)
@@ -1068,27 +1109,34 @@ describe('arrays should work as expected', () => {
     )
 
     equal(
-      Brrr.from('101234')
+      Inventory.from('101234')
         .map(Number)
         .to((acc, item) => (acc += item), 0),
       11
     )
   })
   it('.zeroes and .ones should work', () => {
-    deepEqual(Brrr.zeroes(4).items, [0, 0, 0, 0])
-    deepEqual(Brrr.ones(8).items, [1, 1, 1, 1, 1, 1, 1, 1])
+    deepEqual(Inventory.zeroes(4).items, [0, 0, 0, 0])
+    deepEqual(Inventory.ones(8).items, [1, 1, 1, 1, 1, 1, 1, 1])
   })
   it('.shape should work', () => {
-    deepEqual(Brrr.of(1, 1, 1, 1).shape, [4])
-    deepEqual(Brrr.of(Brrr.of(1, 1, 1), Brrr.of(1, 1, 1)).shape, [[3], [3]])
+    deepEqual(Inventory.of(1, 1, 1, 1).shape, [4])
     deepEqual(
-      Brrr.of(
-        Brrr.of(
-          Brrr.of(1, 1),
-          Brrr.of(Brrr.of(1, 1, 1), Brrr.of(1, 1), Brrr.of(1)),
-          Brrr.of(1, 1, 1, 1, 1, 1)
+      Inventory.of(Inventory.of(1, 1, 1), Inventory.of(1, 1, 1)).shape,
+      [[3], [3]]
+    )
+    deepEqual(
+      Inventory.of(
+        Inventory.of(
+          Inventory.of(1, 1),
+          Inventory.of(
+            Inventory.of(1, 1, 1),
+            Inventory.of(1, 1),
+            Inventory.of(1)
+          ),
+          Inventory.of(1, 1, 1, 1, 1, 1)
         ),
-        Brrr.of(1, 1, 1)
+        Inventory.of(1, 1, 1)
       ).shape,
       [[[2], [[3], [2], [1]], [6]], [3]]
     )
@@ -1102,7 +1150,7 @@ describe('arrays should work as expected', () => {
 
     deepEqual(
       array1.filter((x) => !isPrime(x)),
-      Brrr.from(array1).reject(isPrime).items
+      Inventory.from(array1).reject(isPrime).items
     )
 
     const array2 = [
@@ -1121,77 +1169,80 @@ describe('arrays should work as expected', () => {
         if (!(Number.isFinite(item.id) && item.id !== 0)) return true
         return false
       }),
-      Brrr.from(array2).reject((item) => {
+      Inventory.from(array2).reject((item) => {
         if (Number.isFinite(item.id) && item.id !== 0) return true
         return false
       }).items
     )
   })
   it('.merge should work', () => {
-    const arr = Brrr.of(1, 2, 3, 4)
+    const arr = Inventory.of(1, 2, 3, 4)
     deepEqual(
       arr.merge(arr.copy(), arr.copy(), arr.copy(), arr.copy()).items,
       [1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4]
     )
     deepEqual(
-      Brrr.of(1, 2, 3, 4).merge(Brrr.of(5, 6, 7, 8), Brrr.of(9, 10)).items,
+      Inventory.of(1, 2, 3, 4).merge(
+        Inventory.of(5, 6, 7, 8),
+        Inventory.of(9, 10)
+      ).items,
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     )
   })
   it('.isCompact and .isSparce should work', () => {
-    equal(Brrr.of(1, 2, 3, 4).isCompact(), true)
-    equal(Brrr.of(1, 2, 3, 4).isSparce(), false)
-    equal(Brrr.of(1, 2, 3, undefined, 4).isCompact(), false)
-    equal(Brrr.of(1, 2, 3, undefined, 4).isSparce(), true)
+    equal(Inventory.of(1, 2, 3, 4).isCompact(), true)
+    equal(Inventory.of(1, 2, 3, 4).isSparce(), false)
+    equal(Inventory.of(1, 2, 3, undefined, 4).isCompact(), false)
+    equal(Inventory.of(1, 2, 3, undefined, 4).isSparce(), true)
   })
   it('.isEqual should work', () => {
-    equal(Brrr.of(1, 2, 3, 4).isEqual(Brrr.of(1, 2, 3, 4)), true)
-    equal(Brrr.of(1, 2, 3, 4).isEqual(Brrr.of(1, 2, 5, 4)), false)
-    equal(Brrr.of(1, 2, 3, 4).isEqual(Brrr.of(1, 2, 3, 4, 5)), false)
+    equal(Inventory.of(1, 2, 3, 4).isEqual(Inventory.of(1, 2, 3, 4)), true)
+    equal(Inventory.of(1, 2, 3, 4).isEqual(Inventory.of(1, 2, 5, 4)), false)
+    equal(Inventory.of(1, 2, 3, 4).isEqual(Inventory.of(1, 2, 3, 4, 5)), false)
     equal(
-      Brrr.of(1, [1, 2, 3], {
+      Inventory.of(1, [1, 2, 3], {
         x: 1,
-        y: Brrr.of(1, 2, { a: [1, 2, 3] }),
+        y: Inventory.of(1, 2, { a: [1, 2, 3] }),
       }).isEqual(
-        Brrr.of(1, [1, 2, 3], {
+        Inventory.of(1, [1, 2, 3], {
           x: 1,
-          y: Brrr.of(1, 2, { a: [1, 2, 3] }),
+          y: Inventory.of(1, 2, { a: [1, 2, 3] }),
         })
       ),
       true
     )
     equal(
-      Brrr.of(1, [1, 2, 3], {
+      Inventory.of(1, [1, 2, 3], {
         x: 1,
-        y: Brrr.of(1, 2, { a: [1, 2, 3] }),
+        y: Inventory.of(1, 2, { a: [1, 2, 3] }),
       }).isEqual(
-        Brrr.of(1, [1, 2, 3], {
+        Inventory.of(1, [1, 2, 3], {
           m: 1,
-          y: Brrr.of(1, 2, { a: [1, 2, 3] }),
+          y: Inventory.of(1, 2, { a: [1, 2, 3] }),
         })
       ),
       false
     )
     equal(
-      Brrr.of(1, [1, 2, 3], {
+      Inventory.of(1, [1, 2, 3], {
         x: 1,
-        y: Brrr.of(1, 2, { a: [2, 2, 3] }),
+        y: Inventory.of(1, 2, { a: [2, 2, 3] }),
       }).isEqual(
-        Brrr.of(1, [1, 2, 3], {
+        Inventory.of(1, [1, 2, 3], {
           x: 1,
-          y: Brrr.of(1, 2, { a: [1, 2, 3] }),
+          y: Inventory.of(1, 2, { a: [1, 2, 3] }),
         })
       ),
       false
     )
     equal(
-      Brrr.of(1, [1, 2, 3], 3, {
+      Inventory.of(1, [1, 2, 3], 3, {
         x: 1,
-        y: Brrr.of(1, 2, { a: [1, 2, 3] }),
+        y: Inventory.of(1, 2, { a: [1, 2, 3] }),
       }).isEqual(
-        Brrr.of(1, [1, 2, 3], {
+        Inventory.of(1, [1, 2, 3], {
           x: 1,
-          y: Brrr.of(1, 2, { a: [1, 2, 3] }),
+          y: Inventory.of(1, 2, { a: [1, 2, 3] }),
         })
       ),
       false
@@ -1199,8 +1250,8 @@ describe('arrays should work as expected', () => {
   })
 
   it(`.imbalance should work`, () => {
-    const a = Brrr.of(1, 2, 3, 4).imbalance(-1).reflection
-    const b = Brrr.of(1, 2, 3, 4).imbalance(1).reflection
+    const a = Inventory.of(1, 2, 3, 4).imbalance(-1).reflection
+    const b = Inventory.of(1, 2, 3, 4).imbalance(1).reflection
     equal(a.left.length, 5)
     equal(a.right.length, 0)
     equal(b.left.length, 1)

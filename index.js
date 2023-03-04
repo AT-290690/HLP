@@ -108,8 +108,7 @@ const withBundle = (file) => {
   const imports = extractComments(file)
     .map((x) => x.split(';; @import')[1]?.trim())
     .filter(Boolean)
-
-  if (imports) {
+  if (imports.length) {
     const files = imports.map((f) => readFileSync(f.trim(), 'utf-8'))
     files.push(handleHangingSemi(file.trim()) + ';')
     return files

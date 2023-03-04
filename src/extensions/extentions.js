@@ -1,7 +1,7 @@
-import { VOID } from '../core/tokens.js'
+import { VOID } from '../core/tokeniser.js'
 import { LZUTF8 } from '../misc/lz-utf8.js'
 import { runFromInterpreted } from '../misc/utils.js'
-import Brrr from './Brrr.js'
+import Inventory from './Inventory.js'
 export const protolessModule = (methods) => {
   const env = Object.create(null)
   for (const method in methods) env[method] = methods[method]
@@ -102,8 +102,8 @@ export const LIBRARY = {
       return p / v
     },
     permutations_array: (inputArr) => {
-      let result = new Brrr()
-      const permute = (arr, m = new Brrr()) => {
+      let result = new Inventory()
+      const permute = (arr, m = new Inventory()) => {
         if (arr.length === 0) result.push(m)
         else {
           for (let i = 0; i < arr.length; i++) {
@@ -226,7 +226,7 @@ export const LIBRARY = {
         return typeof value === 'object' ? JSON.stringify(value) : String(value)
       else if (value === null || value === undefined) return VOID
       else if (type === '.:') {
-        if (Brrr.isBrrr(value)) return value
+        if (Inventory.isBrrr(value)) return value
         else if (typeof value === 'string') return [...value]
         else if (typeof value === 'number')
           return [...String(value)].map(Number)
@@ -254,13 +254,13 @@ export const LIBRARY = {
     is_number: (number) => +(typeof number === 'number'),
     is_not_string: (string) => +!(typeof string === 'string'),
     is_not_number: (number) => +!(typeof number === 'number'),
-    is_not_array: (array) => +!Brrr.isBrrr(array),
-    is_array: (array) => +Brrr.isBrrr(array),
+    is_not_array: (array) => +!Inventory.isBrrr(array),
+    is_array: (array) => +Inventory.isBrrr(array),
     is_map: (map) => +(map instanceof Map),
     is_not_map: (map) => +!(map instanceof Map),
     is_true: (bol) => +(!!bol === true),
     is_false: (bol) => +(!!bol === false),
-    is_equal: (a, b) => +Brrr.of(a).isEqual(Brrr.of(b)),
+    is_equal: (a, b) => +Inventory.of(a).isEqual(Inventory.of(b)),
   },
   LOOP: {
     NAME: 'LOOP',
@@ -328,10 +328,10 @@ export const LIBRARY = {
   },
   ARRAY: {
     NAME: 'ARRAY',
-    from: (arr) => Brrr.from(arr),
-    split_new_line: (str) => Brrr.from(str.split('\n')),
-    split_spaces: (str) => Brrr.from(str.split(' ')),
-    split: (str, separator) => Brrr.from(str.split(separator)),
+    from: (arr) => Inventory.from(arr),
+    split_new_line: (str) => Inventory.from(str.split('\n')),
+    split_spaces: (str) => Inventory.from(str.split(' ')),
+    split: (str, separator) => Inventory.from(str.split(separator)),
     join: (entity, separator) => entity.join(separator),
     shuffle: (array) => {
       array = array.toArray()
@@ -339,12 +339,12 @@ export const LIBRARY = {
         const j = Math.floor(Math.random() * (i + 1))
         ;[array[i], array[j]] = [array[j], array[i]]
       }
-      return Brrr.from(array)
+      return Inventory.from(array)
     },
-    zeroes: (size) => Brrr.zeroes(size),
-    ones: (size) => Brrr.ones(size),
+    zeroes: (size) => Inventory.zeroes(size),
+    ones: (size) => Inventory.ones(size),
     range: (start, end, step = 1) => {
-      const arr = new Brrr()
+      const arr = new Inventory()
       if (start > end)
         for (let i = start; i >= end; i -= 1) arr.append(i * step)
       else for (let i = start; i <= end; i += 1) arr.append(i * step)
@@ -362,9 +362,9 @@ export const LIBRARY = {
     make_fragment: () => document.createDocumentFragment(),
     get_element_by_id: (id) => document.getElementById(id),
     get_elements_by_class_name: (tag) =>
-      Brrr.from([...document.getElementsByClassName(tag)]),
+      Inventory.from([...document.getElementsByClassName(tag)]),
     get_elements_by_tag_name: (tag) =>
-      Brrr.from([...document.getElementsByTagName(tag)]),
+      Inventory.from([...document.getElementsByTagName(tag)]),
     get_value: (el) => el.value,
     get_text_content: (el) => el.textContent,
     make_user_interface: (output = 0) => {
@@ -1221,14 +1221,5 @@ export const LIBRARY = {
 export const STD = {
   void: VOID,
   VOID,
-  _: VOID,
-  print_out: (...args) => console.log(...args),
-  tco:
-    (func) =>
-    (...args) => {
-      let result = func(...args)
-      while (typeof result === 'function') result = result()
-      return result
-    },
   LIBRARY,
 }

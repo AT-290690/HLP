@@ -1,7 +1,7 @@
 import { removeNoCode, wrapInBody } from './helpers.js'
 import { parse } from '../core/parser.js'
 import { LZUTF8 } from './lz-utf8.js'
-import { tokens } from '../core/tokens.js'
+import { tokens } from '../core/tokeniser.js'
 import { LIBRARY } from '../extensions/extentions.js'
 
 const ABC = [
