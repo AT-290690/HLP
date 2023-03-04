@@ -658,7 +658,6 @@ describe('compression should work as expected', () => {
     .: map << [-> [x; ~[x; "0"]]];
     .: to_string [","];
   ]`,
-      ,
       `|>["1,2,3,4,5,6"; 
     .: from_string [","];
     .: map << [-> [x; ~[x; "0"]]];

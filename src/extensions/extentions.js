@@ -1,6 +1,6 @@
+import { compileToJs } from '../core/compiler.js'
 import { VOID } from '../core/tokeniser.js'
 import { LZUTF8 } from '../misc/lz-utf8.js'
-import { runFromInterpreted } from '../misc/utils.js'
 import Inventory from './Inventory.js'
 export const protolessModule = (methods) => {
   const env = Object.create(null)
@@ -30,10 +30,15 @@ export const LIBRARY = {
         .then((data) => data.text())
         .then(callback)
     },
-    hlp: (url, callback) =>
+    hlp_inter: (url, callback) => {
       fetch(url)
         .then((raw) => raw.text())
-        .then((source) => callback(runFromInterpreted(source))),
+        .then((source) => callback(runFromInterpreted(source)))
+    },
+    hlp_comp: (url) =>
+      fetch(url)
+        .then((raw) => raw.text())
+        .then((source) => appendScript(source)),
   },
   STORAGE: {
     NAME: 'STORAGE',
