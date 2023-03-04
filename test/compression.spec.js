@@ -615,4 +615,19 @@ describe('compression should work as expected', () => {
           runFromCompiled(source).items
         )
       ))
+  it(':[] should work', () =>
+    [
+      `:= [fn; -> [x; : [
+    ;; @check ?== [x; 1];
+    * [x; 2]]]]; fn [3];`,
+      `:[1; 2; 3]`,
+      `:[1]`,
+      `:= [f; -> [x; y; : [*[x; y]]]]; f[3; 4]`,
+      `:= [x; : [1]]; x`,
+      `:= [x; : [1; 2; 3]]; x`,
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        strictEqual(runFromInterpreted(source), runFromCompiled(source))
+      ))
 })

@@ -35,15 +35,21 @@ const compile = () => {
     if (!tree) return ''
     if (tree.type === 'apply') {
       switch (tree.operator.name) {
-        case ':':
-          return `(()=>{${tree.args
-            .map((x, i) => {
-              const res = dfs(x, locals)
-              return res !== undefined && i === tree.args.length - 1
-                ? ';return ' + res.toString().trimStart()
-                : res
-            })
-            .join('')}})()`
+        case ':': {
+          if (tree.args.length > 1) {
+            return `(()=>{${tree.args
+              .map((x, i) => {
+                const res = dfs(x, locals)
+                return res !== undefined && i === tree.args.length - 1
+                  ? ';return ' + res.toString().trimStart()
+                  : res
+              })
+              .join('')}})()`
+          } else {
+            const res = dfs(tree.args[0], locals)
+            return res !== undefined ? res.toString().trim() : ''
+          }
+        }
         case ':=': {
           let name,
             out = '(('

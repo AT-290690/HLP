@@ -543,4 +543,17 @@ describe('compilation should work as expected', () => {
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
     ))
+  it(':[] should work', () =>
+    [
+      `:= [fn; -> [x; : [
+    ;; @check ?== [x; 1];
+    * [x; 2]]]]; fn [3];`,
+      `:[1; 2; 3]`,
+      `:[1]`,
+      `:= [f; -> [x; y; : [*[x; y]]]]; f[3; 4]`,
+      `:= [x; : [1]]; x`,
+      `:= [x; : [1; 2; 3]]; x`,
+    ].forEach((source) =>
+      strictEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
 })

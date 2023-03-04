@@ -202,6 +202,8 @@ switch (flag?.toLowerCase()) {
 ------------------------------------
 | local   |   create local link     |
 ------------------------------------
+| basic   |   run no extensions     |
+------------------------------------
       `)
 }
 if (!filename)

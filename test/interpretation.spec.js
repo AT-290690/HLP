@@ -697,4 +697,11 @@ describe('interpretation should work as expected', () => {
       [1, 0]
     )
   })
+  it(':[] should work', () =>
+    strictEqual(
+      runFromInterpreted(`:= [fn; -> [x; : [
+      ;; @check ?== [x; 1];
+      * [x; 2]]]]; fn [3];`),
+      6
+    ))
 })
