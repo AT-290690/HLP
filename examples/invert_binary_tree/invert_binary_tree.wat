@@ -5,7 +5,7 @@
 
 ;; @test invert_binary_tree [t1]; === [t1; t2]
 ;; @test invert_binary_tree [t3]; === [t3; t4] 
-:= [invert_binary_tree; -> [node;  : [
+:= [invert_binary_tree; -> [node; : [
       ;; @check is_object [node]
       ? [:: size [node]; : [
         := [temp_l; . [node; left]];

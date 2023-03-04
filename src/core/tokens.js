@@ -534,7 +534,7 @@ const tokens = {
   },
   ['?==']: (args, env) => {
     if (!args.length || args.length > 2)
-      throw new SyntaxError('Invalid number of arguments for ?!= []')
+      throw new SyntaxError('Invalid number of arguments for ?== []')
     const entity = evaluate(args[0], env)
     const type = evaluate(args[1], env)
     return +(entity.constructor.name === type.constructor.name)

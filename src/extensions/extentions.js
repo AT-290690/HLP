@@ -1223,14 +1223,6 @@ export const STD = {
   VOID,
   _: VOID,
   print_out: (...args) => console.log(...args),
-  // IMP: module => {
-  //   console.log(
-  //     `<- [${Object.keys(module)
-  //       .filter(x => x !== 'NAME')
-  //       .map(x => `"${x}"`)
-  //       .join(';')}] [${module.NAME}];\n`
-  //   )
-  // },
   tco:
     (func) =>
     (...args) => {

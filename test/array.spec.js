@@ -893,11 +893,14 @@ describe('arrays should work as expected', () => {
     const group = new Brrr()
       .with(1, 2, 3, 4, 4, 5, 8, 9, 1, 2, 32, 222, 2)
       .group((item) => (item % 2 == 0 ? 'even' : 'odd'))
-      .map((item) => item.items)
-    deepEqual(group.items, {
-      odd: [1, 3, 5, 9, 1],
-      even: [2, 4, 4, 8, 2, 32, 222, 2],
-    })
+
+    deepEqual(
+      group,
+      new Map([
+        ['odd', Brrr.of(1, 3, 5, 9, 1)],
+        ['even', Brrr.of(2, 4, 4, 8, 2, 32, 222, 2)],
+      ])
+    )
   })
 
   it('.isSorted should work', () => {
@@ -1193,72 +1196,6 @@ describe('arrays should work as expected', () => {
       ),
       false
     )
-  })
-  it('.shortCircuit should work', () => {
-    equal(
-      Brrr.of(1, 2, 3, 4)
-        .shortCircuitUnless((self) => self.isEmpty())
-        .map((x) => x ** 2)
-        .filter((x) => x % 2)
-        .isShortCircuited(),
-      true
-    )
-
-    equal(
-      Brrr.of()
-        .shortCircuitIf((self) => self.isEmpty())
-        .map((x) => x ** 2)
-        .filter((x) => x % 2)
-        .isShortCircuited(),
-      true
-    )
-
-    deepEqual(
-      Brrr.of(1, 2, 3, 4)
-        .shortCircuitIf((self) => self.isEmpty())
-        .map((x) => x ** 2)
-        .filter((x) => x % 2).items,
-      [1, 9]
-    )
-    equal(
-      Brrr.of()
-        .shortCircuitIf((self) => self.isEmpty())
-        .map((x) => x ** 2)
-        .filter((x) => x % 2).constructor.name,
-      '_Shadow'
-    )
-  })
-
-  it(`.do should work`, () => {
-    deepEqual(
-      Brrr.of(1, 2, 3, 4).do((array) => array.append(10)).items,
-      [1, 2, 3, 4, 10]
-    )
-    deepEqual(
-      Brrr.of(1, 2, 3, 4).do((array) => array.reverse()).items,
-      [4, 3, 2, 1]
-    )
-    deepEqual(Brrr.of(1, 2, 3, 4).do((array) => array.clear()).items, [])
-  })
-
-  it(`.window  should work`, () => {
-    const win = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-    const a = Brrr.from(win).window(3)
-    deepEqual(a.position(1).items, [1, 2, 3])
-    deepEqual(a.position(2).items, [2, 3, 4])
-    deepEqual(a.position(3).items, [3, 4, 5])
-
-    const b = Brrr.from(win).window(5)
-    deepEqual(b.iterable().items, [
-      [1, 2, 3, 4, 5],
-      [2, 3, 4, 5, 6],
-      [3, 4, 5, 6, 7],
-      [4, 5, 6, 7, 8],
-      [5, 6, 7, 8, 9],
-      [6, 7, 8, 9, 10],
-      [7, 8, 9, 10, 11],
-      [8, 9, 10, 11, 12],
-    ])
   })
 
   it(`.imbalance should work`, () => {
