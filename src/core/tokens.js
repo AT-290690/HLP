@@ -304,28 +304,6 @@ const tokens = {
       return acc
     }, new Map())
   },
-  // ['.?']: (args, env) => {
-  //   const prop = []
-  //   const entityName = args[0].name
-  //   for (let i = 1; i < args.length; ++i) {
-  //     const arg = args[i]
-  //     const p = extract(arg, env)
-  //     if (p == undefined)
-  //       throw new TypeError(`Void key for accesing :: ${entityName}`)
-  //     prop.push(extract(arg, env).toString())
-  //   }
-  //   for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
-  //     if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
-  //       if (
-  //         scope[entityName] == undefined ||
-  //         !(scope[entityName] instanceof Map)
-  //       )
-  //         throw new TypeError(
-  //           `:: ${entityName} is not a instance of :: at .? []`
-  //         )
-  //       return +scope[entityName].has(prop[0])
-  //     }
-  // },
   ['.?']: (args, env) => {
     if (args.length !== 2)
       throw new RangeError('Invalid number of arguments for .? []')

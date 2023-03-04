@@ -32,11 +32,6 @@ const importArgs = (expr) =>
     return arg
   }))
 
-// const validateDefinitionsInPipe = (args) => {
-//   if (args.some((arg) => arg?.operator?.name === ':='))
-//     throw new TypeError(`Can't use := [] inside a |> []`)
-//   return args
-// }
 const pipeDfs = (stack, parent) => {
   const current = stack.pop()
   if (current) {
