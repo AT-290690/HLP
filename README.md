@@ -1,7 +1,7 @@
 # HLP (Hyper Link Program)
 
 <p align="center">
-<img width="200" src="./editor/assets/images/chip.svg"/>
+<img width="100" src="./editor/assets/images/drone.svg"/>
 </p>
 a programming language for writting ultra compressed code that fits in a link
 
