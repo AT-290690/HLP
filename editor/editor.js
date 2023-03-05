@@ -82,10 +82,21 @@ droneButton.addEventListener('click', () => {
     })
   )
 })
+
+const cmds = {
+  validate: ';; validate',
+  assert: ';; assert',
+  app: ';; app',
+  share: ';; share',
+  window: ';; window',
+  log: ';; log',
+  exe: ';; exe',
+}
+
 const withCommand = (command = editor.getLine(0)) => {
   const value = editor.getValue()
   switch (command.trim()) {
-    case ';; validate':
+    case cmds.validate:
       {
         let result = value
         extractComments(result)
@@ -103,7 +114,7 @@ const withCommand = (command = editor.getLine(0)) => {
         }
       }
       break
-    case ';; assert':
+    case cmds.assert:
       {
         const mocks = extractComments(value)
           .map((x) => x.split(';; @mock')[1]?.trim())
@@ -126,7 +137,7 @@ const withCommand = (command = editor.getLine(0)) => {
           )
       }
       break
-    case ';; app':
+    case cmds.app:
       {
         const encoded = encodeURIComponent(encodeBase64(value))
         window.open(
@@ -136,7 +147,7 @@ const withCommand = (command = editor.getLine(0)) => {
         )
       }
       break
-    case ';; share':
+    case cmds.share:
       {
         const link = `https://at-290690.github.io/hlp/?l=${encodeURIComponent(
           encodeBase64(value)
@@ -147,7 +158,7 @@ const withCommand = (command = editor.getLine(0)) => {
       }
 
       break
-    case ';; window':
+    case cmds.window:
       {
         const encoded = encodeURIComponent(encodeBase64(value))
         window.open(
@@ -158,7 +169,7 @@ const withCommand = (command = editor.getLine(0)) => {
         )
       }
       break
-    case ';; log':
+    case cmds.log:
       {
         const selection = editor.getSelection().trim()
         if (selection) {
@@ -175,23 +186,22 @@ const withCommand = (command = editor.getLine(0)) => {
         } else execute(`:=[__debug_log; LOGGER[0]]; __debug_log[:[${value}]]`)
       }
       break
+    case cmds.exe:
     default:
       execute(value)
       break
   }
 }
+const knownCmds = (cmd) => cmd.trim() in cmds
 document.addEventListener('keydown', (e) => {
   if (e.key && e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey)) {
     e = e || window.event
     e.preventDefault()
     e.stopPropagation()
     consoleEditor.setValue('')
-    editor
-      .getLine(0)
-      .split(';; ')
-      .map((x) => `;; ${x.trim()}`)
-      .forEach((cmd) => withCommand(cmd))
-    // consoleEditor.setValue(encoded)
+    const cmds = editor.getLine(0).split(';; ').filter(knownCmds)
+    if (!cmds.length) cmds.push(';; exe')
+    cmds.map((x) => `;; ${x.trim()}`).forEach((cmd) => withCommand(cmd))
   } else if (e.key === 'Escape') {
     e.preventDefault()
     e.stopPropagation()

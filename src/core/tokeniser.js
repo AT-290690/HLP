@@ -469,7 +469,10 @@ const tokens = {
     const index = evaluate(args[1], env)
     if (!Number.isInteger(index))
       throw new TypeError('Second argument of ^ must be a number')
-    if (!array.isInBounds(Math.abs(index)))
+    if (
+      (index < 0 && !array.isInBounds(array.length + index)) ||
+      (index >= 0 && !array.isInBounds(index))
+    )
       throw new RangeError(
         `Index is out of bounds ^ [${index}] .: [${array.length}]`
       )
