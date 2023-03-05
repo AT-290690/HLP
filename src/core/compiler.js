@@ -494,7 +494,6 @@ const compile = () => {
           .then(encodes => {
             const callback = ${module}
             const signals = Inventory.from(encodes.map((encode => buildModule(decodeBase64(decodeURIComponent(encode.trim()))))))
-            console.log(signals)
             ;callback(signals)
           })`
           return out
