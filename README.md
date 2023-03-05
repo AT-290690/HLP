@@ -14,7 +14,7 @@ here is an example program:
 I know that doesn't explain much ;) 
 here is a more complex example
 
-Game of Life
+## Game of Life
 ```rs
 ;; window
 <- [SKETCH; MATH; DOM; EVENT; STYLE] [LIBRARY]; 
