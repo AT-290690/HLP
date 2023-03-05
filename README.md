@@ -1,5 +1,5 @@
 # HLP 
-__Hyper Link Program__
+~* Hyper Link Program
 
 <p align="center">
 <img width="100" src="./editor/assets/images/icon-512.png"/>
