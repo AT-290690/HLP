@@ -249,12 +249,6 @@ const tokens = {
     })
     const body = args[args.length - 1]
     return (...args) => {
-      //     if (args.length !== argNames.length)
-      //       throw new TypeError(
-      //         'Invalid number of arguments for -> [] near ["' +
-      //           argNames.join('; ') +
-      //           '"]'
-      //       )
       const localEnv = Object.create(env)
       for (let i = 0; i < args.length; ++i) localEnv[argNames[i]] = args[i]
       return evaluate(body, localEnv)

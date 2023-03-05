@@ -3,6 +3,9 @@ import { parse } from '../core/parser.js'
 import { LZUTF8 } from './lz-utf8.js'
 import { tokens } from '../core/tokeniser.js'
 import { LIBRARY } from '../extensions/extentions.js'
+import { evaluate } from '../core/interpreter.js'
+import Inventory from '../extensions/Inventory.js'
+import { runFromInterpreted } from './utils.js'
 
 const ABC = [
   'a',
@@ -58,6 +61,25 @@ const ABC = [
   'Y',
   'Z',
 ]
+
+tokens['~*'] = (args, env) => {
+  if (!args.length) throw new RangeError('Invalid number of arguments to ~* []')
+  const callback = evaluate(args.pop(), env)
+  if (typeof callback !== 'function')
+    throw new TypeError('Second argument of ~* must be an -> []')
+  Promise.all(
+    args.map((arg) => fetch(evaluate(arg, env)).then((r) => r.text()))
+  ).then((encodes) => {
+    const signals = Inventory.from(
+      encodes.map((encode) =>
+        runFromInterpreted(decodeBase64(decodeURIComponent(encode.trim())))
+      )
+    )
+    callback(signals)
+  })
+  return 0
+}
+
 const OFFSET = 123
 const generateCompressionRunes = (start) => {
   return Object.keys(tokens)

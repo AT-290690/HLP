@@ -1,4 +1,3 @@
-import { compileToJs } from '../core/compiler.js'
 import { VOID } from '../core/tokeniser.js'
 import { LZUTF8 } from '../misc/lz-utf8.js'
 import Inventory from './Inventory.js'
@@ -1225,6 +1224,5 @@ export const LIBRARY = {
 
 export const STD = {
   void: VOID,
-  VOID,
   LIBRARY,
 }

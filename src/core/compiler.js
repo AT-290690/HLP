@@ -487,6 +487,18 @@ const compile = () => {
             locals
           )});`
         }
+        case '~*': {
+          const module = dfs(tree.args.pop(), locals)
+          const links = `[${tree.args.map((x) => dfs(x, locals)).join(',')}]`
+          const out = `Promise.all(${links}.map(f => fetch(f).then(r => r.text())))
+          .then(encodes => {
+            const callback = ${module}
+            const signals = Inventory.from(encodes.map((encode => buildModule(decodeBase64(decodeURIComponent(encode.trim()))))))
+            console.log(signals)
+            ;callback(signals)
+          })`
+          return out
+        }
         default: {
           if (tree.operator.name)
             return (
