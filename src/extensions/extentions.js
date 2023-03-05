@@ -29,15 +29,15 @@ export const LIBRARY = {
         .then((data) => data.text())
         .then(callback)
     },
-    hlp_inter: (url, callback) => {
-      fetch(url)
-        .then((raw) => raw.text())
-        .then((source) => callback(runFromInterpreted(source)))
+  },
+  REGEXP: {
+    NAME: "REGEXP",
+    make_regexp: (regex) => new RegExp(regex),
+    match: (string, regex) => {
+      console.log(string, regex)
+     return string.match(regex)
     },
-    hlp_comp: (url) =>
-      fetch(url)
-        .then((raw) => raw.text())
-        .then((source) => appendScript(source)),
+    replace: (string, regex) => string.replace(regex) 
   },
   STORAGE: {
     NAME: 'STORAGE',
