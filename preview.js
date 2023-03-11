@@ -41,6 +41,6 @@ window.buildModule = (str) => {
 }
 appendScript(
   decodeBase64(
-    decodeURIComponent(new URLSearchParams(location.search).get('l'))
+    decodeURIComponent(new URLSearchParams(location.search).get('l') ?? '')
   )
 )
