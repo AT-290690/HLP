@@ -227,10 +227,10 @@ describe('compilation should work as expected', () => {
 
   it('.:find>> should work', () =>
     [
-      `.:find>> [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
-      `.:find<< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
-      `.:find_index>> [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
-      `.:find_index<< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]`,
+      '.:find>> [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]',
+      '.:find<< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]',
+      '.:find_index>> [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]',
+      '.:find_index<< [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]',
       `|> [.: [1; 2; 3; 4; 5; 6; 7; 8];
       .: filter [-> [x; % [x; 2]]];
       .: map << [-> [x; * [x; 2]]];
@@ -240,8 +240,8 @@ describe('compilation should work as expected', () => {
     ))
   it('.:map>> and .:map<< should work', () =>
     [
-      `.:map>> [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`,
-      `|> [.: [1; 2; 3; 4]; .:map>> [-> [x; i; a; + [i; * [x; 2]]]]; .:map>> [-> [x; i; a; + [i; * [x; 2]]]]]`,
+      '.:map>> [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]',
+      '|> [.: [1; 2; 3; 4]; .:map>> [-> [x; i; a; + [i; * [x; 2]]]]; .:map>> [-> [x; i; a; + [i; * [x; 2]]]]]',
     ].forEach((source) =>
       deepStrictEqual(
         runFromInterpreted(source).items,
@@ -589,15 +589,24 @@ describe('compilation should work as expected', () => {
     .: slice [2; 4];
     .: to_string [","];
   ]`,
-      `+ [.: length [.: [1;2;3;4]]; :: size [:: ["x";1; "y"; 2]]]`,
+      '+ [.: length [.: [1;2;3;4]]; :: size [:: ["x";1; "y"; 2]]]',
     ].forEach((source) =>
       strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
   it(`=== and !== should work`, () =>
     [
-      `===[.: [1;2;3]; .: [1;2;3]]`,
-      `!== [.: [1;2;3]; .: [1;2;3]]`,
-      `.: quick_sort [.: [10; 23; 1; 4; 0; 1; 3]; -1]`,
+      '===[.: [1;2;3]; .: [1;2;3]]',
+      '!== [.: [1;2;3]; .: [1;2;3]]',
+      '.: quick_sort [.: [10; 23; 1; 4; 0; 1; 3]; -1]',
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+  it(`/ should work`, () =>
+    [
+      '* [4; / [2]]',
+      '* [12; / [6]]',
+      '* [8; / [2]]',
+      '* [4; / [4; 2]]',
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source), runFromCompiled(source))
     ))

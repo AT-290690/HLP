@@ -45,7 +45,7 @@ describe('interpretation should work as expected', () => {
   it('simple math', () => {
     strictEqual(
       runFromInterpreted(
-        `:= [x; 30]; := [result; + [/ [* [+ [1; 2; 3]; 2]; % [4; 3]]; x]];`
+        `:= [x; 30]; := [result; + [* [* [+ [1; 2; 3]; 2]; / [% [4; 3]]]; x]];`
       ),
       42
     )
@@ -710,5 +710,11 @@ describe('interpretation should work as expected', () => {
     strictEqual(runFromInterpreted(`=== [.:[1;"2";3]; .:[1;2;3]]`), 0)
     strictEqual(runFromInterpreted(`!== [.:[1;2;3]; .:[1;2;3]]`), 0)
     strictEqual(runFromInterpreted(`!== [.:[1;"2";3]; .:[1;2;3]]`), 1)
+  })
+  it(`/ should work`, () => {
+    strictEqual(runFromInterpreted(`* [4; / [2]]`), 2)
+    strictEqual(runFromInterpreted(`* [12; / [6]]`), 2)
+    strictEqual(runFromInterpreted(`* [8; / [2]]`), 4)
+    strictEqual(runFromInterpreted(`* [4; / [4; 2]]`), 0.5)
   })
 })

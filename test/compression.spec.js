@@ -680,4 +680,10 @@ describe('compression should work as expected', () => {
       .forEach((source) =>
         deepEqual(runFromInterpreted(source), runFromCompiled(source))
       ))
+  it(`/ should work`, () =>
+    ['* [4; / [2]]', '* [12; / [6]]', '* [8; / [2]]', '* [4; / [4; 2]]']
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      ))
 })

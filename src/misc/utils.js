@@ -114,12 +114,7 @@ export const compilePlainJs = (source) => {
 ${top}${program}`
 }
 
-export const compileHtml = (
-  source,
-  scripts = `<script
-src="./src/misc/two.min.js"
-></script>`
-) => {
+export const compileHtml = (source, scripts = '') => {
   const inlined = wrapInBody(removeNoCode(source))
   const { top, program, modules } = compileToJs(parse(inlined))
   const lib = treeShake(modules)
@@ -134,12 +129,7 @@ const VOID = 0;
 <script> (() => { ${top}${program} })()</script>
 </body>`
 }
-export const compileHtmlModule = (
-  source,
-  scripts = `<script
-  src="./src/misc/two.min.js"
-  ></script>`
-) => {
+export const compileHtmlModule = (source, scripts = '') => {
   const inlined = wrapInBody(removeNoCode(source))
   const { top, program, modules } = compileToJs(parse(inlined))
   const lib = treeShake(modules)
