@@ -180,10 +180,9 @@ describe('compression should work as expected', () => {
       <- [floor] [MATH];
       .:map>> [.: [1.123; 3.14; 4.9]; floor];
       `,
-      `<- [MATH; LOGIC; STRING; LOOP; CONVERT] [LIBRARY];
+      `<- [MATH; LOGIC; STRING; LOOP] [LIBRARY];
       <- [floor; PI; sin; cos] [MATH];
       <- [trim; upper_case] [STRING];
-      <- [string] [CONVERT];
       <- [repeat] [LOOP];
       <- [is_equal] [LOGIC];
 
@@ -193,7 +192,7 @@ describe('compression should work as expected', () => {
         > [10];
         is_equal [10];  
       ]; 1; 
-      |> [15; + [100]; string []; ~ ["hello"; " "; "there"]; upper_case []]];
+      |> [15; + [100]; \` []; ~ ["hello"; " "; "there"]; upper_case []]];
       `,
       `<- [MATH] [LIBRARY]; <- [PI] [MATH]; PI;`,
     ]

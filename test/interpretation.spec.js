@@ -173,10 +173,9 @@ describe('interpretation should work as expected', () => {
     )
 
     strictEqual(
-      runFromInterpreted(`<- [MATH; LOGIC; STRING; LOOP; CONVERT] [LIBRARY];
+      runFromInterpreted(`<- [MATH; LOGIC; STRING; LOOP] [LIBRARY];
       <- [floor; PI; sin; cos] [MATH];
       <- [trim; upper_case] [STRING];
-      <- [string] [CONVERT];
       <- [repeat] [LOOP];
       <- [is_equal] [LOGIC];
   
@@ -186,7 +185,7 @@ describe('interpretation should work as expected', () => {
         > [10];
         is_equal [10];  
       ]; 1; 
-      |> [15; + [100]; string []; ~ ["hello"; " "; "there"]; upper_case []]];
+      |> [15; + [100]; \`[]; ~ ["hello"; " "; "there"]; upper_case []]];
       `),
       '115HELLO THERE'
     )

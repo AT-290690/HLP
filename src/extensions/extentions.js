@@ -213,41 +213,6 @@ export const LIBRARY = {
     replace_all: (string, match, replace) => string.replaceAll(match, replace),
     sp: ' ',
   },
-  CONVERT: {
-    NAME: 'CONVERT',
-    array: (thing) => [...thing],
-    boolean: (thing) => Boolean(thing),
-    string: (thing) => thing.toString(),
-    integer: (number) => parseInt(number.toString()),
-    float: (number, base = 1) => +Number(number).toFixed(base),
-    number: (thing) => Number(thing),
-    cast: (value, type) => {
-      if (type === '1')
-        return typeof value === 'object'
-          ? Object.keys(value).length
-          : Number(value)
-      else if (type === '')
-        return typeof value === 'object' ? JSON.stringify(value) : String(value)
-      else if (value === null || value === undefined) return VOID
-      else if (type === '.:') {
-        if (Inventory.isBrrr(value)) return value
-        else if (typeof value === 'string') return [...value]
-        else if (typeof value === 'number')
-          return [...String(value)].map(Number)
-        else if (typeof value === 'object') return Object.entries(value)
-      } else if (type === '::') {
-        if (typeof value === 'string' || Array.isArray(value))
-          return { ...value }
-        else if (typeof value === 'number') {
-          const out = { ...String(value) }
-          for (const key in out) {
-            out[key] = Number(out[key])
-          }
-          return out
-        } else if (typeof value === 'object') return value
-      } else return VOID
-    },
-  },
   CONSOLE: {
     console_log: (thing) => console.log(thing),
     NAME: 'CONSOLE',
@@ -804,6 +769,5 @@ export const LIBRARY = {
 }
 
 export const STD = {
-  void: VOID,
   LIBRARY,
 }
