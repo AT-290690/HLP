@@ -11,18 +11,18 @@ make_css_link ["https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"];
 ~*
 ["https://gist.githubusercontent.com/AT-290690/a06c8c5c5726e40ce7a1f24fba8cd601/raw/b2f530a95c92ec28fbcc67815f7bab89e85aea44/article.txt";
  -> [crates; : [
-   := [data; ^ [crates; 0]];
+   := [data; .: . [crates; 0]];
   := [
-      content_title; |> [data; ^ [0]; ^ [0]]; 
-      content_subtitle;|> [data; ^ [0]; ^ [1]];
-      content_author; |> [data; ^ [0]; ^ [2]];
-      content_git; |> [data; ^ [0]; ^ [3]];
-      content_exposition; ^ [data; 1];
-      content_goal; ^ [data; 2];
-      content_explanation; ^ [data; 3];
-      content_arithmetic; ^ [data; 4];
-      content_source; ^ [data; 5];
-      content_conclusion; ^ [data; 6]
+      content_title; |> [data; .: . [0]; .: . [0]]; 
+      content_subtitle;|> [data; .: . [0]; .: . [1]];
+      content_author; |> [data; .: . [0]; .: . [2]];
+      content_git; |> [data; .: . [0]; .: . [3]];
+      content_exposition; .: . [data; 1];
+      content_goal; .: . [data; 2];
+      content_explanation; .: . [data; 3];
+      content_arithmetic; .: . [data; 4];
+      content_source; .: . [data; 5];
+      content_conclusion; .: . [data; 6]
   ];
   make_container [|> [make_paragraph []; add_text_content["~* hlp v1.0.0"]; add_class ["mb-2"]; set_style [text_align ["c"]]]];
   |> [make_container [
@@ -69,29 +69,29 @@ make_css_link ["https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"];
               add_class ["media"]];
       
           |> [make_container [
-            add_text_content [make_paragraph []; ^ [content_exposition; 0]];
-            add_text_content [make_strong_text []; ^ [content_exposition; 1]];
+            add_text_content [make_paragraph []; .: . [content_exposition; 0]];
+            add_text_content [make_strong_text []; .: . [content_exposition; 1]];
             
             make_paragraph [];
             
-            add_text_content [make_paragraph []; ^ [content_exposition; 2]]; 
-            add_text_content [make_paragraph []; ^ [content_goal; 0]];
-            add_text_content [make_italic_text []; ^ [content_goal; 1]]; make_paragraph [];
-            add_text_content [make_paragraph []; ^ [content_goal; 2]];
+            add_text_content [make_paragraph []; .: . [content_exposition; 2]]; 
+            add_text_content [make_paragraph []; .: . [content_goal; 0]];
+            add_text_content [make_italic_text []; .: . [content_goal; 1]]; make_paragraph [];
+            add_text_content [make_paragraph []; .: . [content_goal; 2]];
             
             make_paragraph [];
             
-            add_text_content [make_paragraph []; ^ [content_goal; 3]];
-            add_text_content [make_strong_text []; ^ [content_goal; 4]]; 
+            add_text_content [make_paragraph []; .: . [content_goal; 3]];
+            add_text_content [make_strong_text []; .: . [content_goal; 4]]; 
    |> [make_figure [
             make_image ["https://miro.medium.com/max/1400/1*ErCCPAEcI3Gh1R4My8n8lQ.webp"]];
             add_class ["image"];  add_class ["card-image"]];
   
        add_text_content [make_paragraph []; 
-              ^ [content_explanation; 0]];
+              .: . [content_explanation; 0]];
   
        add_text_content [make_paragraph []; 
-              ^ [content_explanation; 1]];
+              .: . [content_explanation; 1]];
     
    |> [make_figure [
             make_image ["https://miro.medium.com/max/1400/1*RiphOyRvYqkB4Z3Dv9PGgg.webp"]];
@@ -99,23 +99,23 @@ make_css_link ["https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"];
   
             
              add_text_content [make_paragraph []; 
-           ^ [content_explanation; 2]];
+           .: . [content_explanation; 2]];
   
             
    add_text_content [make_paragraph []; 
-  ^ [content_arithmetic; 0]]; 
+  .: . [content_arithmetic; 0]]; 
   insert_into_container [make_pre []; 
-  add_text_content [make_paragraph []; ^ [content_arithmetic; 1]];
-  add_text_content [make_paragraph []; ^ [content_arithmetic; 2]];
-  add_text_content [make_paragraph []; ^ [content_arithmetic; 3]];
-  add_text_content [make_paragraph []; ^ [content_arithmetic; 4]];
-  add_text_content [make_paragraph []; ^ [content_arithmetic; 5]];
-  add_text_content [make_paragraph []; ^ [content_arithmetic; 6]];
-  add_text_content [make_paragraph []; ^ [content_arithmetic; 7]];
-  add_text_content [make_paragraph []; ^ [content_arithmetic; 8]];
-  add_text_content [make_paragraph []; ^ [content_arithmetic; 9]];
-  add_text_content [make_paragraph []; ^ [content_arithmetic; 10]];
-  add_text_content [make_paragraph []; ^ [content_arithmetic; 11]]];
+  add_text_content [make_paragraph []; .: . [content_arithmetic; 1]];
+  add_text_content [make_paragraph []; .: . [content_arithmetic; 2]];
+  add_text_content [make_paragraph []; .: . [content_arithmetic; 3]];
+  add_text_content [make_paragraph []; .: . [content_arithmetic; 4]];
+  add_text_content [make_paragraph []; .: . [content_arithmetic; 5]];
+  add_text_content [make_paragraph []; .: . [content_arithmetic; 6]];
+  add_text_content [make_paragraph []; .: . [content_arithmetic; 7]];
+  add_text_content [make_paragraph []; .: . [content_arithmetic; 8]];
+  add_text_content [make_paragraph []; .: . [content_arithmetic; 9]];
+  add_text_content [make_paragraph []; .: . [content_arithmetic; 10]];
+  add_text_content [make_paragraph []; .: . [content_arithmetic; 11]]];
   make_paragraph []]; 
               
     make_container [|> [make_figure [
@@ -123,21 +123,21 @@ make_css_link ["https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"];
     add_class ["image"];  
     add_class ["card-image"]];
              
-    add_text_content [make_italic_text []; ^ [content_source; 0]];
+    add_text_content [make_italic_text []; .: . [content_source; 0]];
       make_paragraph [];
     |> [
     make_paragraph [];
     insert_into_container [
-    add_text_content [make_italic_text []; ^ [content_source; 1]]]];
+    add_text_content [make_italic_text []; .: . [content_source; 1]]]];
   
   
     |> [
     make_paragraph [];
     insert_into_container [
-    add_text_content [make_strong_text []; ^ [content_source; 2]]]];
+    add_text_content [make_strong_text []; .: . [content_source; 2]]]];
   
                     
-    add_text_content [make_italic_text []; ^ [content_source; 3]]];
+    add_text_content [make_italic_text []; .: . [content_source; 3]]];
     add_class ["content"]];
   
     make_paragraph [];
@@ -149,9 +149,9 @@ make_css_link ["https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"];
               add_class ["is-square"]];
           
      add_class [make_container [
-               add_text_content [make_paragraph []; ^ [content_conclusion; 0]];
-             add_text_content [make_anchor ["https://github.com/AT-290690/brrr"]; ^ [content_conclusion; 1]];
-            add_text_content [make_paragraph [];  ^ [content_conclusion; 2]
+               add_text_content [make_paragraph []; .: . [content_conclusion; 0]];
+             add_text_content [make_anchor ["https://github.com/AT-290690/brrr"]; .: . [content_conclusion; 1]];
+            add_text_content [make_paragraph [];  .: . [content_conclusion; 2]
              ]];  add_class ["card-content"]]; 
           
           make_container [
@@ -170,7 +170,7 @@ make_css_link ["https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"];
           |> [make_container [
             add_text_content [
               make_span []; 
-              ^ [content_source; 5]]; 
+              .: . [content_source; 5]]; 
               add_text_content [make_anchor ["https://at-290690.github.io/hlp/editor"]; 
               "made with hlp"];
             make_paragraph [];

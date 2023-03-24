@@ -26,14 +26,14 @@
 := [invert_binary_tree; -> [node; : [
       ;; @check is_object [node]
       ? [:: size [node]; : [
-        := [temp_l; . [node; left]];
-        := [temp_r; . [node; right]];
+        := [temp_l; :: . [node; left]];
+        := [temp_r; :: . [node; right]];
 
-        .= [node; left; temp_r];
-        .= [node; right; temp_l];
+        :: .= [node; left; temp_r];
+        :: .= [node; right; temp_l];
         
-        invert_binary_tree [. [node; left]];
-        invert_binary_tree [. [node; right]];
+        invert_binary_tree [:: . [node; left]];
+        invert_binary_tree [:: . [node; right]];
       ]; node]]]];
 
 := [tree; make_node [3; make_node[4; :: []; :: []]; make_node[5; :: []; :: []]]];

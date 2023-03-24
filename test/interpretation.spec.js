@@ -18,7 +18,7 @@ describe('interpretation should work as expected', () => {
       Error
     )
   })
-  it(':: ::keys ::entries ::values ::size .? should work', () => {
+  it(':: ::keys ::entries ::values ::size ::.? should work', () => {
     deepStrictEqual(
       runFromInterpreted(`::entries [:: ["x"; 10; "y"; 23; "z"; 4]]`).items,
       [
@@ -37,7 +37,7 @@ describe('interpretation should work as expected', () => {
     )
     deepStrictEqual(
       runFromInterpreted(
-        `:= [obj; :: ["x"; 3; "y"; 4]]; .: [.? [obj; "z"]; .? [obj; "x"]; ::size [obj]]`
+        `:= [obj; :: ["x"; 3; "y"; 4]]; .: [::.? [obj; "z"]; ::.? [obj; "x"]; ::size [obj]]`
       ).items,
       [0, 1, 2]
     )
@@ -90,7 +90,7 @@ describe('interpretation should work as expected', () => {
       <- [max; infinity] [MATH];
       ~= [loop; -> [i; nums; maxGlobal; maxSoFar;
           ? [< [i; .:length [nums]]; : [
-          = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; ^ [nums; i]]]]]];
+          = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; .: . [nums; i]]]]]];
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
       [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; * [infinity; -1]; * [infinity; -1]]`),
@@ -109,7 +109,7 @@ describe('interpretation should work as expected', () => {
                        = [max_so_far; 
                           max [0; 
                                + [max_so_far; 
-                                  ^ [nums; i]]]]]]]]]]];
+                                  .: . [nums; i]]]]]]]]]]];
     max_sub_array_sum [.: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]];`
       ),
       21
@@ -123,8 +123,8 @@ describe('interpretation should work as expected', () => {
   <- [range] [ARRAY];
 
   := [NUMBERS; range [1; 100]];
-  := [first; ^ [NUMBERS; 0]];
-  := [last; ^ [NUMBERS; - [.:length [NUMBERS]; 1]]];
+  := [first; .: . [NUMBERS; 0]];
+  := [last; .: . [NUMBERS; - [.:length [NUMBERS]; 1]]];
   := [median; + [first;
   - [* [last; * [+ [1; last]; 0.5]];
       * [first; * [+ [1; first]; 0.5]]]]];
@@ -145,9 +145,9 @@ describe('interpretation should work as expected', () => {
       := [sum; -> [item;
         ? [== [item; 0];
           0;
-          + [. [item; "value"];
-             sum [. [item; "left"]];
-             sum [. [item; "right"]]]]]];
+          + [:: . [item; "value"];
+             sum [:: . [item; "left"]];
+             sum [:: . [item; "right"]]]]]];
 
       := [myTree;
         node [1;
@@ -212,7 +212,7 @@ describe('interpretation should work as expected', () => {
       runFromInterpreted(`
     := [create_db; -> [:: ["connect"; -> ["connected!"]]]];
     := [db; create_db[]];
-    |> [db; . ["connect"]][];`),
+    |> [db; :: . ["connect"]][];`),
       'connected!'
     )
   })
@@ -230,8 +230,8 @@ describe('interpretation should work as expected', () => {
       runFromInterpreted(`
     := [out; .: []];
     >> [.: [1; 2; 3; 4]; -> [x; i; a; .:append [out; * [x; 10]]]];
-    << [.: [10; 20; 30]; -> [x; i; a; .:append [out; - [^ [out; i]; * [x; 0.1]]]]];
-    >> [out; -> [x; i; a; ^= [out; i; + [x; i]]]];
+    << [.: [10; 20; 30]; -> [x; i; a; .:append [out; - [.: . [out; i]; * [x; 0.1]]]]];
+    >> [out; -> [x; i; a; .: .= [out; i; + [x; i]]]];
     out;
       `).items,
       [10, 21, 32, 43, 31, 23, 15]
@@ -241,10 +241,10 @@ describe('interpretation should work as expected', () => {
       runFromInterpreted(`
       |> [
         .: [1; 2; 3; 4];
-        >> [-> [x; i; a; ^= [a; i; * [x; 10]]]];
-        << [-> [x; i; a; ^= [a; i; - [^ [a; i]; * [x; 0.1]]]]];
-        >> [-> [x; i; a; ^= [a; i; + [x; i]]]];
-        << [-> [x; i; a; ^= [a; i; + [^ [a; i]; i; 1]]]];
+        >> [-> [x; i; a; .: .= [a; i; * [x; 10]]]];
+        << [-> [x; i; a; .: .= [a; i; - [.: . [a; i]; * [x; 0.1]]]]];
+        >> [-> [x; i; a; .: .= [a; i; + [x; i]]]];
+        << [-> [x; i; a; .: .= [a; i; + [.: . [a; i]; i; 1]]]];
       ]
       `).items,
       [10, 21, 32, 43]
@@ -410,50 +410,50 @@ describe('interpretation should work as expected', () => {
     )
   })
 
-  it('. .? .= .!= should work', () => {
+  it(':: . .? :: .= :: .!=  should work', () => {
     strictEqual(
       runFromInterpreted(
-        `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; . ["x"]; . ["y"]]`
+        `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; :: . ["x"]; :: . ["y"]]`
       ),
       0
     )
     throws(
       () =>
         runFromInterpreted(
-          `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; . ["x"]; . ["z"]]`
+          `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; :: . ["x"]; :: . ["z"]]`
         ),
       RangeError
     )
     throws(
       () =>
         runFromInterpreted(
-          `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; . ["z"]; . ["y"]]`
+          `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; :: . ["z"]; :: . ["y"]]`
         ),
       RangeError
     )
     strictEqual(
       runFromInterpreted(
-        `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; . ["x"]; .= ["y"; 1]]; |> [obj; . ["x"]; . ["y"]]`
+        `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; :: . ["x"]; :: .= ["y"; 1]]; |> [obj; :: . ["x"]; :: . ["y"]]`
       ),
       1
     )
     strictEqual(
       runFromInterpreted(
-        `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; . ["x"]; .= ["z"; 1]]; |> [obj; . ["x"]; . ["z"]]`
+        `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; :: . ["x"]; :: .= ["z"; 1]]; |> [obj; :: . ["x"]; :: . ["z"]]`
       ),
       1
     )
     throws(
       () =>
         runFromInterpreted(
-          `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; . ["x"]; . ["z"]; .= ["f"; 1]]`
+          `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; :: . ["x"]; :: . ["z"]; :: .= ["f"; 1]]`
         ),
       RangeError
     )
     throws(
       () =>
         runFromInterpreted(
-          `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; . ["z"]; .= ["y"; 1]]`
+          `:= [obj; :: ["x"; :: ["y"; 0]]]; |> [obj; :: . ["z"]; :: .= ["y"; 1]]`
         ),
       RangeError
     )
@@ -461,42 +461,42 @@ describe('interpretation should work as expected', () => {
     throws(
       () =>
         runFromInterpreted(
-          `:= [obj; :: ["x"; :: ["y"; 0]]]; .!= [obj; "x"; "z"; "f"]`
+          `:= [obj; :: ["x"; :: ["y"; 0]]]; :: .!=  [obj; "x"; "z"; "f"]`
         ),
       RangeError
     )
     throws(
       () =>
         runFromInterpreted(
-          `:= [obj; :: ["x"; :: ["y"; 0]]]; .!= [obj; "z"; "y"]`
+          `:= [obj; :: ["x"; :: ["y"; 0]]]; :: .!=  [obj; "z"; "y"]`
         ),
       RangeError
     )
     throws(
       () =>
         runFromInterpreted(
-          `:= [obj; :: ["x"; :: ["y"; 0]]];|> [obj; . ["x"]; . ["y"]; . ["m"]]`
+          `:= [obj; :: ["x"; :: ["y"; 0]]];|> [obj; :: . ["x"]; :: . ["y"]; :: . ["m"]]`
         ),
       TypeError
     )
     throws(
       () =>
         runFromInterpreted(
-          `:= [obj; :: ["x"; :: ["y"; 0]]];|> [obj; . ["x"]; . ["y"]; .? ["m"]]`
+          `:= [obj; :: ["x"; :: ["y"; 0]]];|> [obj; :: . ["x"]; :: . ["y"]; ::.? ["m"]]`
         ),
       TypeError
     )
     throws(
       () =>
         runFromInterpreted(
-          `:= [obj; :: ["x"; :: ["y"; 0]]];|> [obj; . ["x"]; . ["y"]; .= ["m"; 4]]`
+          `:= [obj; :: ["x"; :: ["y"; 0]]];|> [obj; :: . ["x"]; :: . ["y"]; :: .= ["m"; 4]]`
         ),
       TypeError
     )
     throws(
       () =>
         runFromInterpreted(
-          `:= [obj; :: ["x"; :: ["y"; 0]]];|> [obj; . ["x"]; . ["y"]; .!= ["m"]]`
+          `:= [obj; :: ["x"; :: ["y"; 0]]];|> [obj; :: . ["x"]; :: . ["y"]; :: .!=  ["m"]]`
         ),
       TypeError
     )
@@ -620,7 +620,7 @@ describe('interpretation should work as expected', () => {
   it('.:length :. : .:is_in_bounds should work', () => {
     deepStrictEqual(
       runFromInterpreted(
-        `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:length [arr]; ^ [arr; -2]; ^ [arr; 3]; .:is_in_bounds [arr; 4]; .:is_in_bounds [arr; 9]]`
+        `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:length [arr]; .: . [arr; -2]; .: . [arr; 3]; .:is_in_bounds [arr; 4]; .:is_in_bounds [arr; 9]]`
       ).items,
       [8, 7, 4, 1, 0]
     )

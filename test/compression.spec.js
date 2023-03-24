@@ -72,7 +72,7 @@ describe('compression should work as expected', () => {
       <- [max; infinity] [MATH];
       ~= [loop; -> [i; nums; maxGlobal; maxSoFar;
           ? [< [i; .:length [nums]]; : [
-          = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; ^ [nums; i]]]]]];
+          = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; .: . [nums; i]]]]]];
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
         [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; * [infinity; -1]; * [infinity; -1]]`,
@@ -87,7 +87,7 @@ describe('compression should work as expected', () => {
                            = [max_so_far; 
                               max [0; 
                                    + [max_so_far; 
-                                      ^ [nums; i]]]]]]]]]]];
+                                      .: . [nums; i]]]]]]]]]]];
         max_sub_array_sum [.: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]];`,
     ]
       .map((source) => decompress(compress(source)))
@@ -101,8 +101,8 @@ describe('compression should work as expected', () => {
       <- [sum] [MATH];
       <- [range] [ARRAY];
       := [NUMBERS; range [1; 100]];
-      := [first; ^ [NUMBERS; 0]];
-      := [last; ^ [NUMBERS; - [.:length [NUMBERS]; 1]]];
+      := [first; .: . [NUMBERS; 0]];
+      := [last; .: . [NUMBERS; - [.:length [NUMBERS]; 1]]];
       := [median; + [first;
       - [* [last; * [+ [1; last]; 0.5]];
           * [first; * [+ [1; first]; 0.5]]]]];
@@ -123,9 +123,9 @@ describe('compression should work as expected', () => {
       := [sum; -> [item;
         ? [== [item; 0];
           0;
-          + [. [item; "value"];
-             sum [. [item; "left"]];
-             sum [. [item; "right"]]]]]];
+          + [:: . [item; "value"];
+             sum [:: . [item; "left"]];
+             sum [:: . [item; "right"]]]]]];
       := [myTree;
         node [1;
           node [2;
@@ -220,17 +220,17 @@ describe('compression should work as expected', () => {
       `
     := [out; .: []];
     >> [.: [1; 2; 3; 4]; -> [x; i; a; .:append [out; * [x; 10]]]];
-    << [.: [10; 20; 30]; -> [x; i; a; .:append [out; - [^ [out; i]; * [x; 0.1]]]]];
-    >> [out; -> [x; i; a; ^= [out; i; + [x; i]]]];
+    << [.: [10; 20; 30]; -> [x; i; a; .:append [out; - [.: . [out; i]; * [x; 0.1]]]]];
+    >> [out; -> [x; i; a; .: .= [out; i; + [x; i]]]];
     out;
     `,
       `
     |> [
       .: [1; 2; 3; 4];
-      >> [-> [x; i; a; ^= [a; i; * [x; 10]]]];
-      << [-> [x; i; a; ^= [a; i; - [^ [a; i]; * [x; 0.1]]]]];
-      >> [-> [x; i; a; ^= [a; i; + [x; i]]]];
-      << [-> [x; i; a; ^= [a; i; + [^ [a; i]; i; 1]]]];
+      >> [-> [x; i; a; .: .= [a; i; * [x; 10]]]];
+      << [-> [x; i; a; .: .= [a; i; - [.: . [a; i]; * [x; 0.1]]]]];
+      >> [-> [x; i; a; .: .= [a; i; + [x; i]]]];
+      << [-> [x; i; a; .: .= [a; i; + [.: . [a; i]; i; 1]]]];
     ]
     `,
       `
@@ -344,7 +344,7 @@ describe('compression should work as expected', () => {
           runFromCompiled(source).items
         )
       ))
-  it(':: ::keys ::entries ::values .? ::size should work', () =>
+  it(':: ::keys ::entries ::values ::size should work', () =>
     [
       `.: [::entries [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
       `.: [::keys [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
@@ -388,7 +388,7 @@ describe('compression should work as expected', () => {
       .: [1; 2; 3; 4; 5; 6; 7; 8];
       .:remove_from [2; 4];
     ]`,
-      `:= [obj; :: ["x"; 3; "y"; 4]]; .: [.? [obj; "z"]; .? [obj; "x"]; ::size [obj]]`,
+      `:= [obj; :: ["x"; 3; "y"; 4]]; .: [::.? [obj; "z"]; ::.? [obj; "x"]; ::size [obj]]`,
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
@@ -522,7 +522,7 @@ describe('compression should work as expected', () => {
       ))
   it('.:length :. : .:is_in_bounds should work', () =>
     [
-      `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:length [arr]; ^ [arr; -2]; ^ [arr; 3]; ? [.:is_in_bounds [arr; 4]; 1; 0]; ? [.:is_in_bounds [arr; 9]; 1; 0]]`,
+      `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:length [arr]; .: . [arr; -2]; .: . [arr; 3]; ? [.:is_in_bounds [arr; 4]; 1; 0]; ? [.:is_in_bounds [arr; 9]; 1; 0]]`,
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
@@ -535,7 +535,7 @@ describe('compression should work as expected', () => {
     [
       `:= [create_db; -> [:: ["connect"; -> ["connected!"]]]];
         := [db; create_db[]];
-        |> [db; . ["connect"]][];`,
+        |> [db; :: . ["connect"]][];`,
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
