@@ -219,8 +219,8 @@ describe('compression should work as expected', () => {
     [
       `
     := [out; .: []];
-    >> [.: [1; 2; 3; 4]; -> [x; i; a; .:append [out; * [x; 10]]]];
-    << [.: [10; 20; 30]; -> [x; i; a; .:append [out; - [.: . [out; i]; * [x; 0.1]]]]];
+    >> [.: [1; 2; 3; 4]; -> [x; i; a; .:>= [out; * [x; 10]]]];
+    << [.: [10; 20; 30]; -> [x; i; a; .:>= [out; - [.: . [out; i]; * [x; 0.1]]]]];
     >> [out; -> [x; i; a; .: .= [out; i; + [x; i]]]];
     out;
     `,
@@ -279,8 +279,8 @@ describe('compression should work as expected', () => {
 
   it('*loop should work', () =>
     [
-      `:= [arr; .:[]]; *loop [3; -> [.:append[arr; 1]]]`,
-      `:= [arr; .:[]]; *loop [3; -> [i; .:append[arr; +[i; 1]]]]`,
+      `:= [arr; .:[]]; *loop [3; -> [.:>=[arr; 1]]]`,
+      `:= [arr; .:[]]; *loop [3; -> [i; .:>=[arr; +[i; 1]]]]`,
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
@@ -289,22 +289,22 @@ describe('compression should work as expected', () => {
           runFromCompiled(source).items
         )
       ))
-  it('.:cut should work', () =>
+  it('.:>!=. should work', () =>
     [
       `|> [
       .: [1; 2; 3];
-     .:cut [];
+     .:>!=. [];
      + [100]]`,
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
       ))
-  it('.:chop should work', () =>
+  it('.:<!=. should work', () =>
     [
       `|> [
       .: [1; 2; 3];
-     .:cut [];
+     .:>!=. [];
      + [100]]`,
     ]
       .map((source) => decompress(compress(source)))
@@ -401,15 +401,15 @@ describe('compression should work as expected', () => {
     [
       `:= [arr; .: []];
     ~= [loop1; -> [i;  : [
-      .:prepend [arr; .:[]];
-      := [current; .:first [arr]];
+      .: <= [arr; .:[]];
+      := [current; .:< [arr]];
       ~= [loop2; -> [j;  : [
-       .:prepend [current; + [j; i]];
+       .: <= [current; + [j; i]];
       ? [> [j; 0]; loop2 [= [j; - [j; 1]]]]]]][10];
     ? [> [i; 0]; loop1 [= [i; - [i; 1]]]]]]][10];
     arr`,
       `:= [arr; .: []];
-    ~= [loop; -> [i; bounds; : [.:append [arr; i];
+    ~= [loop; -> [i; bounds; : [.:>= [arr; i];
     ? [> [bounds; i]; loop [+= [i]; bounds]]]]][1; 12];
     arr;`,
     ]
@@ -459,13 +459,13 @@ describe('compression should work as expected', () => {
       `|> [
       .: [1; 2; 3; 4];
       .:difference [.: [1; 2; 4]];
-      .:last []
+      .:> []
     ];
     `,
       `|> [
       .: [1; 2; 3; 4];
       .:difference [.: [1; 2; 4]];
-      .:last []
+      .:> []
     ];
     `,
       `|> [
@@ -495,7 +495,7 @@ describe('compression should work as expected', () => {
     <-.: [a; b; c; rest; arr]; .: [a; b; c; rest]`,
       `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]];
     <-.: [a; b; c; rest; arr];
-    |> [rest; .:append [a]; .:append [b]; .:append [c]];`,
+    |> [rest; .:>= [a]; .:>= [b]; .:>= [c]];`,
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
@@ -556,32 +556,32 @@ describe('compression should work as expected', () => {
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
       ))
 
-  it('.: head, .: tail, .: first, .: last, .: cut, .: chop should work', () =>
+  it('.: >!=, .: <!=, .: <, .: >, .: >!=., .: <!=. should work', () =>
     [
       `
         := [arr; .: [1; 2; 3; 4; 5; 6]];
     |> [arr; 
-       .: head [];
-       .: head [];
-       .: tail [];
-       .: tail []; 
+       .: >!= [];
+       .: >!= [];
+       .: <!= [];
+       .: <!= []; 
        .: reduce >> [-> [acc; x; + [acc; x]]; 0]];
         `,
       `
         := [arr; .: [1; 2; 3; 4; 5; 6]];
-          .: first [arr]
+          .: < [arr]
         `,
       `
         := [arr; .: [1; 2; 3; 4; 5; 6]];
-          .: last [arr]
+          .: > [arr]
         `,
       `
       := [arr; .: [1; 2; 3; 4; 5; 6]];
-      .: chop [arr]
+      .: <!=. [arr]
       `,
       `
       := [arr; .: [1; 2; 3; 4; 5; 6]];
-      .: cut [arr]
+      .: >!=. [arr]
       `,
     ]
       .map((source) => decompress(compress(source)))
@@ -594,7 +594,7 @@ describe('compression should work as expected', () => {
         <- [abs] [MATH];
         := [is_odd; -> [x; == [% [x; 2]; 0]]];
         := [is_even; -> [x; % [x; 2]]];
-        := [first_element; .: first [.: [1; 2; 3; 4]]];
+        := [first_element; .: < [.: [1; 2; 3; 4]]];
         := [out; |> [
             .: [3; 4; 2; 1; 2; 3];
             .:map>> [-> [x; |> [x;
@@ -605,7 +605,7 @@ describe('compression should work as expected', () => {
             .: map << [-> [x; abs[x]]];
           ]];
           
-        .: [is_even[.:first[out]]; is_odd[.:last[out]]]`,
+        .: [is_even[.:<[out]]; is_odd[.:>[out]]]`,
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
