@@ -1,12 +1,11 @@
 import { removeNoCode, wrapInBody } from './helpers.js'
 import { parse } from '../core/parser.js'
-import { LZUTF8 } from './lz-utf8.js'
+import { LZUTF8 } from '../../lib/lz-utf8.js'
 import { tokens } from '../core/tokeniser.js'
-import { LIBRARY } from '../extensions/extentions.js'
 import { evaluate } from '../core/interpreter.js'
 import Inventory from '../extensions/Inventory.js'
-import { runFromInterpreted } from './utils.js'
-
+import { runFromInterpreted } from '../misc/utils.js'
+import { Expression, Word } from '../core'
 const ABC = [
   'a',
   'b',
@@ -61,7 +60,6 @@ const ABC = [
   'Y',
   'Z',
 ]
-
 tokens['~*'] = (args, env) => {
   if (!args.length) throw new RangeError('Invalid number of arguments to ~* []')
   const callback = evaluate(args.pop(), env)
@@ -79,7 +77,6 @@ tokens['~*'] = (args, env) => {
   })
   return 0
 }
-
 const OFFSET = 161
 const generateCompressionRunes = (start) => {
   return Object.keys(tokens)
@@ -91,75 +88,41 @@ const generateCompressionRunes = (start) => {
       short: String.fromCharCode(start + i + OFFSET),
     }))
 }
-export const generateCompressedModules = (start) => {
-  const { NAME, ...lib } = LIBRARY
-  const modules = new Set([NAME])
-  const dfs = (lib, modules) => {
-    for (const module in lib) {
-      if (module.length > 1) modules.add(module)
-      for (const m in lib[module]) {
-        if (lib[module][m].NAME) dfs(lib[module][m], modules)
-        if (m !== 'NAME' && m.length > 1) modules.add(m)
+export const shortRunes = generateCompressionRunes(0)
+
+const dfs = (tree: Expression[], definitions = new Set()) => {
+  for (const node of tree) {
+    if (node.type !== 'value') {
+      if (node.type === 'word' && node.name.length > 1) {
+        definitions.add(node.name)
+      } else if (node.type === 'apply') {
+        if (node.operator.type === 'word') {
+          node.args
+            .filter((expr): expr is Word => expr.type === 'word')
+            .forEach(({ name }) => {
+              if (name && name.length > 2 && name[0] !== '_') {
+                definitions.add(name)
+              }
+            })
+        } else dfs(node.operator.args, definitions)
       }
+      dfs(node.args, definitions)
     }
   }
-  dfs(lib, modules)
-  return [...modules].map((full, i) => {
-    const short = String.fromCharCode(start + i + OFFSET)
-    return { full, short }
-  })
+  return definitions
 }
-export const shortRunes = generateCompressionRunes(0)
-export const shortModules = generateCompressedModules(shortRunes.length)
-const dfs = (
-  tree,
-  definitions = new Set(),
-  imports = new Set()
-  // excludes = new Set()
-) => {
-  for (const node of tree) {
-    const { type, operator, args, name } = node
-    if (type === 'import') imports.add(name)
-    else if (
-      type === 'word' &&
-      node.name.length > 1 &&
-      node.name[0] !== '_' &&
-      !imports.has(node.name)
-    )
-      definitions.add(node.name)
-    else if (type === 'apply' && operator.type === 'word')
-      args.forEach(({ name }) => {
-        if (name && name.length > 2 && name[0] !== '_') {
-          definitions.add(name)
-        }
-      })
-    if (Array.isArray(args)) dfs(args, definitions, imports)
-    if (Array.isArray(operator?.args)) dfs(operator.args, definitions, imports)
-  }
-  return { definitions, imports }
+interface Compression {
+  result: string
+  occurance: number
 }
-export const compress = (source) => {
-  const raw = removeNoCode(source).split('];]').join(']]')
+export const compress = (source: string) => {
+  const raw: string = removeNoCode(source).split('];]').join(']]')
   const strings = raw.match(/"([^"]*)"/g) || []
   const value = raw.replaceAll(/"([^"]*)"/g, '" "')
   const AST = parse(wrapInBody(value))
-  const { definitions, imports } = dfs(
-    AST.args,
-    new Set(),
-    new Set(['LIBRARY'])
-  )
-  // imports.forEach(value => {
-  //   if (definitions.has(value)) definitions.delete(value)
-  // })
-
-  const importedModules = shortModules.reduce((acc, item) => {
-    if (imports.has(item.full)) acc.push(item)
-    return acc
-  }, [])
-
-  const defs = [...definitions]
+  const definitions = AST.type === 'apply' ? [...dfs(AST.args, new Set())] : []
   let { result, occurance } = value.split('').reduce(
-    (acc, item) => {
+    (acc: Compression, item: string) => {
       if (item === ']') acc.occurance++
       else {
         if (acc.occurance < 3) {
@@ -176,13 +139,9 @@ export const compress = (source) => {
     { result: '', occurance: 0 }
   )
   if (occurance > 0) result += "'" + occurance
-
-  for (const { full, short } of importedModules)
-    result = result.replaceAll(new RegExp(`\\b${full}\\b`, 'g'), short)
-
   let index = 0
   let count = 0
-  const shortDefinitions = defs.map((full) => {
+  const shortDefinitions = definitions.map((full) => {
     const short = ABC[index] + count
     ++index
     if (index === ABC.length) {
@@ -197,12 +156,12 @@ export const compress = (source) => {
   for (const { full, short } of shortRunes)
     result = result.replaceAll(full, short)
 
-  result = result.split('" "')
-  strings.forEach((str, i) => (result[i] += str))
+  const arr = result.split('" "')
+  strings.forEach((str, i) => (arr[i] += str))
 
-  return result.join('')
+  return arr.join('')
 }
-export const decompress = (raw) => {
+export const decompress = (raw: string) => {
   const strings = raw.match(/"([^"]*)"/g) || []
   const value = raw.replaceAll(/"([^"]*)"/g, '" "')
   const suffix = [...new Set(value.match(/\'+?\d+/g))]
@@ -210,21 +169,18 @@ export const decompress = (raw) => {
     (acc, m) => acc.split(m).join(']'.repeat(parseInt(m.substring(1)))),
     value
   )
-  for (const { full, short } of shortModules)
-    result = result.replaceAll(new RegExp(short, 'g'), full)
 
   for (const { full, short } of shortRunes)
     result = result.replaceAll(short, full)
 
-  result = result.split('" "')
-  strings.forEach((str, i) => (result[i] += str))
+  const arr = result.split('" "')
+  strings.forEach((str, i) => (arr[i] += str))
 
-  return result.join('')
+  return arr.join('')
 }
-export const encodeBase64 = (source) =>
+export const encodeBase64 = (source: string) =>
   LZUTF8.compress(compress(source).trim(), { outputEncoding: 'Base64' })
-
-export const decodeBase64 = (source) =>
+export const decodeBase64 = (source: string) =>
   decompress(
     LZUTF8.decompress(source.trim(), {
       inputEncoding: 'Base64',

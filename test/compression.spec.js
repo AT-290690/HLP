@@ -1,6 +1,6 @@
 import { equal, strictEqual, deepEqual, deepStrictEqual } from 'assert'
-import { compress, decompress } from '../src/misc/compression.js'
-import { runFromInterpreted, runFromCompiled } from '../src/misc/utils.js'
+import { compress, decompress } from '../dist/misc/compression.js'
+import { runFromInterpreted, runFromCompiled } from '../dist/misc/utils.js'
 describe('compression should work as expected', () => {
   it('definitions', () =>
     [
@@ -68,27 +68,23 @@ describe('compression should work as expected', () => {
   it('max sub array sum rec', () =>
     [
       `;; max_sub_array_recursive
-      <- [MATH] [LIBRARY];
-      <- [max; infinity] [MATH];
-      ~= [loop; -> [i; nums; maxGlobal; maxSoFar;
+      := [loop; -> [i; nums; maxGlobal; maxSoFar;
           ? [< [i; .:length [nums]]; : [
-          = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; .: . [nums; i]]]]]];
+          = [maxGlobal; math::max [maxGlobal; = [maxSoFar; math::max [0; + [maxSoFar; .: . [nums; i]]]]]];
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
-        [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; * [infinity; -1]; * [infinity; -1]]`,
-      `<- [MATH] [LIBRARY];
-        <- [max; infinity] [MATH];
-        := [max_sub_array_sum; -> [nums; : [
-           := [max_global; * [infinity; -1]; 
-               max_so_far;  max_global];    
-           * loop [.: length [nums]; -> [i; 
-                   = [max_global; 
-                      max [max_global; 
-                           = [max_so_far; 
-                              max [0; 
-                                   + [max_so_far; 
-                                      .: . [nums; i]]]]]]]]]]];
-        max_sub_array_sum [.: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]];`,
+      [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; math::negative[math::infinity[]]; math::negative[math::infinity[]]]`,
+      `:= [max_sub_array_sum; -> [nums; : [
+        := [max_global; * [math::infinity[]; -1];
+            max_so_far;  max_global];
+        * loop [.: length [nums]; -> [i;
+                = [max_global;
+                   math::max [max_global;
+                        = [max_so_far;
+                         math::max [0;
+                                + [max_so_far;
+                                   .: . [nums; i]]]]]]]]]]];
+     max_sub_array_sum [.: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]];`,
     ]
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
@@ -96,17 +92,13 @@ describe('compression should work as expected', () => {
       ))
   it('sum median', () =>
     [
-      `
-      <- [MATH; ARRAY] [LIBRARY];
-      <- [sum] [MATH];
-      <- [range] [ARRAY];
-      := [NUMBERS; range [1; 100]];
+      `:= [NUMBERS; .: map >> [.: seq [100]; -> [x; + [x; 1]]]];
       := [first; .: . [NUMBERS; 0]];
       := [last; .: . [NUMBERS; - [.:length [NUMBERS]; 1]]];
       := [median; + [first;
       - [* [last; * [+ [1; last]; 0.5]];
           * [first; * [+ [1; first]; 0.5]]]]];
-      == [sum [NUMBERS]; median]
+      == [math::sum [NUMBERS]; median]
           `,
     ]
       .map((source) => decompress(compress(source)))
@@ -175,27 +167,7 @@ describe('compression should work as expected', () => {
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
       ))
   it('import should work', () =>
-    [
-      `<- [MATH; ARRAY] [LIBRARY];
-      <- [floor] [MATH];
-      .:map>> [.: [1.123; 3.14; 4.9]; floor];
-      `,
-      `<- [MATH; LOGIC; STRING; LOOP] [LIBRARY];
-      <- [floor; PI; sin; cos] [MATH];
-      <- [trim; upper_case] [STRING];
-      <- [repeat] [LOOP];
-      <- [is_equal] [LOGIC];
-
-      ? [|> [
-        12;
-        + [sin [4]];
-        > [10];
-        is_equal [10];  
-      ]; 1; 
-      |> [15; + [100]; \` []; ~ ["hello"; " "; "there"]; upper_case []]];
-      `,
-      `<- [MATH] [LIBRARY]; <- [PI] [MATH]; PI;`,
-    ]
+    [` .:map>> [.: [1.123; 3.14; 4.9]; -> [x; math::floor[x]]];`, 'math::PI[]']
       .map((source) => decompress(compress(source)))
       .forEach((source) =>
         deepStrictEqual(
@@ -397,19 +369,19 @@ describe('compression should work as expected', () => {
           runFromCompiled(source).items
         )
       ))
-  it('~= should work', () =>
+  it(':= should work', () =>
     [
       `:= [arr; .: []];
-    ~= [loop1; -> [i;  : [
+    := [loop1; -> [i;  : [
       .: <= [arr; .:[]];
       := [current; .:< [arr]];
-      ~= [loop2; -> [j;  : [
+      := [loop2; -> [j;  : [
        .: <= [current; + [j; i]];
       ? [> [j; 0]; loop2 [= [j; - [j; 1]]]]]]][10];
     ? [> [i; 0]; loop1 [= [i; - [i; 1]]]]]]][10];
     arr`,
       `:= [arr; .: []];
-    ~= [loop; -> [i; bounds; : [.:>= [arr; i];
+    := [loop; -> [i; bounds; : [.:>= [arr; i];
     ? [> [bounds; i]; loop [+= [i]; bounds]]]]][1; 12];
     arr;`,
     ]
@@ -590,9 +562,7 @@ describe('compression should work as expected', () => {
       ))
   it('complex expressions should work', () =>
     [
-      `<- [MATH] [LIBRARY];
-        <- [abs] [MATH];
-        := [is_odd; -> [x; == [% [x; 2]; 0]]];
+      `:= [is_odd; -> [x; == [% [x; 2]; 0]]];
         := [is_even; -> [x; % [x; 2]]];
         := [first_element; .: < [.: [1; 2; 3; 4]]];
         := [out; |> [
@@ -600,11 +570,11 @@ describe('compression should work as expected', () => {
             .:map>> [-> [x; |> [x;
              + [2; 4];
             * [10000; first_element];
-            => [-> [x; 
+            => [-> [x;
                 |> [x; - [232321]]]]]]];
-            .: map << [-> [x; abs[x]]];
+            .: map << [-> [x; math::abs[x]]];
           ]];
-          
+
         .: [is_even[.:<[out]]; is_odd[.:>[out]]]`,
     ]
       .map((source) => decompress(compress(source)))

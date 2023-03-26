@@ -1,14 +1,13 @@
 import { evaluate } from './interpreter.js'
 import Inventory from '../extensions/Inventory.js'
+import { Expression, Interpration } from './index.js'
+import { extensions } from '../extensions/extensions.js'
+
 export const VOID = 0
-export const pipe =
-  (...fns) =>
-  (x) =>
-    fns.reduce((v, f) => f(v), x)
-const extract = (item, env) =>
+const extract = (item: Expression, env: Expression) =>
   item.type === 'value' ? item.value : evaluate(item, env)
 const MAX_KEY = 10
-const tokens = {
+const tokens: Record<string, Interpration> = {
   ['+']: (args, env) => {
     if (args.length < 2)
       throw new RangeError('Invalid number of arguments to +')
@@ -40,11 +39,13 @@ const tokens = {
     if (args.length < 1)
       throw new RangeError('Invalid number of arguments to /')
     const operands = args.map((a) => evaluate(a, env))
-    if (operands.some((n) => typeof n !== 'number'))
+    const isNumber = operands.some((n) => typeof n === 'number')
+    if (!isNumber)
       throw new TypeError('Invalid use of / [] (Not all args are numbers)')
-    if (operands.includes(0))
+    const isZero = operands.includes(0)
+    if (isZero)
       throw new RangeError('Invalid operation to / (devision by zero)')
-    return operands.reduce((acc, x) => (acc *= 1 / x), 1)
+    else return operands.reduce((acc, x) => (acc *= 1 / x), 1)
   },
   ['%']: (args, env) => {
     if (args.length !== 2)
@@ -72,8 +73,12 @@ const tokens = {
     const b = right ? evaluate(right, env) : 1
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError('Invalid use of += [] (Not all args are numbers)')
+
     for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
-      if (Object.prototype.hasOwnProperty.call(scope, left.name)) {
+      if (
+        left.type === 'word' &&
+        Object.prototype.hasOwnProperty.call(scope, left.name)
+      ) {
         const value = a + b
         scope[left.name] = value
         return value
@@ -88,7 +93,10 @@ const tokens = {
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError('Invalid use of -= [] (Not all args are numbers)')
     for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
-      if (Object.prototype.hasOwnProperty.call(scope, left.name)) {
+      if (
+        left.type === 'word' &&
+        Object.prototype.hasOwnProperty.call(scope, left.name)
+      ) {
         const value = a - b
         scope[left.name] = value
         return value
@@ -103,7 +111,10 @@ const tokens = {
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError('Invalid use of *= [] (Not all args are numbers)')
     for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
-      if (Object.prototype.hasOwnProperty.call(scope, left.name)) {
+      if (
+        left.type === 'word' &&
+        Object.prototype.hasOwnProperty.call(scope, left.name)
+      ) {
         const value = a * b
         scope[left.name] = value
         return value
@@ -247,7 +258,7 @@ const tokens = {
       return expr.name
     })
     const body = args[args.length - 1]
-    return (...args) => {
+    return (...args: unknown[]) => {
       const localEnv = Object.create(env)
       for (let i = 0; i < args.length; ++i) localEnv[argNames[i]] = args[i]
       return evaluate(body, localEnv)
@@ -305,15 +316,17 @@ const tokens = {
       const arg = args[i]
       const p = extract(arg, env)
       if (p == undefined)
-        throw new TypeError(`Void key for accesing :: ${args[0].name}`)
+        throw new TypeError(
+          `Void key for accesing :: ${
+            args[0].type === 'word' ? args[0].name : '::[]'
+          }`
+        )
       prop.push(extract(arg, env).toString())
     }
     if (args[0].type === 'apply' || args[0].type === 'value') {
       const entity = evaluate(args[0], env)
       if (!(entity instanceof Map))
-        throw new TypeError(
-          `:: ${args[0].name} is not a instance of :: at .? []`
-        )
+        throw new TypeError(`:: ${args[0]} is not a instance of :: at .? []`)
       return +entity.has(prop[0])
     } else {
       const entityName = args[0].name
@@ -335,7 +348,11 @@ const tokens = {
       const arg = args[i]
       const p = extract(arg, env)
       if (p == undefined)
-        throw new TypeError(`Void key for accesing :: ${args[0].name}`)
+        throw new TypeError(
+          `Void key for accesing :: ${
+            args[0].type === 'word' ? args[0].name : '::[]'
+          }`
+        )
       prop.push(extract(arg, env).toString())
     }
     if (args[0].type === 'apply' || args[0].type === 'value') {
@@ -384,14 +401,22 @@ const tokens = {
       const arg = args[i]
       const p = extract(arg, env)
       if (p == undefined)
-        throw new TypeError(`Void key for accesing :: ${args[0].name}`)
+        throw new TypeError(
+          `Void key for accesing :: ${
+            args[0].type === 'word' ? args[0].name : args[0]
+          }`
+        )
       prop.push(extract(arg, env).toString())
     }
     const value = evaluate(last, env)
     if (main.type === 'apply') {
       const entity = evaluate(main, env)
       if (entity == undefined || !(entity instanceof Map))
-        throw new TypeError(`:: ${main.name} is not a instance of :: at .= []`)
+        throw new TypeError(
+          `:: ${
+            entity.type === 'word' ? entity.name : entity
+          } is not a instance of :: at .= []`
+        )
       entity.set(prop[0], value)
       return entity
     } else if (main.type === 'word') {
@@ -413,24 +438,26 @@ const tokens = {
       throw new RangeError('Invalid number of arguments for :: .!=  []')
     const prop = []
     const main = args[0]
-    const entityName = args[0].name
 
+    if (main.type === 'value') {
+      if (main == undefined || !(main instanceof Map))
+        throw new TypeError(`:: ${main} is not a instance of :: at :: .!=  []`)
+      main.delete(prop[0])
+      return main
+    }
     for (let i = 1; i < args.length; ++i) {
       const arg = args[i]
       const p = extract(arg, env)
       if (p == undefined)
-        throw new TypeError(`Void key for accesing :: ${entityName}`)
+        throw new TypeError(
+          `Void key for accesing :: ${
+            main.type === 'word' ? main.name : '::[]'
+          }`
+        )
       prop.push(extract(arg, env).toString())
     }
-    if (main.type === 'apply') {
-      const entity = evaluate(main, env)
-      if (entity == undefined || !(entity instanceof Map))
-        throw new TypeError(
-          `:: ${entity} is not a instance of :: at :: .!=  []`
-        )
-      entity.set(prop[0], value)
-      return entity
-    } else if (main.type === 'word') {
+    if (main.type === 'word') {
+      const entityName = main.name
       for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
         if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
           let temp = scope[entityName]
@@ -448,22 +475,34 @@ const tokens = {
           return temp
         }
     }
+
+    if (main.type === 'apply') {
+      const entity = evaluate(main, env)
+      if (entity == undefined || !(entity instanceof Map))
+        throw new TypeError(
+          `:: ${entity} is not a instance of :: at :: .!=  []`
+        )
+      entity.delete(prop[0])
+      return entity
+    }
   },
   ["'"]: (args, env) => {
     if (!args.length)
-      throw new TypeErorr(`Invalid number of arguments for ' []`)
-    args.forEach(({ name, type }) => {
-      if (type !== 'word')
+      throw new TypeError(`Invalid number of arguments for ' []`)
+    let name = ''
+    args.forEach((a) => {
+      if (a.type !== 'word')
         throw new SyntaxError(
-          `Invalid use of operation ' [] setting ${name} (Arguments must be words)`
+          `Invalid use of operation ' [] setting ${a} (Arguments must be words)`
         )
+      name = a.name
       if (name.includes('.') || name.includes('-'))
         throw new SyntaxError(
           `Invalid use of operation ' [] (variable name must not contain . or -)`
         )
       env[name] = name
     })
-    return args[args.length - 1].name
+    return name
   },
   ['.:.']: (args, env) => {
     if (args.length !== 2)
@@ -513,22 +552,6 @@ const tokens = {
     else if (typeof value === 'number') return value.toString()
     else throw new TypeError('Can only cast number or string at ` []')
   },
-  ['<-']: (args, env) => (imp) => {
-    args.forEach((arg) => {
-      if (!arg.name)
-        throw new TypeError(`import has to be a word but got ${method}`)
-      const method = arg.name
-      if (
-        method.includes('constructor') ||
-        method.includes('prototype') ||
-        method.includes('__proto__')
-      )
-        throw new TypeError(`Forbidden property access ${method}`)
-
-      env[method] = imp[method]
-    })
-    return VOID
-  },
   ['|>']: (args, env) => evaluate(args[0], env),
   ['!throw']: (args, env) => {
     if (!evaluate(args[0], env))
@@ -540,21 +563,6 @@ const tokens = {
     const entity = evaluate(args[0], env)
     const type = evaluate(args[1], env)
     return +(entity.constructor.name === type.constructor.name)
-  },
-  ['~=']: (args, env) => {
-    if (!args.length || args.length > 2)
-      throw new SyntaxError('Invalid number of arguments for ~= []')
-    if (args[0].type !== 'word')
-      throw new SyntaxError('First argument of ~= [] must be word')
-    const name = args[0].name
-    if (name.includes('.') || name.includes('-'))
-      throw new SyntaxError(
-        'Invalid use of operation ~= [] [variable name must not contain . or -]'
-      )
-    const value =
-      args.length === 1 ? VOID : evaluate(args[args.length - 1], env)
-    env[name] = value
-    return value
   },
   ['=>']: (args, env) => {
     if (args.length != 2)
@@ -693,7 +701,7 @@ const tokens = {
     return copy
   },
   ['.:difference']: (args, env) => {
-    if (args !== 2) {
+    if (args.length !== 2) {
       if (args.length < 2)
         throw new RangeError('Invalid number of arguments to .: difference[]')
     }
@@ -708,7 +716,7 @@ const tokens = {
     return a.difference(b)
   },
   ['.:intersection']: (args, env) => {
-    if (args !== 2) {
+    if (args.length !== 2) {
       if (args.length < 2)
         throw new RangeError(
           'Invalid number of arguments to .: intersection []'
@@ -727,7 +735,7 @@ const tokens = {
     return a.intersection(b)
   },
   ['.:xor']: (args, env) => {
-    if (args !== 2) {
+    if (args.length !== 2) {
       if (args.length < 2)
         throw new RangeError('Invalid number of arguments to .: xor []')
     }
@@ -740,7 +748,7 @@ const tokens = {
     return a.xor(b)
   },
   ['.:union']: (args, env) => {
-    if (args !== 2) {
+    if (args.length !== 2) {
       if (args.length < 2)
         throw new RangeError('Invalid number of arguments to .: union []')
     }
@@ -1134,11 +1142,13 @@ const tokens = {
       throw new TypeError('First argument of :: size [] must be an :: []')
     return map.size
   },
+  ['~*']: () => {},
   ['void']: () => VOID,
   ['number']: () => 0,
   ['string']: () => 0,
   ['array']: () => new Inventory(),
   ['object']: () => new Map(),
+  ...extensions,
 }
 
 export { tokens }

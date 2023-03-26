@@ -1,12 +1,7 @@
-const sanitizeProp = (prop) => {
-  if (
-    prop.includes('constructor') ||
-    prop.includes('prototype') ||
-    prop.includes('__proto__')
-  )
-    throw new TypeError(`Forbidden property access ${prop}`)
-  return prop
-}
+import { Expression, Word, Token } from '.'
+import { unreachable } from './interpreter.js'
+import { tokens } from './tokeniser.js'
+
 const semiColumnEdgeCases = new Set([
   ';)',
   ';-',
@@ -29,12 +24,12 @@ const semiColumnEdgeCases = new Set([
 ])
 
 const compile = () => {
-  const vars = new Set()
-  let modules = {}
-  const dfs = (tree, locals) => {
+  const vars = new Set<string>()
+  const dfs = (tree: Expression, locals: Set<string>) => {
     if (!tree) return ''
     if (tree.type === 'apply') {
-      switch (tree.operator.name) {
+      const token = tree.operator.name as Token
+      switch (token) {
         case ':': {
           if (tree.args.length > 1) {
             return `(()=>{${tree.args
@@ -51,16 +46,15 @@ const compile = () => {
           }
         }
         case ':=': {
-          let name,
+          let name: string,
             out = '(('
           for (let i = 0, len = tree.args.length; i < len; ++i) {
-            if (i % 2 === 0) {
-              name = tree.args[i].name
+            const arg = tree.args[i]
+            if (i % 2 === 0 && arg.type === 'word') {
+              name = arg.name
               locals.add(name)
             } else
-              out += `${name}=${dfs(tree.args[i], locals)}${
-                i !== len - 1 ? ',' : ''
-              }`
+              out += `${name}=${dfs(arg, locals)}${i !== len - 1 ? ',' : ''}`
           }
           out += `), ${name});`
           return out
@@ -69,11 +63,14 @@ const compile = () => {
           let out = '(('
           const obj = dfs(tree.args.pop(), locals)
           for (let i = 0, len = tree.args.length; i < len; ++i) {
-            let name = tree.args[i].name
-            locals.add(name)
-            out += `${name}=${obj}.get(${`"${name}"`})${
-              i !== len - 1 ? ',' : ''
-            }`
+            const arg = tree.args[i]
+            if (arg.type === 'word') {
+              let name = arg.name
+              locals.add(name)
+              out += `${name}=${obj}.get(${`"${name}"`})${
+                i !== len - 1 ? ',' : ''
+              }`
+            }
           }
           out += `));`
 
@@ -83,30 +80,27 @@ const compile = () => {
           let out = '(('
           const obj = dfs(tree.args.pop(), locals)
           for (let i = 0, len = tree.args.length; i < len; ++i) {
-            let name = tree.args[i].name
-            locals.add(name)
-            if (i !== len - 1) out += `${name}=${obj}.at(${i}),`
-            else out += `${name}=${obj}.slice(${i})`
+            const arg = tree.args[i]
+            if (arg.type === 'word') {
+              let name = arg.name
+              locals.add(name)
+              if (i !== len - 1) out += `${name}=${obj}.at(${i}),`
+              else out += `${name}=${obj}.slice(${i})`
+            }
           }
           out += `));`
 
           return out
         }
-        case '~=': {
-          const res = dfs(tree.args[1], locals)
-          const name = tree.args[0].name
-          locals.add(name)
-          if (res !== undefined) return `((${name}=${res}),${name});`
-          break
-        }
         case '=': {
           const res = dfs(tree.args[1], locals)
-          return `((${tree.args[0].name}=${res}),${tree.args[0].name});`
+          const arg = tree.args[0]
+          if (arg.type === 'word') return `((${arg.name}=${res}),${arg.name});`
         }
         case '->': {
           const args = tree.args
           const body = args.pop()
-          const localVars = new Set()
+          const localVars = new Set<string>()
           const evaluatedBody = dfs(body, localVars)
           const vars = localVars.size ? `var ${[...localVars].join(',')};` : ''
           return `(${args.map((x) => dfs(x, locals))}) => {${vars} ${
@@ -328,8 +322,6 @@ const compile = () => {
           return `${dfs(tree.args[0], locals)}.length;`
         case '::size':
           return `${dfs(tree.args[0], locals)}.size;`
-        case 'tco':
-          return 'Inventory._tco(' + dfs(tree.args[0], locals) + ');'
         case '...':
           return `Inventory._spreadArr([${tree.args
             .map((x) => dfs(x, locals))
@@ -375,14 +367,16 @@ const compile = () => {
             '])'
           )
         case "'": {
-          const names = tree.args.map(({ name }) => {
+          const words = tree.args.filter(
+            (expr): expr is Word => expr.type === 'word'
+          )
+          const names = words.map((expr) => {
+            const name = expr.name
             locals.add(name)
             return `${name} = "${name}"`
           })
 
-          return `((${names.join(',')}),${
-            tree.args[tree.args.length - 1].name
-          });`
+          return `((${names.join(',')}),${words[words.length - 1].name});`
         }
         case '::.?':
           return `${dfs(tree.args[0], locals)}.has(${dfs(
@@ -501,37 +495,216 @@ const compile = () => {
           })`
           return out
         }
+        case 'string':
+          return '0'
+        case 'number':
+          return '0'
+        case 'object':
+          return 'new Map()'
+        case 'void':
+          return '0'
+        case 'array':
+          return 'new Inventory()'
+        case 'bit::make_bit':
+          return `((${dfs(tree.args[0], locals)}>>>0).toString(2));`
+        case 'bit::and':
+          return `(${dfs(tree.args[0], locals)}&${dfs(tree.args[1], locals)});`
+        case 'bit::not':
+          return `~${dfs(tree.args[0], locals)};`
+        case 'bit::or':
+          return `(${dfs(tree.args[0], locals)}|${dfs(tree.args[1], locals)});`
+        case 'bit::xor':
+          return `(${dfs(tree.args[0], locals)}^${dfs(tree.args[1], locals)});`
+        case 'bit::left_shift':
+          return `(${dfs(tree.args[0], locals)}<<${dfs(tree.args[1], locals)});`
+        case 'bit::right_shift':
+          return `(${dfs(tree.args[0], locals)}>>${dfs(tree.args[1], locals)});`
+        case 'bit::un_right_shift':
+          return `(${dfs(tree.args[0], locals)}>>>${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case 'math::factorial':
+          return `Inventory._math_factorial(${dfs(tree.args[0], locals)});`
+        case 'math::permutations':
+          return `Inventory._math_permutations(${dfs(
+            tree.args[0],
+            locals
+          )}, ${dfs(tree.args[0], locals)});`
+        case 'math::permutations_array':
+          return `Inventory._math_permutations_array(${dfs(
+            tree.args[0],
+            locals
+          )});`
+        case 'math::lerp': {
+          const [start, end, amt] = tree.args.map((x) => dfs(x, locals))
+          return `((1 - ${amt}) * ${start} + ${amt} * ${end});`
+        }
+        case 'math::abs':
+          return `Math.abs(${dfs(tree.args[0], locals)});`
+        case 'math::mod': {
+          const left = dfs(tree.args[0], locals)
+          const right = dfs(tree.args[1], locals)
+          return `(((${left} % ${right}) + ${right}) % ${right});`
+        }
+        case 'math::clamp':
+          ;`Math.min(Math.max(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )}), ${dfs(tree.args[2], locals)});`
+        case 'math::sqrt':
+          return `Math.sqrt(${dfs(tree.args[0], locals)});`
+        case 'math::add':
+          return `(${dfs(tree.args[0], locals)}+${dfs(tree.args[1], locals)});`
+        case 'math::sub':
+          return `(${dfs(tree.args[0], locals)}-${dfs(tree.args[1], locals)});`
+        case 'math::mult':
+          return `(${dfs(tree.args[0], locals)}*${dfs(tree.args[1], locals)});`
+        case 'math::pow':
+          return `(${dfs(tree.args[0], locals)}**${dfs(tree.args[1], locals)});`
+        case 'math::pow2':
+          return `(${dfs(tree.args[0], locals)}**2);`
+        case 'math::divide':
+          return `(${dfs(tree.args[0], locals)}/${dfs(tree.args[1], locals)});`
+        case 'math::sign':
+          return `Math.sign(${dfs(tree.args[0], locals)});`
+        case 'math::trunc':
+          return `Math.trunc(${dfs(tree.args[0], locals)});`
+        case 'math::exp':
+          return `Math.exp(${dfs(tree.args[0], locals)});`
+        case 'math::floor':
+          return `Math.floor(${dfs(tree.args[0], locals)});`
+        case 'math::round':
+          return `Math.round(${dfs(tree.args[0], locals)});`
+        case 'math::random':
+          return `Math.random();`
+        case 'math::random_int': {
+          const min = dfs(tree.args[0], locals)
+          const max = dfs(tree.args[1], locals)
+          return ` Math.floor(Math.random() * (${max} - ${min} + 1) + ${min});`
+        }
+        case 'math::max':
+          return `Math.max(${tree.args.map((x) => dfs(x, locals))});`
+        case 'math::min':
+          return `Math.min(${tree.args.map((x) => dfs(x, locals))});`
+        case 'math::sin':
+          return `Math.sin(${dfs(tree.args[0], locals)});`
+        case 'math::cos':
+          return `Math.cos(${dfs(tree.args[0], locals)});`
+        case 'math::tan':
+          return `Math.tan(${dfs(tree.args[0], locals)});`
+        case 'math::tanh':
+          return `Math.tanh(${dfs(tree.args[0], locals)});`
+        case 'math::atan':
+          return `Math.atan(${dfs(tree.args[0], locals)});`
+        case 'math::atan2':
+          return `Math.atan2(${dfs(tree.args[0], locals)});`
+        case 'math::acos':
+          return `Math.acos(${dfs(tree.args[0], locals)});`
+        case 'math::acosh':
+          return `Math.acosh(${dfs(tree.args[0], locals)});`
+        case 'math::asin':
+          return `Math.asin(${dfs(tree.args[0], locals)});`
+        case 'math::asinh':
+          return `Math.asinh(${dfs(tree.args[0], locals)});`
+        case 'math::atanh':
+          return `Math.atanh(${dfs(tree.args[0], locals)});`
+        case 'math::hypot':
+          return `Math.hypot(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case 'math::fround':
+          return `Math.fround(${dfs(tree.args[0], locals)});`
+        case 'math::log':
+          return `Math.log(${dfs(tree.args[0], locals)});`
+        case 'math::log10':
+          return `Math.log10(${dfs(tree.args[0], locals)});`
+        case 'math::log2':
+          return `Math.log2(${dfs(tree.args[0], locals)});`
+        case 'math::sum':
+          return `((${dfs(
+            tree.args[0],
+            locals
+          )}).reduce((acc, item) => (acc += item), 0));`
+        case 'math::MIN_INT':
+          return `Number.MIN_SAFE_INTEGER`
+        case 'math::MAX_INT':
+          return `Number.MAX_SAFE_INTEGER`
+        case 'math::infinity':
+          return `Number.POSITIVE_INFINITY`
+        case 'math::PI':
+          return `Math.PI`
+        case 'math::E':
+          return `Math.E`
+        case 'math::LN10':
+          return `Math.LN10`
+        case 'math::LOG10E':
+          return `Math.LOG10E`
+        case 'math::SQRT1_2':
+          return `Math.SQRT1_2`
+        case 'math::SQRT2':
+          return `Math.SQRT2`
+        case 'math::parse_int':
+          return `parseInt(${dfs(tree.args[0], locals).toString()}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case 'math::number':
+          return `Number(${dfs(tree.args[0], locals)});`
+        case 'math::negative':
+          return `-(${dfs(tree.args[0], locals)});`
+        case 'text::make_regexp':
+          return `new RegExp(${dfs(tree.args[0], locals)}),`
+        case 'text::match':
+          return `(${dfs(tree.args[0], locals)}).match(${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case 'text::replace':
+          return `(${dfs(tree.args[0], locals)}).replace(${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case 'text::to_lower_case':
+          return `(${dfs(tree.args[0], locals)}).toLowerCase();`
+        case 'text::to_upper_case':
+          return `(${dfs(tree.args[0], locals)}).toUpperCase();`
+        case 'text::trim':
+          return `(${dfs(tree.args[0], locals)}).trim();`
+        case 'text::trim_start':
+          return `(${dfs(tree.args[0], locals)}).trimStart();`
+        case 'text::trim_end':
+          return `(${dfs(tree.args[0], locals)}).trimEnd();`
+        case 'time::set_timeout':
+          return `setTimeout(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case 'time::set_interval':
+          return `setInterval(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case 'time::set_animation': {
+          return `requestAnimationFrame(${dfs(tree.args[0], locals)});`
+        }
         default: {
-          if (tree.operator.name)
-            return (
-              tree.operator.name +
-              '(' +
-              tree.args.map((x) => dfs(x, locals)).join(',') +
-              ');'
-            )
-          else {
-            if (tree.operator.operator.name === '<-') {
-              const lib = tree.args[0]
-              const imp =
-                lib.type === 'word' ? lib.name : dfs(lib, locals).slice(0, -1)
-              const methods = tree.operator.args.map((x) =>
-                sanitizeProp(x.name)
+          if (!(token in tokens)) {
+            if (token)
+              return (
+                token +
+                '(' +
+                tree.args.map((x) => dfs(x, locals)).join(',') +
+                ');'
               )
-              return methods
-                .map((method) => {
-                  if (method) {
-                    locals.add(method)
-                    if (imp in modules) modules[imp].push(method)
-                    else modules[imp] = [method]
-                  }
-                  return `${method} = ${imp}["${method}"];`
-                })
-                .join('')
-            } else {
+            else {
               return `(${dfs(tree.operator, locals)})(${tree.args
                 .map((x) => dfs(x, locals))
                 .join(',')});`
             }
+          } else {
+            unreachable(token)
           }
         }
       }
@@ -539,11 +712,11 @@ const compile = () => {
     else if (tree.type === 'value')
       return tree.class === 'string' ? `"${tree.value}"` : tree.value
   }
-  return { dfs, vars, modules }
+  return { dfs, vars }
 }
 
-export const compileToJs = (AST) => {
-  const { dfs, vars, modules } = compile()
+export const compileToJs = (AST: Expression) => {
+  const { dfs, vars } = compile()
   const raw = dfs(AST, vars)
   let program = ''
   for (let i = 0; i < raw.length; ++i) {
@@ -552,5 +725,5 @@ export const compileToJs = (AST) => {
     if (!semiColumnEdgeCases.has(current + next)) program += current
   }
   const top = vars.size ? `var ${[...vars].join(',')};` : ''
-  return { top, program, modules }
+  return { top, program }
 }

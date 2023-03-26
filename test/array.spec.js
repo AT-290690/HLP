@@ -1,4 +1,4 @@
-import Inventory from '../src/extensions/Inventory.js'
+import Inventory from '../dist/extensions/Inventory.js'
 import { equal, deepEqual } from 'assert'
 
 describe('arrays should work as expected', () => {

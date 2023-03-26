@@ -1,5 +1,5 @@
 import { throws, strictEqual, deepStrictEqual } from 'assert'
-import { runFromInterpreted } from '../src/misc/utils.js'
+import { runFromInterpreted } from '../dist/misc/utils.js'
 describe('interpretation should work as expected', () => {
   it('definitions', () => {
     deepStrictEqual(
@@ -51,7 +51,6 @@ describe('interpretation should work as expected', () => {
     )
     throws(() => runFromInterpreted(`/ [29; 0]`), RangeError)
   })
-
   it('if', () => {
     strictEqual(
       runFromInterpreted(
@@ -86,29 +85,25 @@ describe('interpretation should work as expected', () => {
   it('max sub array sum rec', () => {
     strictEqual(
       runFromInterpreted(`;; max_sub_array_recursive
-      <- [MATH] [LIBRARY];
-      <- [max; infinity] [MATH];
-      ~= [loop; -> [i; nums; maxGlobal; maxSoFar;
+      := [loop; -> [i; nums; maxGlobal; maxSoFar;
           ? [< [i; .:length [nums]]; : [
-          = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; .: . [nums; i]]]]]];
+          = [maxGlobal; math::max [maxGlobal; = [maxSoFar; math::max [0; + [maxSoFar; .: . [nums; i]]]]]];
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
-      [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; * [infinity; -1]; * [infinity; -1]]`),
+      [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; math::negative[math::infinity[]]; math::negative[math::infinity[]]]`),
       21
     )
     strictEqual(
       runFromInterpreted(
-        `<- [MATH] [LIBRARY];
-    <- [max; infinity] [MATH];
-    := [max_sub_array_sum; -> [nums; : [
-       := [max_global; * [infinity; -1]; 
-           max_so_far;  max_global];    
-       * loop [.: length [nums]; -> [i; 
-               = [max_global; 
-                  max [max_global; 
-                       = [max_so_far; 
-                          max [0; 
-                               + [max_so_far; 
+        `:= [max_sub_array_sum; -> [nums; : [
+       := [max_global; * [math::infinity[]; -1];
+           max_so_far;  max_global];
+       * loop [.: length [nums]; -> [i;
+               = [max_global;
+                  math::max [max_global;
+                       = [max_so_far;
+                        math::max [0;
+                               + [max_so_far;
                                   .: . [nums; i]]]]]]]]]]];
     max_sub_array_sum [.: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]];`
       ),
@@ -118,17 +113,13 @@ describe('interpretation should work as expected', () => {
   it('sum median', () => {
     strictEqual(
       runFromInterpreted(`
-  <- [MATH; ARRAY] [LIBRARY];
-  <- [sum] [MATH];
-  <- [range] [ARRAY];
-
-  := [NUMBERS; range [1; 100]];
+  := [NUMBERS; .: map >> [.: seq [100]; -> [x; + [x; 1]]]];
   := [first; .: . [NUMBERS; 0]];
   := [last; .: . [NUMBERS; - [.:length [NUMBERS]; 1]]];
   := [median; + [first;
   - [* [last; * [+ [1; last]; 0.5]];
       * [first; * [+ [1; first]; 0.5]]]]];
-  == [sum [NUMBERS]; median]
+  == [math::sum [NUMBERS]; median]
       `),
       1
     )
@@ -165,35 +156,12 @@ describe('interpretation should work as expected', () => {
 
   it('import should work', () => {
     deepStrictEqual(
-      runFromInterpreted(`<- [MATH; ARRAY] [LIBRARY];
-      <- [floor] [MATH];
-      .:map>> [.: [1.123; 3.14; 4.9]; floor];
+      runFromInterpreted(`
+      .:map>> [.: [1.123; 3.14; 4.9]; -> [x; math::floor[x]]];
       `).items,
       [1, 3, 4]
     )
-
-    strictEqual(
-      runFromInterpreted(`<- [MATH; LOGIC; STRING; LOOP] [LIBRARY];
-      <- [floor; PI; sin; cos] [MATH];
-      <- [trim; upper_case] [STRING];
-      <- [repeat] [LOOP];
-      <- [is_equal] [LOGIC];
-  
-      ? [|> [
-        12;
-        + [sin [4]];
-        > [10];
-        is_equal [10];  
-      ]; 1; 
-      |> [15; + [100]; \`[]; ~ ["hello"; " "; "there"]; upper_case []]];
-      `),
-      '115HELLO THERE'
-    )
-
-    strictEqual(
-      runFromInterpreted(`<- [MATH] [LIBRARY]; <- [PI] [MATH]; PI;`),
-      Math.PI
-    )
+    strictEqual(runFromInterpreted(`math::PI[]`), Math.PI)
   })
 
   it('nested pipes should work', () => {
@@ -500,20 +468,20 @@ describe('interpretation should work as expected', () => {
       TypeError
     )
   })
-  it('~= should work', () => {
+  it(':= should work', () => {
     deepStrictEqual(
       runFromInterpreted(`:= [arr; .: []];
-    ~= [loop; -> [i; bounds; : [.:>= [arr; i];
+    := [loop; -> [i; bounds; : [.:>= [arr; i];
     ? [> [bounds; i]; loop [+= [i]; bounds]]]]][1; 12];
     arr;`).items,
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     )
     deepStrictEqual(
       runFromInterpreted(`:= [arr; .: []];
-    ~= [loop1; -> [i;  : [
+    := [loop1; -> [i;  : [
       .: <= [arr; .:[]];
       := [current; .:< [arr]];
-      ~= [loop2; -> [j;  : [
+      := [loop2; -> [j;  : [
        .: <= [current; + [j; i]];
       ? [> [j; 0]; loop2 [= [j; - [j; 1]]]]]]][10];
     ? [> [i; 0]; loop1 [= [i; - [i; 1]]]]]]][10];
@@ -676,8 +644,7 @@ describe('interpretation should work as expected', () => {
   })
   it('complex expressions should work', () => {
     deepStrictEqual(
-      runFromInterpreted(`<- [MATH] [LIBRARY];
-    <- [abs] [MATH];
+      runFromInterpreted(`
     := [is_odd; -> [x; == [% [x; 2]; 0]]];
     := [is_even; -> [x; % [x; 2]]];
     := [first_element; .: < [.: [1; 2; 3; 4]]];
@@ -686,11 +653,11 @@ describe('interpretation should work as expected', () => {
         .:map>> [-> [x; |> [x;
          + [2; 4];
         * [10000; first_element];
-        => [-> [x; 
+        => [-> [x;
             |> [x; - [232321]]]]]]];
-        .: map << [-> [x; abs[x]]];
+        .: map << [-> [x; math::abs[x]]];
       ]];
-      
+
     .: [is_even[.:<[out]]; is_odd[.:>[out]]]`).items,
       [1, 0]
     )

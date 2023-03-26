@@ -669,18 +669,18 @@ export default class Inventory {
   }
 
   /**
-     * Creates a slice of array with n elements taken from the beginning.
-     * @params
-      array (Array): The array to query.
-      [n=1] (number): The number of elements to take.
-      @returns
-      (Array): Returns the slice of array.
-      @example 
-      [1, 2, 3].take() // => [1]
-      [1, 2, 3].take(2) // => [1, 2]
-      [1, 2, 3].take(5) // => [1, 2, 3]
-      [1, 2, 3].take(0); // => []
-     */
+       * Creates a slice of array with n elements taken from the beginning.
+       * @params
+        array (Array): The array to query.
+        [n=1] (number): The number of elements to take.
+        @returns
+        (Array): Returns the slice of array.
+        @example 
+        [1, 2, 3].take() // => [1]
+        [1, 2, 3].take(2) // => [1, 2]
+        [1, 2, 3].take(5) // => [1, 2, 3]
+        [1, 2, 3].take(0); // => []
+       */
   take(n = 1) {
     const slice = new Inventory()
     const sliceLen = Math.min(n, this.length)
@@ -935,15 +935,15 @@ export default class Inventory {
 
   /**  Helper functions */
   /** 
-    If Type(x) is different from Type(y), return false.
-    If Type(x) is Number, then
-    If x is NaN and y is NaN, return true.
-    If x is +0 and y is -0, return true.
-    If x is -0 and y is +0, return true.
-    If x is the same Number value as y, return true.
-    Return false.
-    Return SameValueNonNumber(x, y).
-  */
+      If Type(x) is different from Type(y), return false.
+      If Type(x) is Number, then
+      If x is NaN and y is NaN, return true.
+      If x is +0 and y is -0, return true.
+      If x is -0 and y is +0, return true.
+      If x is the same Number value as y, return true.
+      Return false.
+      Return SameValueNonNumber(x, y).
+    */
   static _sameValueZero(x, y) {
     return x === y || (Number.isNaN(x) && Number.isNaN(y))
   }
@@ -1191,4 +1191,30 @@ export default class Inventory {
   }
   static _split = (e, t) => Inventory.from(e.split(t))
   static _call = (e, t) => t(e)
+  static _math_factorial = (num) => {
+    let rval = 1
+    for (let i = 2; i <= num; i++) rval = rval * i
+    return rval
+  }
+  static _math_permutations = (n, k) => {
+    const fact = Inventory._math_factorial
+    const p = fact(n)
+    const v = fact(n - k)
+    return p / v
+  }
+  static _math_permutations_array = (inputArr) => {
+    let result = new Inventory()
+    const permute = (arr, m = new Inventory()) => {
+      if (arr.length === 0) result.push(m)
+      else {
+        for (let i = 0; i < arr.length; i++) {
+          let curr = arr.slice()
+          let next = curr.splice(i, 1)
+          permute(curr.slice(), m.concat(next))
+        }
+      }
+    }
+    permute(inputArr)
+    return result.balance()
+  }
 }

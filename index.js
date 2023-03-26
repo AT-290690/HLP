@@ -3,14 +3,19 @@ import {
   exe,
   runFromCompiled,
   runFromInterpreted,
-} from './src/misc/utils.js'
-import { encodeBase64, compress, decodeBase64 } from './src/misc/compression.js'
+} from './dist/misc/utils.js'
+import {
+  encodeBase64,
+  compress,
+  decodeBase64,
+} from './dist/misc/compression.js'
 import {
   extractComments,
   handleHangingSemi,
   removeNoCode,
-} from './src/misc/helpers.js'
+} from './dist/misc/helpers.js'
 import { readdirSync, readFileSync, writeFileSync } from 'fs'
+import { tokens } from './dist/core/tokeniser.js'
 const logBoldMessage = (msg) => console.log('\x1b[1m', msg, '\x1b[0m')
 const logErrorMessage = (msg) =>
   console.log('\x1b[31m', '\x1b[1m', msg, '\x1b[0m')
@@ -38,7 +43,6 @@ const test = (file) => {
       t ? logSuccessMessage(`${t} ${x}`) : logErrorMessage(`${t} ${x}`)
     })
 }
-
 const check = (file) => {
   extractComments(file)
     .filter((x) => x.split(`;; @check`)[1]?.trim())
@@ -54,12 +58,10 @@ const check = (file) => {
     logErrorMessage(err.message)
   }
 }
-
 const logResultCompiled = (file, type = 'raw') =>
   logBoldMessage(
     type == 'items' ? runFromCompiled(file).items : runFromCompiled(file)
   )
-
 const encode = async (
   file,
   destination = 'https://at-290690.github.io/hlp'
@@ -123,6 +125,13 @@ const withBundle = (file) => {
 const [, , filename, flag, arg] = process.argv
 const file = withBundle(readFileSync(filename, 'utf-8'))
 switch (flag?.toLowerCase()) {
+  case 'types':
+    console.log(
+      `type Token = ${Object.keys(tokens)
+        .map((x) => `"${x}"`)
+        .join('\n|')}`
+    )
+    break
   case 'build':
     buildProject(filename, arg)
     break

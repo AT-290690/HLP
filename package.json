@@ -9,6 +9,7 @@
   },
   "scripts": {
     "hlp": "node index.js",
+    "build": "tsc --build tsconfig.json",
     "test": "mocha"
   },
   "license": "MIT",

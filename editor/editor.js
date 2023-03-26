@@ -1,11 +1,11 @@
 import { CodeMirror } from './hlp.editor.bundle.js'
-import { runFromInterpreted } from '../src/misc/utils.js'
-import { encodeBase64 } from '../src/misc/compression.js'
+import { runFromInterpreted } from '../dist/misc/utils.js'
+import { encodeBase64 } from '../dist/misc/compression.js'
 import {
   extractComments,
   handleHangingSemi,
   removeNoCode,
-} from '../src/misc/helpers.js'
+} from '../dist/misc/helpers.js'
 
 const consoleElement = document.getElementById('console')
 const editorContainer = document.getElementById('editor-container')
@@ -14,8 +14,12 @@ const errorIcon = document.getElementById('error-drone-icon')
 const execIcon = document.getElementById('exec-drone-icon')
 const consoleEditor = CodeMirror(consoleElement)
 
+const droneIntel = (icon) => {
+  icon.style.visibility = 'visible'
+  setTimeout(() => (icon.style.visibility = 'hidden'), 500)
+}
 const extensions = {
-  LOGGER: (disable = 0) => {
+  log: (disable = 0) => {
     if (disable) return () => {}
     return (msg) => {
       const current = consoleEditor.getValue()
@@ -51,11 +55,6 @@ const extensions = {
       return msg
     }
   },
-}
-
-const droneIntel = (icon) => {
-  icon.style.visibility = 'visible'
-  setTimeout(() => (icon.style.visibility = 'hidden'), 500)
 }
 const execute = async (source) => {
   try {
@@ -108,9 +107,11 @@ const withCommand = (command = editor.getLine(0)) => {
           })
         try {
           runFromInterpreted(result)
-          extensions.LOGGER(0)('All checks passed!')
+          consoleEditor.setValue(
+            `${consoleEditor.getValue()} All checks passed!`
+          )
         } catch (err) {
-          extensions.LOGGER(0)(err.message.trim())
+          consoleEditor.setValue(err.message.trim())
         }
       }
       break
@@ -130,9 +131,12 @@ const withCommand = (command = editor.getLine(0)) => {
               `${handleHangingSemi(removeNoCode(value))};${mocks}${x}`
             )
           )
-        if (res.every((x) => !!x)) extensions.LOGGER(0)('All tests passed!')
+        if (res.every((x) => !!x))
+          consoleEditor.setValue(
+            `${consoleEditor.getValue()} All tests passed!`
+          )
         else
-          extensions.LOGGER(0)(
+          consoleEditor.setValue(
             `Tests: ${res.map((x) => (x ? '+' : '-')).join(' ')}`
           )
       }
@@ -181,9 +185,9 @@ const withCommand = (command = editor.getLine(0)) => {
           }; ""]${isEndingWithSemi ? ';' : ''}`
           editor.replaceSelection(out)
 
-          execute(`:=[__debug_log; LOGGER[0]]; ${editor.getValue().trim()}`)
+          execute(`:=[__debug_log; log[]]; ${editor.getValue().trim()}`)
           editor.setValue(value)
-        } else execute(`:=[__debug_log; LOGGER[0]]; __debug_log[:[${value}]]`)
+        } else execute(`:=[__debug_log; log[]]; __debug_log[:[${value}]]`)
       }
       break
     case cmds.exe:
