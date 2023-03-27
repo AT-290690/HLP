@@ -4,6 +4,7 @@ import { VOID } from '../core/tokeniser.js'
 import Inventory from './Inventory.js'
 
 type Extension = Record<string, Record<string, Interpration>>
+
 const TimeExtension: Extension = {
   'time::': {
     set_timeout: (args, env) =>
@@ -11,6 +12,31 @@ const TimeExtension: Extension = {
     set_interval: (args, env) =>
       setInterval(evaluate(args[0], env), evaluate(args[1], env)),
     set_animation: (args, env) => requestAnimationFrame(evaluate(args[0], env)),
+  },
+}
+const DomExtension: Extension = {
+  'dom::': {
+    div: () => {
+      return {}
+    },
+    set_attribute: () => {
+      return {}
+    },
+    get_attribute: () => {
+      return {}
+    },
+    create_element: () => {
+      return {}
+    },
+    add_to: () => {
+      return {}
+    },
+    get_element_by_id: () => {
+      return {}
+    },
+    set_text_content: () => {
+      return {}
+    },
   },
 }
 const StringExtension: Extension = {
@@ -69,7 +95,7 @@ const MathExtension: Extension = {
     random_int: (args, env) => {
       const max = evaluate(args[0], env)
       const min = evaluate(args[1], env)
-      if (Number.isInteger(max) || Number.isInteger(min))
+      if (!Number.isInteger(max) || !Number.isInteger(min))
         throw new TypeError('math::random_int arguments must both be integeres')
       return Math.floor(Math.random() * (max - min + 1) + min)
     },
@@ -146,6 +172,7 @@ const Extensions = {
   ...MathExtension,
   ...StringExtension,
   ...TimeExtension,
+  ...DomExtension,
 }
 const extensions = {}
 for (const ext in Extensions) {

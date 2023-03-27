@@ -126,10 +126,12 @@ const [, , filename, flag, arg] = process.argv
 const file = withBundle(readFileSync(filename, 'utf-8'))
 switch (flag?.toLowerCase()) {
   case 'types':
-    console.log(
-      `type Token = ${Object.keys(tokens)
+    writeFileSync(
+      './src/core/tokens.d.ts',
+      `export type Token = ${Object.keys(tokens)
         .map((x) => `"${x}"`)
-        .join('\n|')}`
+        .join('\n|')}`,
+      'utf-8'
     )
     break
   case 'build':

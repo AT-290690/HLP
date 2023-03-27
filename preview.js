@@ -3,7 +3,7 @@ import { compileToJs } from './dist/core/compiler.js'
 import { runFromInterpreted } from './dist/misc/utils.js'
 import { wrapInBody } from './dist/misc/helpers.js'
 import { parse } from './dist/core/parser.js'
-import Inventory from './src/extensions/Inventory.js'
+import Inventory from './dist/extensions/Inventory.js'
 
 const buildModule = (encoding) => {
   const inlined = wrapInBody(encoding)
@@ -15,7 +15,7 @@ const buildScript = (encoding) => {
   return `
 ;(() => {
   ${top}
-  ;document.getElementById('output').textContent = ${program}
+  ${program}
   })()`
 }
 window.runFromInterpreted = runFromInterpreted

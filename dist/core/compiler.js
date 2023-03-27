@@ -504,6 +504,22 @@ const compile = () => {
                 case 'time::set_animation': {
                     return `requestAnimationFrame(${dfs(tree.args[0], locals)});`;
                 }
+                case 'dom::div':
+                    return `Inventory._dom_div(${dfs(tree.args[0], locals)})`;
+                case 'dom::set_attribute':
+                    return `Inventory._dom_set_attribute(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)})`;
+                case 'dom::get_attribute':
+                    return `Inventory._dom_get_attribute(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)})`;
+                case 'dom::create_element':
+                    return `Inventory._dom_create_element(${dfs(tree.args[0], locals)})`;
+                case 'dom::add_to': {
+                    const [container, ...rest] = tree.args;
+                    return `Inventory._dom_insert_into_container(${dfs(container, locals)}, ${rest.map((x) => dfs(x, locals)).join(',')})`;
+                }
+                case 'dom::get_element_by_id':
+                    return `Inventory._dom_get_element_by_id(${dfs(tree.args[0], locals)})`;
+                case 'dom::set_text_content':
+                    return `Inventory._dom_set_text_content(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)})`;
                 default: {
                     if (!(token in tokens)) {
                         if (token)

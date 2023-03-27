@@ -69,18 +69,7 @@ ${Inventory.toString()}
 <script> (() => { ${top}${program} })()</script>
 </body>`
 }
-export const compileHtmlModule = (source: string, scripts = '') => {
-  const inlined = wrapInBody(removeNoCode(source))
-  const { top, program } = compileToJs(parse(inlined))
-  return `
-<style>body { background: #0e0e0e } </style><body>
-${scripts}
-<script type="module">
-  import Inventory from '../../chip/language/extensions/Inventory.js'; 
-  (() => { ${top}${program} })()
- </script>
-</body>`
-}
+
 export const compileExecutable = (source: string) => {
   const inlined = wrapInBody(removeNoCode(source))
   const ENV = protolessModule({})
