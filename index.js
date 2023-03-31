@@ -10,7 +10,9 @@ import {
   decodeBase64,
 } from './dist/misc/compression.js'
 import {
-  extractComments,
+  extractChecks,
+  extractMocks,
+  extractTests,
   handleHangingSemi,
   removeNoCode,
 } from './dist/misc/helpers.js'
@@ -28,29 +30,23 @@ const logResultInterpreted = (file, type = 'raw') =>
     type == 'items' ? runFromInterpreted(file).items : runFromInterpreted(file)
   )
 const test = (file) => {
-  const mocks = extractComments(file)
-    .map((x) => x.split(';; @mock')[1]?.trim())
-    .filter(Boolean)
+  const mocks = extractMocks(file)
     .map((x) => handleHangingSemi(x) + ';')
     .join('\n')
-  extractComments(file)
-    .map((x) => x.split(';; @test')[1]?.trim())
-    .filter(Boolean)
-    .forEach((x) => {
-      const t = runFromInterpreted(
-        `${handleHangingSemi(removeNoCode(file))};${mocks}${x}`
-      )
-      t ? logSuccessMessage(`${t} ${x}`) : logErrorMessage(`${t} ${x}`)
-    })
+  extractTests(file).forEach((x) => {
+    const t = runFromInterpreted(
+      `${handleHangingSemi(removeNoCode(file))};${mocks}${x}`
+    )
+    t ? logSuccessMessage(`${t} ${x}`) : logErrorMessage(`${t} ${x}`)
+  })
 }
 const check = (file) => {
-  extractComments(file)
-    .filter((x) => x.split(`;; @check`)[1]?.trim())
-    .filter(Boolean)
-    .forEach((x) => {
-      const def = handleHangingSemi(x.split(';; @check')[1])
-      file = file.replaceAll(x, `!throw[${def}; "${def}"];`)
-    })
+  extractChecks(file).forEach((x) => {
+    const def = handleHangingSemi(x)
+    file = file
+      .replaceAll(x, `!throw[${def}; "${def}"];`)
+      .replaceAll(';; @check', '')
+  })
   try {
     runFromInterpreted(file)
     logSuccessMessage('All checks passed!')
@@ -106,24 +102,9 @@ const buildProject = (dir, arg) => {
   )
   writeFileSync(arg, cat.join(`;\n\n`))
 }
-const withBundle = (file) => {
-  const imports = extractComments(file)
-    .map((x) => x.split(';; @import')[1]?.trim())
-    .filter(Boolean)
-  if (imports.length) {
-    const files = imports.map((f) => readFileSync(f.trim(), 'utf-8'))
-    files.push(handleHangingSemi(file.trim()) + ';')
-    return files
-      .map((f) => handleHangingSemi(f.trim()) + ';')
-      .join('\n\n')
-      .trim()
-  } else {
-    return file
-  }
-}
 
 const [, , filename, flag, arg] = process.argv
-const file = withBundle(readFileSync(filename, 'utf-8'))
+const file = readFileSync(filename, 'utf-8')
 switch (flag?.toLowerCase()) {
   case 'types':
     writeFileSync(

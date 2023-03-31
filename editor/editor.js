@@ -2,7 +2,8 @@ import { CodeMirror } from './hlp.editor.bundle.js'
 import { runFromInterpreted } from '../dist/misc/utils.js'
 import { encodeBase64 } from '../dist/misc/compression.js'
 import {
-  extractComments,
+  extractChecks,
+  extractTests,
   handleHangingSemi,
   removeNoCode,
 } from '../dist/misc/helpers.js'
@@ -98,13 +99,12 @@ const withCommand = (command = editor.getLine(0)) => {
     case cmds.validate:
       {
         let result = value
-        extractComments(result)
-          .filter((x) => x.split(`;; @check`)[1]?.trim())
-          .filter(Boolean)
-          .forEach((x) => {
-            const def = handleHangingSemi(x.split(';; @check')[1])
-            result = result.replaceAll(x, `!throw[${def}; "${def}"];`)
-          })
+        extractChecks(file).forEach((x) => {
+          const def = handleHangingSemi(x)
+          result = result
+            .replaceAll(x, `!throw[${def}; "${def}"];`)
+            .replaceAll(';; @check', '')
+        })
         try {
           runFromInterpreted(result)
           consoleEditor.setValue(
@@ -117,20 +117,15 @@ const withCommand = (command = editor.getLine(0)) => {
       break
     case cmds.assert:
       {
-        const mocks = extractComments(value)
-          .map((x) => x.split(';; @mock')[1]?.trim())
-          .filter(Boolean)
+        const mocks = extractMocks(file)
           .map((x) => handleHangingSemi(x) + ';')
           .join('\n')
 
-        const res = extractComments(value)
-          .map((x) => x.split(';; @test')[1]?.trim())
-          .filter(Boolean)
-          .map((x) =>
-            runFromInterpreted(
-              `${handleHangingSemi(removeNoCode(value))};${mocks}${x}`
-            )
+        const res = extractTests(file).map((x) =>
+          runFromInterpreted(
+            `${handleHangingSemi(removeNoCode(value))};${mocks}${x}`
           )
+        )
         if (res.every((x) => !!x))
           consoleEditor.setValue(
             `${consoleEditor.getValue()} All tests passed!`

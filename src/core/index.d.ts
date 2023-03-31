@@ -1,4 +1,5 @@
 declare global {}
+
 export interface Word {
   type: 'word'
   name: string
