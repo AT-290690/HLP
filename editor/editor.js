@@ -3,6 +3,7 @@ import { runFromInterpreted } from '../dist/misc/utils.js'
 import { encodeBase64 } from '../dist/misc/compression.js'
 import {
   extractChecks,
+  extractMocks,
   extractTests,
   handleHangingSemi,
   removeNoCode,
@@ -117,11 +118,11 @@ const withCommand = (command = editor.getLine(0)) => {
       break
     case cmds.assert:
       {
-        const mocks = extractMocks(file)
+        const mocks = extractMocks(value)
           .map((x) => handleHangingSemi(x) + ';')
           .join('\n')
 
-        const res = extractTests(file).map((x) =>
+        const res = extractTests(value).map((x) =>
           runFromInterpreted(
             `${handleHangingSemi(removeNoCode(value))};${mocks}${x}`
           )

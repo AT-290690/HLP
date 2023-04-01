@@ -10,10 +10,13 @@
   "scripts": {
     "hlp": "node index.js",
     "build": "tsc --build tsconfig.json",
+    "watch": "tsc-watch",
     "test": "mocha"
   },
   "license": "MIT",
   "devDependencies": {
-    "mocha": "^10.2.0"
+    "mocha": "^10.2.0",
+    "tsc-watch": "^6.0.0",
+    "typescript": "^5.0.3"
   }
 }
