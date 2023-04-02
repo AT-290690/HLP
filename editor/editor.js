@@ -1,13 +1,13 @@
 import { CodeMirror } from './hlp.editor.bundle.js'
-import { runFromInterpreted } from '../dist/misc/utils.js'
-import { encodeBase64 } from '../dist/misc/compression.js'
 import {
+  runFromInterpreted,
   extractChecks,
   extractMocks,
   extractTests,
   handleHangingSemi,
   removeNoCode,
-} from '../dist/misc/helpers.js'
+} from '../dist/misc/utils.js'
+import { encodeBase64 } from '../dist/misc/compression.js'
 
 const consoleElement = document.getElementById('console')
 const editorContainer = document.getElementById('editor-container')

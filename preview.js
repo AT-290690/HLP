@@ -1,7 +1,6 @@
 import { decodeBase64 } from './dist/misc/compression.js'
 import { compileToJs } from './dist/core/compiler.js'
-import { runFromInterpreted } from './dist/misc/utils.js'
-import { wrapInBody } from './dist/misc/helpers.js'
+import { runFromInterpreted, wrapInBody } from './dist/misc/utils.js'
 import { parse } from './dist/core/parser.js'
 import Inventory from './dist/extensions/Inventory.js'
 

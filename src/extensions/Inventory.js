@@ -1211,7 +1211,26 @@ export default class Inventory {
     el.textContent = content
     return el
   }
-  static _dom_get_context = (canvas) => {
-    return canvas.getContext('2d')
+  static _dom_style_map = new Map([
+    ['bg', 'backgroud'],
+    ['c', 'color'],
+    ['tr', 'transparent'],
+    ['w', 'width'],
+    ['h', 'height'],
+  ])
+
+  static _dom_set_style = (el, styles) => {
+    const str = styles
+      .entries()
+      .map(
+        ({ key, value }) =>
+          `${Inventory._dom_style_map.get(key) ?? key} : ${
+            Inventory._dom_style_map.get(value) ?? value
+          }`
+      )
+      .join(';')
+    el.style = str
+    console.log(str)
+    return el
   }
 }

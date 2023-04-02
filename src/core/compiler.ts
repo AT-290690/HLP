@@ -720,6 +720,11 @@ const compile = () => {
             tree.args[0],
             locals
           )}, ${dfs(tree.args[1], locals)})`
+        case 'dom::set_style':
+          return `Inventory._dom_set_style(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )})`
         default: {
           if (!(token in tokens)) {
             if (token)

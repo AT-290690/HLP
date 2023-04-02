@@ -31,6 +31,9 @@ const DomExtension = {
         set_text_content: () => {
             return {};
         },
+        set_style: () => {
+            return {};
+        },
     },
 };
 const StringExtension = {

@@ -3,19 +3,17 @@ import {
   exe,
   runFromCompiled,
   runFromInterpreted,
+  extractChecks,
+  extractMocks,
+  extractTests,
+  handleHangingSemi,
+  removeNoCode,
 } from './dist/misc/utils.js'
 import {
   encodeBase64,
   compress,
   decodeBase64,
 } from './dist/misc/compression.js'
-import {
-  extractChecks,
-  extractMocks,
-  extractTests,
-  handleHangingSemi,
-  removeNoCode,
-} from './dist/misc/helpers.js'
 import { readdirSync, readFileSync, writeFileSync } from 'fs'
 import { tokens } from './dist/core/tokeniser.js'
 const logBoldMessage = (msg) => console.log('\x1b[1m', msg, '\x1b[0m')

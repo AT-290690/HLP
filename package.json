@@ -11,10 +11,12 @@
     "hlp": "node index.js",
     "build": "tsc --build tsconfig.json",
     "watch": "tsc-watch",
-    "test": "mocha"
+    "test": "mocha",
+    "doctest": "node jsdoc.js"
   },
   "license": "MIT",
   "devDependencies": {
+    "jsdoc-spec": "^1.0.5",
     "mocha": "^10.2.0",
     "tsc-watch": "^6.0.0",
     "typescript": "^5.0.3"

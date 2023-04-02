@@ -1,10 +1,9 @@
-import { removeNoCode, wrapInBody } from './helpers.js'
 import { parse } from '../core/parser.js'
 import { LZUTF8 } from '../../lib/lz-utf8.js'
 import { tokens } from '../core/tokeniser.js'
 import { evaluate } from '../core/interpreter.js'
 import Inventory from '../extensions/Inventory.js'
-import { runFromInterpreted } from '../misc/utils.js'
+import { runFromInterpreted, removeNoCode, wrapInBody } from '../misc/utils.js'
 import { Expression, Word } from '../core'
 const ABC = [
   'a',

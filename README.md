@@ -19,9 +19,10 @@ here is a more complex example
 ## Game of Life
 
 ```rs
- ;; window
+  ;; window
 ' [view; next; alive; x; y];
 := [
+    px; -> [u; ~[`[u]; "px"]];
     N; 17;
     factor; 1;
     r; * [N; factor];
@@ -29,14 +30,14 @@ here is a more complex example
     cols; N; rows; N;
     bound; * [rows; cols]; cells; .: [];
     get_cell; -> [x; y; .: . [cells; % [+ [x; * [rows; y]]; bound]]];
-    cells_container; |> [dom::get_element_by_id["container"];
-      dom::set_attribute["style"; ~["max-width:"; 380; "px"]]];
+    cells_container; |> [dom::get_element_by_id["c"];
+      dom::set_style[::["w"; px [340]]]];
 
     make_button; -> [x; : [:= [b; |> [dom::create_element["button"];
                                       dom::set_text_content["*"]]];
                                       dom::add_to[cells_container; b]; b]];
+    fill; -> [cell; is_alive; dom::set_style [cell; :: ["c"; "tr"; "b"; "s1b"; "bg"; ? [is_alive; "#000"; "#fff"]]]];
 
-    fill; -> [cell; is_alive;  dom::set_attribute[cell; "style"; ~["color: transparent; width:"; x;  "px;"; "background:"; ? [is_alive; "black"; "white"]]]];
   make_grid; -> [cells; : [
 
 *loop [bound; -> [count; : [
@@ -44,7 +45,7 @@ here is a more complex example
   ' [x; y];
   := [is_alive; math::random_int [0; 1];
       next_is_alive;math::random_int [0; 1];
-      rect;|> [make_button [r]; fill ["black"]];
+      rect;|> [make_button [r]; fill [1]];
       cell; :: [alive; is_alive;
                 next; next_is_alive;
                 view; rect]];

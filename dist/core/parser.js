@@ -63,6 +63,16 @@ export const parseExpression = (cursor) => {
     }
     return parseApply(expr, cursor.slice(match[0].length));
 };
+/**
+ *
+ * @param program
+ * @returns
+ * @example
+ * parse("1")
+ * // { type: "value", value: 1, class: "number" }
+ * parse("->[]")
+ * // { type: 'apply', operator: { type: 'word', name: '->', args: [] }, args: [] }
+ */
 export const parse = (program) => {
     const result = parseExpression(program);
     if (result.rest.length > 0) {
