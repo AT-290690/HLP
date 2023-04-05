@@ -522,6 +522,8 @@ const compile = () => {
                     return `Inventory._dom_set_text_content(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)})`;
                 case 'dom::set_style':
                     return `Inventory._dom_set_style(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)})`;
+                case 'dom::get_root':
+                    return `Inventory._dom_get_root();`;
                 default: {
                     if (!(token in tokens)) {
                         if (token)

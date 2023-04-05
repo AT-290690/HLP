@@ -1,4 +1,4 @@
- ;; window
+;; window
 ' [view; next; alive; x; y];
 := [
     px; -> [u; ~[`[u]; "px"]];
@@ -9,9 +9,8 @@
     cols; N; rows; N;
     bound; * [rows; cols]; cells; .: [];
     get_cell; -> [x; y; .: . [cells; % [+ [x; * [rows; y]]; bound]]];
-    cells_container; |> [dom::get_element_by_id["c"];
-      dom::set_style[::["w"; px [340]]]];
-    
+    cells_container; |> [dom::get_root []; dom::set_style [::["w"; px [340]]]];
+
     make_button; -> [x; : [:= [b; |> [dom::create_element["bt"];
                                       dom::set_text_content["*"]]];
                                       dom::add_to[cells_container; b]; b]];

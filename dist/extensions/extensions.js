@@ -34,6 +34,9 @@ const DomExtension = {
         set_style: () => {
             return {};
         },
+        get_root: () => {
+            return {};
+        },
     },
 };
 const StringExtension = {

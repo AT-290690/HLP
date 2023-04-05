@@ -725,6 +725,8 @@ const compile = () => {
             tree.args[1],
             locals
           )})`
+        case 'dom::get_root':
+          return `Inventory._dom_get_root();`
         default: {
           if (!(token in tokens)) {
             if (token)

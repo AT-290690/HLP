@@ -40,6 +40,9 @@ const DomExtension: Extension = {
     set_style: () => {
       return {}
     },
+    get_root: () => {
+      return {}
+    },
   },
 }
 const StringExtension: Extension = {

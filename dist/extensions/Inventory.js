@@ -1198,7 +1198,7 @@ export default class Inventory {
     return container
   }
   static _dom_create_element = (type) => {
-    return document.createElement(Inventory._dom_el_map.get(type) ?? type)
+    return document.createElement(Inventory._dom_elements_map.get(type) ?? type)
   }
   static _dom_set_attribute = (el, key, value) => {
     el.setAttribute(key, value)
@@ -1211,6 +1211,7 @@ export default class Inventory {
     el.textContent = content
     return el
   }
+  static _dom_get_root = () => document.getElementById('c')
   static _dom_style_map = new Map([
     ['bg', 'background'],
     ['c', 'color'],
@@ -1226,16 +1227,16 @@ export default class Inventory {
     ['s1w', 'solid 1px white'],
     ['s2w', 'solid 2px white'],
   ])
-  static _dom_el_map = new Map([['bt', 'button']])
+  static _dom_elements_map = new Map([
+    ['bt', 'button'],
+    ['ar', 'article'],
+  ])
+
   static _dom_set_style = (el, styles) => {
     styles.forEach((value, key) => {
       el.style[`${Inventory._dom_style_map.get(key) ?? key}`] = `${
         Inventory._dom_style_map.get(value) ?? value
       }`
-      console.log(
-        `${Inventory._dom_style_map.get(key) ?? key}`,
-        `${Inventory._dom_style_map.get(value) ?? value}`
-      )
     })
     return el
   }
