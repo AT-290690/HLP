@@ -1059,7 +1059,7 @@ const tokens: Record<string, Interpration> = {
     const map = evaluate(args[0], env)
     if (!(map.constructor.name === 'Map'))
       throw new TypeError('First argument of :: keys [] must be an :: []')
-    return Inventory.from([...map.keys()])
+    return Inventory._mapKeys(map)
   },
   ['::values']: (args, env) => {
     if (args.length !== 1)
@@ -1067,7 +1067,7 @@ const tokens: Record<string, Interpration> = {
     const map = evaluate(args[0], env)
     if (!(map.constructor.name === 'Map'))
       throw new TypeError('First argument of :: values [] must be an :: []')
-    return Inventory.from([...map.values()])
+    return Inventory._mapValues(map)
   },
   ['.:seq']: (args, env) => {
     if (args.length !== 1)
@@ -1142,6 +1142,179 @@ const tokens: Record<string, Interpration> = {
       throw new TypeError('First argument of :: size [] must be an :: []')
     return map.size
   },
+  [':.']: (args, env) => {
+    return args.reduce((acc, item) => {
+      acc.add(extract(item, env))
+      return acc
+    }, new Set())
+  },
+  [':..?']: (args, env) => {
+    if (args.length !== 2)
+      throw new RangeError('Invalid number of arguments for .? []')
+    const item = extract(args[1], env)
+    if (item == undefined)
+      throw new TypeError(
+        `Void item for accesing :. ${
+          args[0].type === 'word' ? args[0].name : ':.[]'
+        }`
+      )
+    if (args[0].type === 'apply' || args[0].type === 'value') {
+      const entity = evaluate(args[0], env)
+      if (!(entity instanceof Set))
+        throw new TypeError(`:. ${args[0]} is not a instance of :. at .? []`)
+      return +entity.has(item)
+    } else {
+      const entityName = args[0].name
+      for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
+        if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
+          if (!(scope[entityName] instanceof Set))
+            throw new TypeError(
+              `:. ${entityName} is not a instance of :. at .? []`
+            )
+          return +scope[entityName].has(item)
+        }
+    }
+  },
+  [':..=']: (args, env) => {
+    if (args.length !== 2)
+      throw new RangeError('Invalid number of arguments for .= []')
+    const main = args[0]
+    const item = extract(args[1], env)
+    if (item == undefined)
+      throw new TypeError(
+        `Void item for accesing :. ${
+          args[0].type === 'word' ? args[0].name : ':.[]'
+        }`
+      )
+    if (main.type === 'apply') {
+      const entity = evaluate(main, env)
+      if (entity == undefined || !(entity instanceof Set))
+        throw new TypeError(
+          `:. ${
+            entity.type === 'word' ? entity.name : entity
+          } is not a instance of :. at .= []`
+        )
+      entity.add(item)
+      return entity
+    } else if (main.type === 'word') {
+      const entityName = main.name
+      for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
+        if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
+          const entity = scope[entityName]
+          if (entity == undefined || !(entity instanceof Set))
+            throw new TypeError(
+              `:. ${entityName} is not a instance of :: at .= []`
+            )
+          entity.add(item)
+          return entity
+        }
+    }
+  },
+  [':..!=']: (args, env) => {
+    if (args.length !== 2)
+      throw new RangeError('Invalid number of arguments for .= []')
+    const main = args[0]
+    const item = extract(args[1], env)
+    if (item == undefined)
+      throw new TypeError(
+        `Void item for accesing :. ${
+          args[0].type === 'word' ? args[0].name : ':.[]'
+        }`
+      )
+    if (main.type === 'apply') {
+      const entity = evaluate(main, env)
+      if (entity == undefined || !(entity instanceof Set))
+        throw new TypeError(
+          `:. ${
+            entity.type === 'word' ? entity.name : entity
+          } is not a instance of :. at .= []`
+        )
+      entity.delete(item)
+      return entity
+    } else if (main.type === 'word') {
+      const entityName = main.name
+      for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
+        if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
+          const entity = scope[entityName]
+          if (entity == undefined || !(entity instanceof Set))
+            throw new TypeError(
+              `:. ${entityName} is not a instance of :: at .= []`
+            )
+          entity.delete(item)
+          return entity
+        }
+    }
+  },
+  [':.size']: (args, env) => {
+    if (args.length !== 1)
+      throw new RangeError('Invalid number of arguments to :. size []')
+    const set = evaluate(args[0], env)
+    if (!(set.constructor.name === 'Set'))
+      throw new TypeError('First argument of :. size [] must be an :. []')
+    return set.size
+  },
+  [':.union']: (args, env) => {
+    if (args.length !== 2)
+      throw new RangeError('Invalid number of arguments to :. union []')
+    const a = evaluate(args[0], env)
+    if (!(a.constructor.name === 'Set'))
+      throw new TypeError('First argument of :. union [] must be an :. []')
+    const b = evaluate(args[1], env)
+    if (!(b.constructor.name === 'Set'))
+      throw new TypeError('Second argument of :. union [] must be an :. []')
+    return Inventory._setUnion(a, b)
+  },
+  [':.xor']: (args, env) => {
+    if (args.length !== 2)
+      throw new RangeError('Invalid number of arguments to :. xor []')
+    const a = evaluate(args[0], env)
+    if (!(a.constructor.name === 'Set'))
+      throw new TypeError('First argument of :. xor [] must be an :. []')
+    const b = evaluate(args[1], env)
+    if (!(b.constructor.name === 'Set'))
+      throw new TypeError('Second argument of :. xor [] must be an :. []')
+    return Inventory._setXor(a, b)
+  },
+  [':.intersection']: (args, env) => {
+    if (args.length !== 2)
+      throw new RangeError('Invalid number of arguments to :. intersection []')
+    const a = evaluate(args[0], env)
+    if (!(a.constructor.name === 'Set'))
+      throw new TypeError(
+        'First argument of :. intersection [] must be an :. []'
+      )
+    const b = evaluate(args[1], env)
+    if (!(b.constructor.name === 'Set'))
+      throw new TypeError(
+        'Second argument of :. intersection [] must be an :. []'
+      )
+    return Inventory._setIntersection(a, b)
+  },
+  [':.difference']: (args, env) => {
+    if (args.length !== 2)
+      throw new RangeError('Invalid number of arguments to :. difference []')
+    const a = evaluate(args[0], env)
+    if (!(a.constructor.name === 'Set'))
+      throw new TypeError('First argument of :. difference [] must be an :. []')
+    const b = evaluate(args[1], env)
+    if (!(b.constructor.name === 'Set'))
+      throw new TypeError(
+        'Second argument of :. difference [] must be an :. []'
+      )
+    return Inventory._setDifference(a, b)
+  },
+  [':.values']: (args, env) => {
+    if (args.length !== 1)
+      throw new RangeError('Invalid number of arguments to :. values []')
+    const set = evaluate(args[0], env)
+    if (!(set.constructor.name === 'Set'))
+      throw new TypeError('First argument of :. values [] must be an :. []')
+    return Inventory._setValues(set)
+  },
+  // for executing hlp code
+  // it's empty here
+  // gets re-assigned when
+  // the core is initialised
   ['~*']: () => {},
   ['void']: () => VOID,
   ['number']: () => 0,

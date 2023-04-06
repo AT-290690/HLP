@@ -101,8 +101,9 @@ const buildProject = (dir, arg) => {
   writeFileSync(arg, cat.join(`;\n\n`))
 }
 
-const [, , filename, flag, arg] = process.argv
-const file = readFileSync(filename, 'utf-8')
+const [, , flag, filename, arg] = process.argv
+const file = filename ? readFileSync(filename, 'utf-8') : ''
+
 switch (flag?.toLowerCase()) {
   case 'types':
     writeFileSync(
@@ -113,6 +114,7 @@ switch (flag?.toLowerCase()) {
       'utf-8'
     )
     break
+
   case 'build':
     buildProject(filename, arg)
     break
@@ -193,7 +195,6 @@ switch (flag?.toLowerCase()) {
 ------------------------------------
 | basic   |   run no extensions     |
 ------------------------------------
+argument <filename>\n\tyarn hlp run myfile.wat
       `)
 }
-if (!filename)
-  logErrorMessage(`Provide a <filename> argument\n\tyarn hlp myfile.l run`)

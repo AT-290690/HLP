@@ -1182,8 +1182,38 @@ export default class Inventory {
     Inventory.from([...e.entries()].map(Inventory.from))
   static _mapKeys = (e) => Inventory.from([...e.keys()])
   static _mapValues = (e) => Inventory.from([...e.values()])
+  
   static _mapRemove = (e, t) => (e.delete(t), e)
   static _mapSet = (e, t, r) => (e.set(t, r), e)
+  static _setRemove = (e, t) => (e.delete(t), e)
+  static _setSet = (e, r) => (e.add(r), e)
+  static _setValues = (e) => Inventory.from([...e.values()])
+  static _setUnion(a, b) {
+    const out = new Set()
+    a.forEach((item) => out.add(item))
+    b.forEach((item) => out.add(item))
+    return out
+  }
+
+  static _setXor(a, b) {
+    const out = new Set()
+    b.forEach((item) => !a.has(item) && out.add(item))
+    a.forEach((item) => !b.has(item) && out.add(item))
+    return out
+  }
+
+  static _setIntersection(a, b) {
+    const out = new Set()
+    b.forEach((item) => a.has(item) && out.add(item))
+    return out
+  }
+
+  static _setDifference(a, b) {
+    const out = new Set()
+    a.forEach((item) => !b.has(item) && out.add(item))
+    return out
+  }
+
   static _repeat = (e, t) => {
     let r
     for (let n = 0; n < e; ++n) r = t(n)

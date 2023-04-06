@@ -682,4 +682,46 @@ describe('interpretation should work as expected', () => {
     strictEqual(runFromInterpreted(`* [8; / [2]]`), 4)
     strictEqual(runFromInterpreted(`* [4; / [4; 2]]`), 0.5)
   })
+  it(':. should work', () => {
+    deepStrictEqual(
+      runFromInterpreted(` :. [1; 2; 3; 4]`),
+      new Set([1, 2, 3, 4])
+    )
+    deepStrictEqual(
+      runFromInterpreted(`|> [
+      :. [1; 2; 3; 4]; :. xor [:. [3; 4; 5]]
+      ]`),
+      new Set([1, 2, 5])
+    )
+    deepStrictEqual(
+      runFromInterpreted(`|> [
+      :. [1; 2; 3; 4]; :. difference [:. [3; 4; 5]]
+      ]`),
+      new Set([1, 2])
+    )
+    deepStrictEqual(
+      runFromInterpreted(`|> [
+      :. [1; 2; 3; 4]; :. union [:. [3; 4; 5]]
+      ]`),
+      new Set([1, 2, 3, 4, 5])
+    )
+    deepStrictEqual(
+      runFromInterpreted(`|> [
+      :. [1; 2; 3; 4]; :. intersection [:. [3; 4; 5]]
+      ]`),
+      new Set([3, 4])
+    )
+    deepStrictEqual(
+      runFromInterpreted(`|> [:. [1; 2; 3; 4]; :. .=  [5]]`),
+      new Set([1, 2, 3, 4, 5])
+    )
+    deepStrictEqual(
+      runFromInterpreted(`|> [:. [1; 2; 3; 4]; :. .!=  [2]]`),
+      new Set([1, 3, 4])
+    )
+    deepStrictEqual(
+      runFromInterpreted(`|> [:. [1; 2; 3; 4]; :. values []]`).items,
+      [1, 2, 3, 4]
+    )
+  })
 })

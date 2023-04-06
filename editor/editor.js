@@ -32,16 +32,20 @@ const extensions = {
               ? `"${msg}"`
               : typeof msg === 'function'
               ? '-> []'
-              : JSON.stringify(
-                  msg.constructor.name === 'Inventory'
-                    ? msg.items
-                    : msg.constructor.name === 'Map'
-                    ? Object.fromEntries(msg)
-                    : msg,
-                  null
+              : (msg.constructor.name === 'Set'
+                  ? JSON.stringify([...msg]).replaceAll('[', ':. [')
+                  : JSON.stringify(
+                      msg.constructor.name === 'Inventory'
+                        ? msg.items
+                        : msg.constructor.name === 'Map'
+                        ? Object.fromEntries(msg)
+                        : msg,
+                      null
+                    )
+                      .replaceAll('[', '.: [')
+                      .replaceAll('{', ':: [')
                 )
-                  .replaceAll('[', '.: [')
-                  .replaceAll('{', ':: [')
+
                   .replaceAll('}', ']')
                   .replaceAll(',', '; ')
                   .replaceAll('":', '"; ')

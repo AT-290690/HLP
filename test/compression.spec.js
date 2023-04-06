@@ -655,4 +655,19 @@ describe('compression should work as expected', () => {
       .forEach((source) =>
         deepEqual(runFromInterpreted(source), runFromCompiled(source))
       ))
+  it(':. should work', () =>
+    [
+      ` :. [1; 2; 3; 4]`,
+      `|> [:. [1; 2; 3; 4]; :. xor [:. [3; 4; 5]]]`,
+      `|> [:. [1; 2; 3; 4]; :. difference [:. [3; 4; 5]]]`,
+      `|> [:. [1; 2; 3; 4]; :. union [:. [3; 4; 5]]]`,
+      `|> [:. [1; 2; 3; 4]; :. intersection [:. [3; 4; 5]]]`,
+      `|> [:. [1; 2; 3; 4]; :. .=  [5]]`,
+      `|> [:. [1; 2; 3; 4]; :. .!=  [2]]`,
+      `|> [:. [1; 2; 3; 4]; :. values []]`,
+    ]
+      .map((source) => decompress(compress(source)))
+      .forEach((source) =>
+        deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      ))
 })

@@ -364,7 +364,7 @@ const compile = () => {
                 } else acc += `${item}],`
                 return acc
               }, '') +
-            '])'
+            ']);'
           )
         case "'": {
           const words = tree.args.filter(
@@ -484,6 +484,53 @@ const compile = () => {
             locals
           )});`
         }
+        case ':.':
+          return (
+            'new Set([' + tree.args.map((x) => dfs(x, locals)).join(',') + ']);'
+          )
+        case ':..!=':
+          return `Inventory._setRemove(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case ':..=':
+          return `Inventory._setSet(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case ':..?':
+          return `${dfs(tree.args[0], locals)}.has(${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case ':.size':
+          return `${dfs(tree.args[0], locals)}.size(${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case ':.difference':
+          return `Inventory._setDifference(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case ':.intersection':
+          return `Inventory._setIntersection(${dfs(
+            tree.args[0],
+            locals
+          )}, ${dfs(tree.args[1], locals)});`
+        case ':.union':
+          return `Inventory._setUnion(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case ':.xor':
+          return `Inventory._setXor(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
+        case ':.values':
+          return `Inventory._setValues(${dfs(tree.args[0], locals)});`
+
         case '~*': {
           const module = dfs(tree.args.pop(), locals)
           const links = `[${tree.args.map((x) => dfs(x, locals)).join(',')}]`
