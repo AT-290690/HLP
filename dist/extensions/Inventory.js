@@ -751,48 +751,6 @@ export default class Inventory {
     return this.filter(Boolean)
   }
 
-  union(b) {
-    const a = this
-    const out = new Inventory()
-    const A = new Set(a.toArray())
-    const B = new Set(b.toArray())
-    A.forEach((item) => out.#addToRight(item))
-    B.forEach((item) => out.#addToRight(item))
-    out.balance()
-    return out
-  }
-
-  xor(b) {
-    const a = this
-    const out = new Inventory()
-    const A = new Set(a.toArray())
-    const B = new Set(b.toArray())
-    B.forEach((item) => !A.has(item) && out.#addToRight(item))
-    A.forEach((item) => !B.has(item) && out.#addToRight(item))
-    out.balance()
-    return out
-  }
-
-  intersection(b) {
-    const a = this
-    const out = new Inventory()
-    const A = new Set(a.toArray())
-    const B = new Set(b.toArray())
-    B.forEach((item) => A.has(item) && out.#addToRight(item))
-    out.balance()
-    return out
-  }
-
-  difference(b) {
-    const a = this
-    const out = new Inventory()
-    const A = new Set(a.toArray())
-    const B = new Set(b.toArray())
-    A.forEach((item) => !B.has(item) && out.#addToRight(item))
-    out.balance()
-    return out
-  }
-
   partition(groups = 1) {
     const res = this.reduce((acc, _, index, arr) => {
       if (index % groups === 0) {
@@ -1187,7 +1145,7 @@ export default class Inventory {
     Inventory.from([...e.entries()].map(Inventory.from))
   static _mapKeys = (e) => Inventory.from([...e.keys()])
   static _mapValues = (e) => Inventory.from([...e.values()])
-  
+
   static _mapRemove = (e, t) => (e.delete(t), e)
   static _mapSet = (e, t, r) => (e.set(t, r), e)
   static _setRemove = (e, t) => (e.delete(t), e)

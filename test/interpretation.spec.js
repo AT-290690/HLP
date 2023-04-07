@@ -526,8 +526,10 @@ describe('interpretation should work as expected', () => {
       runFromInterpreted(
         `|> [
       .: [1; 2; 3; 4];
-      .:difference [.: [1; 2; 4]];
-      .:> []
+      .: -> :. [];
+      :. difference [|>[.: [1; 2; 4]; .: -> :. []]];
+      :. -> .: [];
+      .: > []
     ];
     `
       ),
@@ -536,8 +538,9 @@ describe('interpretation should work as expected', () => {
     deepStrictEqual(
       runFromInterpreted(`|> [
       .: [1; 2; 3; 4; 5; 6; 7];
-      .:xor [.: [1; 2; 4; 6]];
-    ];
+      .: -> :. [];
+      :. xor [:. [1; 2; 4; 6]]; 
+      :. -> .: []];
     `).items,
       [3, 5, 7]
     )
@@ -545,18 +548,20 @@ describe('interpretation should work as expected', () => {
     deepStrictEqual(
       runFromInterpreted(`|> [
       .: [1; 2; 3; 4; 5; 6; 7];
-      .:union [.: [1; 2; 4; 6]];
-    ];
+      .: -> :. [];
+      :. union [:. [1; 2; 4; 6]];
+      :. -> .: []];
     `).items,
-      [1, 2, 3, 4, 5, 6, 7, 1, 2, 4, 6]
+      [1, 2, 3, 4, 5, 6, 7]
     )
 
     deepStrictEqual(
       runFromInterpreted(`
     |> [
       .: [1; 2; 3; 4; 5; 6; 7];
-      .:intersection [.: [1; 2; 4; 6]];
-    ];
+      .: -> :. [];
+      :. intersection [:. [1; 2; 4; 6]]; 
+      :. -> .: []];
     `).items,
       [1, 2, 4, 6]
     )

@@ -700,66 +700,6 @@ const tokens: Record<string, Interpration> = {
       copy.set(len - i, callback(array.get(i), i, array))
     return copy
   },
-  ['.:difference']: (args, env) => {
-    if (args.length !== 2) {
-      if (args.length < 2)
-        throw new RangeError('Invalid number of arguments to .: difference[]')
-    }
-    const a = evaluate(args[0], env)
-    if (!(a.constructor.name === 'Inventory'))
-      throw new TypeError('First argument of .: difference [] must be an .: []')
-    const b = evaluate(args[1], env)
-    if (!(b.constructor.name === 'Inventory'))
-      throw new TypeError(
-        'Second argument of .: difference [] must be an .: []'
-      )
-    return a.difference(b)
-  },
-  ['.:intersection']: (args, env) => {
-    if (args.length !== 2) {
-      if (args.length < 2)
-        throw new RangeError(
-          'Invalid number of arguments to .: intersection []'
-        )
-    }
-    const a = evaluate(args[0], env)
-    if (!(a.constructor.name === 'Inventory'))
-      throw new TypeError(
-        'First argument of .: intersection [] must be an .: []'
-      )
-    const b = evaluate(args[1], env)
-    if (!(b.constructor.name === 'Inventory'))
-      throw new TypeError(
-        'Second argument of .: intersection [] must be an .: []'
-      )
-    return a.intersection(b)
-  },
-  ['.:xor']: (args, env) => {
-    if (args.length !== 2) {
-      if (args.length < 2)
-        throw new RangeError('Invalid number of arguments to .: xor []')
-    }
-    const a = evaluate(args[0], env)
-    if (!(a.constructor.name === 'Inventory'))
-      throw new TypeError('First argument of .: xor [] must be an .: []')
-    const b = evaluate(args[1], env)
-    if (!(b.constructor.name === 'Inventory'))
-      throw new TypeError('Second argument of .: xor [] must be an .: []')
-    return a.xor(b)
-  },
-  ['.:union']: (args, env) => {
-    if (args.length !== 2) {
-      if (args.length < 2)
-        throw new RangeError('Invalid number of arguments to .: union []')
-    }
-    const a = evaluate(args[0], env)
-    if (!(a.constructor.name === 'Inventory'))
-      throw new TypeError('First argument of .: union [] must be an .: []')
-    const b = evaluate(args[1], env)
-    if (!(b.constructor.name === 'Inventory'))
-      throw new TypeError('Second argument of .: union [] must be an .: []')
-    return a.union(b)
-  },
   ['.:quick_sort']: (args, env) => {
     if (args.length !== 2)
       throw new RangeError('Invalid number of arguments to .: quick_sort []')
@@ -798,15 +738,12 @@ const tokens: Record<string, Interpration> = {
     return array.group(callback)
   },
   ['.:->:.']: (args, env) => {
-    if (args.length !== 2)
+    if (args.length !== 1)
       throw new RangeError('Invalid number of arguments to .: -> :. []')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Inventory'))
       throw new TypeError('First argument of .: -> :. [] must be an .: []')
-    const callback = evaluate(args[1], env)
-    if (typeof callback !== 'function')
-      throw new TypeError('Second argument of .: -> :. [] must be an -> []')
-    return array.uniform(callback)
+    return array.uniform()
   },
   ['.:rotate']: (args, env) => {
     if (args.length !== 3)

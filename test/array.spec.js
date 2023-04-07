@@ -761,32 +761,6 @@ describe('arrays should work as expected', () => {
     )
   })
 
-  it('Set methods should work', () => {
-    const a1 = new Inventory().with(1, 2, 3, 4)
-    const b1 = new Inventory().with(8, 9, 3, 2, 4)
-    deepEqual(a1.xor(b1).items, [8, 9, 1])
-
-    const a2 = new Inventory().with(1, 2, 3, 4)
-    const b2 = new Inventory().with(8, 9, 3, 2, 4)
-    deepEqual(a2.difference(b2).items, [1])
-
-    const a3 = new Inventory().with(1, 2, 3, 4)
-    const b3 = new Inventory().with(8, 9, 3, 2, 4)
-    deepEqual(a3.union(b3).items, [1, 2, 3, 4, 8, 9, 3, 2, 4])
-
-    const a4 = new Inventory().with(1, 2, 3, 4)
-    const b4 = new Inventory().with(8, 9, 3, 2, 4)
-    deepEqual(a4.intersection(b4).items, [3, 2, 4])
-
-    const a5 = new Inventory().with(1, 2, 3, 4)
-    const b5 = new Inventory().with(8, 9, 3, 2, 4)
-    deepEqual(a5.union(b5).unique().items, [1, 2, 3, 4, 8, 9])
-
-    const a6 = new Inventory().with(1, 2, 3, 4, 5, 8)
-    const b6 = new Inventory().with(8, 9, 3, 2, 4)
-    deepEqual(a6.unique().union(b6.unique()).xor(b6).items, [1, 5])
-  })
-
   it('.swap should work', () => {
     const arr = new Inventory().with(1, 2, 3)
     arr.swap(0, 2)
@@ -1260,5 +1234,9 @@ describe('arrays should work as expected', () => {
     deepEqual(a.right, [])
     deepEqual(b.left.slice(1), [])
     deepEqual(b.right, [1, 2, 3, 4])
+  })
+  it(`.uniform should work`, () => {
+    deepEqual(Inventory.of(1, 2, 3, 4).uniform(), new Set([1, 2, 3, 4]))
+    deepEqual(Inventory.of(2, 3, 3, 3, 4).uniform(), new Set([2, 3, 4]))
   })
 })

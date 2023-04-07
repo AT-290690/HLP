@@ -31,14 +31,12 @@ export const parseApply = (expr, cursor) => {
         cursor = arg.rest;
         if (cursor[0] === ';')
             cursor = cursor.slice(1);
-        else if (cursor[0] !== ']') {
+        else if (cursor[0] !== ']')
             throw new SyntaxError(`Unexpected token - Expected ';' or ']'" but got "${cursor[0]}"`);
-        }
     }
-    if (expression.type === 'apply') {
+    if (expression.type === 'apply')
         if (expression.operator.name === '|>')
             pipeArgs(expression);
-    }
     return parseApply(expression, cursor.slice(1));
 };
 export const parseExpression = (cursor) => {
@@ -75,8 +73,7 @@ export const parseExpression = (cursor) => {
  */
 export const parse = (program) => {
     const result = parseExpression(program);
-    if (result.rest.length > 0) {
+    if (result.rest.length > 0)
         throw new SyntaxError('Unexpected text after program');
-    }
     return result.expr;
 };

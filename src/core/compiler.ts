@@ -204,26 +204,6 @@ const compile = () => {
         }
         case '`':
           return `Inventory._cast(${dfs(tree.args[0], locals)})`
-        case '.:difference':
-          return `${dfs(tree.args[0], locals)}.difference(${dfs(
-            tree.args[1],
-            locals
-          )});`
-        case '.:intersection':
-          return `${dfs(tree.args[0], locals)}.intersection(${dfs(
-            tree.args[1],
-            locals
-          )});`
-        case '.:xor':
-          return `${dfs(tree.args[0], locals)}.xor(${dfs(
-            tree.args[1],
-            locals
-          )});`
-        case '.:union':
-          return `${dfs(tree.args[0], locals)}.union(${dfs(
-            tree.args[1],
-            locals
-          )});`
         case '.:...':
           return `Inventory._fill(${dfs(tree.args[0], locals)});`
         case '.:find>>':
@@ -530,7 +510,7 @@ const compile = () => {
         case ':.->.:':
           return `Inventory._setValues(${dfs(tree.args[0], locals)});`
         case '.:->:.':
-          return `Inventory.uniform(${dfs(tree.args[0], locals)});`
+          return `${dfs(tree.args[0], locals)}.uniform();`
         case '~*': {
           const module = dfs(tree.args.pop(), locals)
           const links = `[${tree.args.map((x) => dfs(x, locals)).join(',')}]`
