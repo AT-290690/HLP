@@ -81,7 +81,7 @@ describe('compilation should work as expected', () => {
     ))
   it('sum median', () =>
     [
-      `:= [NUMBERS; .: map >> [.: seq [100]; -> [x; + [x; 1]]]];
+      `:= [NUMBERS; .: map >> [.: ... [100]; -> [x; + [x; 1]]]];
       := [first; .: . [NUMBERS; 0]];
       := [last; .: . [NUMBERS; - [.:length [NUMBERS]; 1]]];
       := [median; + [first;
@@ -279,11 +279,11 @@ describe('compilation should work as expected', () => {
         runFromCompiled(source).items
       )
     ))
-  it(':: ::keys ::entries ::values ::size should work', () =>
+  it(':: ::keys ::entries ::->.: ::size should work', () =>
     [
       `.: [::entries [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
       `.: [::keys [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
-      `.: [::values [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
+      `.: [::->.: [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
     ].forEach((source) =>
       deepStrictEqual(
         runFromInterpreted(source).items,
@@ -590,7 +590,7 @@ describe('compilation should work as expected', () => {
       `|> [:. [1; 2; 3; 4]; :. intersection [:. [3; 4; 5]]]`,
       `|> [:. [1; 2; 3; 4]; :. .=  [5]]`,
       `|> [:. [1; 2; 3; 4]; :. .!=  [2]]`,
-      `|> [:. [1; 2; 3; 4]; :. values []]`,
+      `|> [:. [1; 2; 3; 4]; :. -> .: []]`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source), runFromCompiled(source))
     ))

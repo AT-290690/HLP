@@ -718,16 +718,27 @@ const tokens = {
             throw new TypeError('Second argument of .: merge_sort [] must be an -> []');
         return array.mergeSort(callback);
     },
-    ['.:group']: (args, env) => {
+    ['.:->::']: (args, env) => {
         if (args.length !== 2)
-            throw new RangeError('Invalid number of arguments to .: group []');
+            throw new RangeError('Invalid number of arguments to .: -> :: []');
         const array = evaluate(args[0], env);
         if (!(array.constructor.name === 'Inventory'))
-            throw new TypeError('First argument of .: group [] must be an .: []');
+            throw new TypeError('First argument of .: -> :: [] must be an .: []');
         const callback = evaluate(args[1], env);
         if (typeof callback !== 'function')
-            throw new TypeError('Second argument of .: group [] must be an -> []');
+            throw new TypeError('Second argument of .: -> :: [] must be an -> []');
         return array.group(callback);
+    },
+    ['.:->:.']: (args, env) => {
+        if (args.length !== 2)
+            throw new RangeError('Invalid number of arguments to .: -> :. []');
+        const array = evaluate(args[0], env);
+        if (!(array.constructor.name === 'Inventory'))
+            throw new TypeError('First argument of .: -> :. [] must be an .: []');
+        const callback = evaluate(args[1], env);
+        if (typeof callback !== 'function')
+            throw new TypeError('Second argument of .: -> :. [] must be an -> []');
+        return array.uniform(callback);
     },
     ['.:rotate']: (args, env) => {
         if (args.length !== 3)
@@ -967,15 +978,15 @@ const tokens = {
             throw new TypeError('First argument of :: keys [] must be an :: []');
         return Inventory._mapKeys(map);
     },
-    ['::values']: (args, env) => {
+    ['::->.:']: (args, env) => {
         if (args.length !== 1)
-            throw new RangeError('Invalid number of arguments to :: values []');
+            throw new RangeError('Invalid number of arguments to :: -> .: []');
         const map = evaluate(args[0], env);
         if (!(map.constructor.name === 'Map'))
-            throw new TypeError('First argument of :: values [] must be an :: []');
+            throw new TypeError('First argument of :: -> .: [] must be an :: []');
         return Inventory._mapValues(map);
     },
-    ['.:seq']: (args, env) => {
+    ['.:...']: (args, env) => {
         if (args.length !== 1)
             throw new RangeError('Invalid number of arguments to .: seq []');
         const n = evaluate(args[0], env);
@@ -1174,12 +1185,12 @@ const tokens = {
             throw new TypeError('Second argument of :. difference [] must be an :. []');
         return Inventory._setDifference(a, b);
     },
-    [':.values']: (args, env) => {
+    [':.->.:']: (args, env) => {
         if (args.length !== 1)
-            throw new RangeError('Invalid number of arguments to :. values []');
+            throw new RangeError('Invalid number of arguments to :. -> .: []');
         const set = evaluate(args[0], env);
         if (!(set.constructor.name === 'Set'))
-            throw new TypeError('First argument of :. values [] must be an :. []');
+            throw new TypeError('First argument of :. -> .: [] must be an :. []');
         return Inventory._setValues(set);
     },
     // for executing hlp code

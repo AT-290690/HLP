@@ -224,7 +224,7 @@ const compile = () => {
             tree.args[1],
             locals
           )});`
-        case '.:seq':
+        case '.:...':
           return `Inventory._fill(${dfs(tree.args[0], locals)});`
         case '.:find>>':
           return `${dfs(tree.args[0], locals)}.find(${dfs(
@@ -342,13 +342,12 @@ const compile = () => {
             locals
           )});`
         }
-        case '.:group': {
+        case '.:->::': {
           return `${dfs(tree.args[0], locals)}.group(${dfs(
             tree.args[1],
             locals
           )});`
         }
-
         case '::':
           return (
             'new Map([' +
@@ -421,7 +420,7 @@ const compile = () => {
             tree.args[1],
             locals
           )}, ${dfs(tree.args[2], locals)});`
-        case '::values':
+        case '::->.:':
           return `Inventory._mapValues(${dfs(tree.args[0], locals)});`
         case '::keys':
           return `Inventory._mapKeys(${dfs(tree.args[0], locals)});`
@@ -528,9 +527,10 @@ const compile = () => {
             tree.args[1],
             locals
           )});`
-        case ':.values':
+        case ':.->.:':
           return `Inventory._setValues(${dfs(tree.args[0], locals)});`
-
+        case '.:->:.':
+          return `Inventory.uniform(${dfs(tree.args[0], locals)});`
         case '~*': {
           const module = dfs(tree.args.pop(), locals)
           const links = `[${tree.args.map((x) => dfs(x, locals)).join(',')}]`

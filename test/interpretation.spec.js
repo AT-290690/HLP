@@ -18,7 +18,7 @@ describe('interpretation should work as expected', () => {
       Error
     )
   })
-  it(':: ::keys ::entries ::values ::size ::.? should work', () => {
+  it(':: ::keys ::entries ::->.: ::size ::.? should work', () => {
     deepStrictEqual(
       runFromInterpreted(`::entries [:: ["x"; 10; "y"; 23; "z"; 4]]`).items,
       [
@@ -32,7 +32,7 @@ describe('interpretation should work as expected', () => {
       ['x', 'y', 'z']
     )
     deepStrictEqual(
-      runFromInterpreted(`::values [:: ["x"; 10; "y"; 23; "z"; 4]]`).items,
+      runFromInterpreted(`::->.: [:: ["x"; 10; "y"; 23; "z"; 4]]`).items,
       [10, 23, 4]
     )
     deepStrictEqual(
@@ -113,7 +113,7 @@ describe('interpretation should work as expected', () => {
   it('sum median', () => {
     strictEqual(
       runFromInterpreted(`
-  := [NUMBERS; .: map >> [.: seq [100]; -> [x; + [x; 1]]]];
+  := [NUMBERS; .: map >> [.: ... [100]; -> [x; + [x; 1]]]];
   := [first; .: . [NUMBERS; 0]];
   := [last; .: . [NUMBERS; - [.:length [NUMBERS]; 1]]];
   := [median; + [first;
@@ -720,7 +720,7 @@ describe('interpretation should work as expected', () => {
       new Set([1, 3, 4])
     )
     deepStrictEqual(
-      runFromInterpreted(`|> [:. [1; 2; 3; 4]; :. values []]`).items,
+      runFromInterpreted(`|> [:. [1; 2; 3; 4]; :. -> .: []]`).items,
       [1, 2, 3, 4]
     )
   })

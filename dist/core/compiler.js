@@ -182,7 +182,7 @@ const compile = () => {
                     return `${dfs(tree.args[0], locals)}.xor(${dfs(tree.args[1], locals)});`;
                 case '.:union':
                     return `${dfs(tree.args[0], locals)}.union(${dfs(tree.args[1], locals)});`;
-                case '.:seq':
+                case '.:...':
                     return `Inventory._fill(${dfs(tree.args[0], locals)});`;
                 case '.:find>>':
                     return `${dfs(tree.args[0], locals)}.find(${dfs(tree.args[1], locals)});`;
@@ -249,7 +249,7 @@ const compile = () => {
                 case '.:merge_sort': {
                     return `${dfs(tree.args[0], locals)}.mergeSort(${dfs(tree.args[1], locals)});`;
                 }
-                case '.:group': {
+                case '.:->::': {
                     return `${dfs(tree.args[0], locals)}.group(${dfs(tree.args[1], locals)});`;
                 }
                 case '::':
@@ -298,7 +298,7 @@ const compile = () => {
                 }
                 case '.:remove_from':
                     return `${dfs(tree.args[0], locals)}.removeFrom(${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)});`;
-                case '::values':
+                case '::->.:':
                     return `Inventory._mapValues(${dfs(tree.args[0], locals)});`;
                 case '::keys':
                     return `Inventory._mapKeys(${dfs(tree.args[0], locals)});`;
@@ -349,8 +349,10 @@ const compile = () => {
                     return `Inventory._setUnion(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
                 case ':.xor':
                     return `Inventory._setXor(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
-                case ':.values':
+                case ':.->.:':
                     return `Inventory._setValues(${dfs(tree.args[0], locals)});`;
+                case '.:->:.':
+                    return `Inventory.uniform(${dfs(tree.args[0], locals)});`;
                 case '~*': {
                     const module = dfs(tree.args.pop(), locals);
                     const links = `[${tree.args.map((x) => dfs(x, locals)).join(',')}]`;

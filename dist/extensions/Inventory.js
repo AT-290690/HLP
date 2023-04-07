@@ -491,7 +491,12 @@ export default class Inventory {
     out.forEach((item) => item.balance())
     return out
   }
-
+  uniform() {
+    return this.reduce((acc, item) => {
+      acc.add(item)
+      return acc
+    }, new Set())
+  }
   /**
    * perform merge sort - requires extra memory
    * @param callback - the condition of sorting
@@ -1182,7 +1187,7 @@ export default class Inventory {
     Inventory.from([...e.entries()].map(Inventory.from))
   static _mapKeys = (e) => Inventory.from([...e.keys()])
   static _mapValues = (e) => Inventory.from([...e.values()])
-
+  
   static _mapRemove = (e, t) => (e.delete(t), e)
   static _mapSet = (e, t, r) => (e.set(t, r), e)
   static _setRemove = (e, t) => (e.delete(t), e)

@@ -491,7 +491,12 @@ export default class Inventory {
     out.forEach((item) => item.balance())
     return out
   }
-
+  uniform() {
+    return this.reduce((acc, item) => {
+      acc.add(item)
+      return acc
+    }, new Set())
+  }
   /**
    * perform merge sort - requires extra memory
    * @param callback - the condition of sorting
