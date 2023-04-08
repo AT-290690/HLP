@@ -76,10 +76,14 @@ const generateCompressionRunes = (start) => {
         .map((t) => `${t}[`)
         .sort((a, b) => (a.length > b.length ? -1 : 1))
         .concat(['][', ']];', '];'])
-        .map((t, i) => ({
-        full: t,
-        short: String.fromCharCode(start + i + OFFSET),
-    }));
+        .reduce((acc, t, i) => {
+        const short = String.fromCharCode(start + i + OFFSET);
+        acc.set(short, {
+            full: t,
+            short,
+        });
+        return acc;
+    }, new Map());
 };
 export const shortRunes = generateCompressionRunes(0);
 const dfs = (tree, definitions = new Set()) => {
@@ -143,7 +147,7 @@ export const compress = (source) => {
     });
     for (const { full, short } of shortDefinitions)
         result = result.replaceAll(new RegExp(`\\b${full}\\b`, 'g'), short);
-    for (const { full, short } of shortRunes)
+    for (const [_, { full, short }] of shortRunes)
         result = result.replaceAll(full, short);
     const arr = result.split('" "');
     strings.forEach((str, i) => (arr[i] += str));
@@ -153,9 +157,15 @@ export const decompress = (raw) => {
     const strings = raw.match(/"([^"]*)"/g) || [];
     const value = raw.replaceAll(/"([^"]*)"/g, '" "');
     const suffix = [...new Set(value.match(/\'+?\d+/g))];
-    let result = suffix.reduce((acc, m) => acc.split(m).join(']'.repeat(parseInt(m.substring(1)))), value);
-    for (const { full, short } of shortRunes)
-        result = result.replaceAll(short, full);
+    const runes = suffix.reduce((acc, m) => acc.split(m).join(']'.repeat(parseInt(m.substring(1)))), value);
+    let result = '';
+    for (const tok of runes) {
+        if (shortRunes.has(tok)) {
+            result += shortRunes.get(tok).full;
+        }
+        else
+            result += tok;
+    }
     const arr = result.split('" "');
     strings.forEach((str, i) => (arr[i] += str));
     return arr.join('');
