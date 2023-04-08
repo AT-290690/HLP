@@ -248,3 +248,10 @@ body {
 .fs-autocomplete-option:hover {
   background-color: var(--comment);
 }
+#application {
+  display: none;
+  border: none;
+  border-bottom: solid 1px var(--border);
+  width: 99.9%;
+  height: 60vh;
+}

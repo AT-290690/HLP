@@ -1,4 +1,4 @@
-;; window
+;; app
 ' [view; next; alive; x; y];
 := [
     px; -> [u; ~[`[u]; "px"]];

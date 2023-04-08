@@ -40,6 +40,9 @@ const DomExtension = {
         get_root: () => {
             return {};
         },
+        event: () => {
+            return {};
+        },
     },
 };
 const StringExtension = {

@@ -1223,6 +1223,10 @@ export default class Inventory {
     ['s2b', 'solid 2px black'],
     ['s1w', 'solid 1px white'],
     ['s2w', 'solid 2px white'],
+    ['pos', 'position'],
+    ['al', 'align'],
+    ['txal', 'text-align'],
+    ['x', 'center'],
   ])
   static _dom_elements_map = new Map([
     ['bt', 'button'],
@@ -1234,12 +1238,27 @@ export default class Inventory {
     ['h', 'height'],
     ['oc', 'onclick'],
   ])
+  static _dom_events_map = new Map([['clk', 'click']])
   static _dom_set_style = (el, styles) => {
     styles.forEach((value, key) => {
       el.style[`${Inventory._dom_style_map.get(key) ?? key}`] = `${
         Inventory._dom_style_map.get(value) ?? value
       }`
     })
+    return el
+  }
+  static _dom_add_event = (el, event, callback) => {
+    el.addEventListener(
+      `${Inventory._dom_events_map.get(event) ?? event}`,
+      (e) =>
+        callback(
+          new Map([
+            ['el', e.target],
+            ['key', e.key],
+            ['code', e.code],
+          ])
+        )
+    )
     return el
   }
 }

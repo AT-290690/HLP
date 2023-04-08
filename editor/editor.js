@@ -15,7 +15,7 @@ const droneButton = document.getElementById('drone')
 const errorIcon = document.getElementById('error-drone-icon')
 const execIcon = document.getElementById('exec-drone-icon')
 const consoleEditor = CodeMirror(consoleElement)
-
+let RATIO_Y = 1
 const droneIntel = (icon) => {
   icon.style.visibility = 'visible'
   setTimeout(() => (icon.style.visibility = 'hidden'), 500)
@@ -91,11 +91,13 @@ droneButton.addEventListener('click', () => {
 const cmds = {
   validate: ';; validate',
   assert: ';; assert',
-  app: ';; app',
+  open: ';; open',
   share: ';; share',
   window: ';; window',
   log: ';; log',
   exe: ';; exe',
+  app: ';; app',
+  focus: ';; focus',
 }
 
 const withCommand = (command = editor.getLine(0)) => {
@@ -141,7 +143,7 @@ const withCommand = (command = editor.getLine(0)) => {
           )
       }
       break
-    case cmds.app:
+    case cmds.open:
       {
         const encoded = encodeURIComponent(encodeBase64(value))
         window.open(
@@ -166,11 +168,41 @@ const withCommand = (command = editor.getLine(0)) => {
       {
         const encoded = encodeURIComponent(encodeBase64(value))
         window.open(
-          `${window.location.href.split('/editor/')[0]}/index.html?l=` +
-            encoded,
+          `${
+            window.location.href.split('/editor/')[0]
+          }/index.html?l=${encoded}`,
           'Bit',
           `menubar=no,directories=no,toolbar=no,status=no,scrollbars=no,resize=no,width=600,height=600,left=600,top=150`
         )
+      }
+      break
+    case cmds.focus:
+      {
+        const application = document.getElementById('application')
+        application.style.display = 'none'
+        application.src = `${
+          window.location.href.split('/editor/')[0]
+        }/index.html`
+        const bouds = document.body.getBoundingClientRect()
+        const width = bouds.width
+        const height = bouds.height
+        RATIO_Y = 1
+        editor.setSize(width, (height - 60) * RATIO_Y)
+      }
+      break
+    case cmds.app:
+      {
+        const encoded = encodeURIComponent(encodeBase64(value))
+        const application = document.getElementById('application')
+        application.src = `${
+          window.location.href.split('/editor/')[0]
+        }/index.html?l=${encoded}`
+        application.style.display = 'block'
+        const bouds = document.body.getBoundingClientRect()
+        const width = bouds.width
+        const height = bouds.height
+        RATIO_Y = 0.35
+        editor.setSize(width, (height - 60) * RATIO_Y)
       }
       break
     case cmds.log:
@@ -216,11 +248,11 @@ window.addEventListener('resize', () => {
   const bouds = document.body.getBoundingClientRect()
   const width = bouds.width
   const height = bouds.height
-  editor.setSize(width, height - 60)
+  editor.setSize(width, (height - 60) * RATIO_Y)
   consoleEditor.setSize(width - 80, 40)
 })
 const bounds = document.body.getBoundingClientRect()
-editor.setSize(bounds.width, bounds.height - 60)
+editor.setSize(bounds.width, (bounds.height - 60) * RATIO_Y)
 consoleEditor.setSize(bounds.width - 80, 40)
 
 const registerSW = async () => {
