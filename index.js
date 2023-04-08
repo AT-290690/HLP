@@ -101,100 +101,113 @@ const buildProject = (dir, arg) => {
   writeFileSync(arg, cat.join(`;\n\n`))
 }
 
-const [, , flag, filename, arg] = process.argv
-const file = filename ? readFileSync(filename, 'utf-8') : ''
-
-switch (flag?.toLowerCase()) {
-  case 'types':
-    writeFileSync(
-      './src/core/tokens.d.ts',
-      `export type Token = ${Object.keys(tokens)
-        .map((x) => `"${x}"`)
-        .join('\n|')}`,
-      'utf-8'
-    )
-    break
-
-  case 'build':
-    buildProject(filename, arg)
-    break
-  case 'link':
-  case 'l':
-    encode(file)
-    break
-  case 'encode':
-    encodeUri(file)
-    break
-  case 'decode':
-    decodeUri(file)
-    break
-  case 'local':
-    encode(file, arg)
-    break
-  case 'mangle':
-  case 'm':
-    mangle(file)
-    break
-  case 'js':
-    compile(file)
-    break
-  case 'c':
-  case 'count':
-    count(file)
-    break
-  case 'cm':
-    countMangled(file)
-    break
-  case 'compile':
-  case 'cr':
-    logResultCompiled(file, arg)
-    break
-  case 't':
-  case 'test':
-    test(file)
-    break
-  case 'run':
-  case 'r':
-  case 'log':
-    logResultInterpreted(file, arg)
-    break
-  case 'check':
-  case 'y':
-    check(file)
-    break
-  case 'basic':
-    {
-      exe(removeNoCode(file.toString().trim()), {
-        utils: { log: (msg) => console.log(msg), items: (a) => a.items },
-      })
-    }
-    break
-  case 'help':
-  default:
-    console.log(`
-------------------------------------
-| help                              |
-------------------------------------
-| encode  |   encode base64         |
-------------------------------------
-| decode  |   decode base64         |
-------------------------------------
-| mangle  |   compress only         |
-------------------------------------
-| js      |   log javascript output |
-------------------------------------
-| compile |   compile and run       |
-------------------------------------
-| count   |   bite size             |
-------------------------------------
-| run     |   interpret and run     |
-------------------------------------
-| link    |   create link           |
-------------------------------------
-| local   |   create local link     |
-------------------------------------
-| basic   |   run no extensions     |
-------------------------------------
-argument <filename>\n\tyarn hlp run myfile.wat
-      `)
+const [, , ...argv] = process.argv
+// const file = filename ? readFileSync(filename, 'utf-8') : ''
+let file = '',
+  type = 'raw'
+while (argv.length) {
+  const flag = argv.shift()?.toLowerCase()
+  const value = argv.shift()
+  if (!flag) throw new Error('No flag provided')
+  // if (!value) throw new Error('No value provided')
+  switch (flag) {
+    case '-type':
+      type = value
+      break
+    case '-file':
+      file = readFileSync(value, 'utf-8')
+      break
+    case '-types':
+      writeFileSync(
+        `./src/core/${value}.d.ts`,
+        `export type Token = ${Object.keys(tokens)
+          .map((x) => `"${x}"`)
+          .join('\n|')}`,
+        'utf-8'
+      )
+      break
+    case '-build':
+      buildProject(value, type)
+      break
+    case '-link':
+    case '-l':
+      encode(file, value)
+      break
+    case '-encode':
+      encodeUri(file)
+      break
+    case '-decode':
+      decodeUri(file)
+      break
+    case '-local':
+      encode(file, type)
+      break
+    case '-mangle':
+    case '-m':
+      mangle(file)
+      break
+    case '-js':
+      compile(file)
+      break
+    case '-c':
+    case '-count':
+      count(file)
+      break
+    case '-cm':
+      countMangled(file)
+      break
+    case '-compile':
+    case '-cr':
+      logResultCompiled(file, type)
+      break
+    case '-t':
+    case '-test':
+      test(file)
+      break
+    case '-run':
+    case '-r':
+    case '-log':
+      logResultInterpreted(file, type)
+      break
+    case '-check':
+    case '-y':
+      check(file)
+      break
+    case '-basic':
+      {
+        exe(removeNoCode(file.toString().trim()), {
+          utils: { log: (msg) => console.log(msg), items: (a) => a.items },
+        })
+      }
+      break
+    case '-help':
+    default:
+      console.log(`
+  ------------------------------------
+  | help                              |
+  ------------------------------------
+  | file    |   prepare a file        |
+   ------------------------------------
+  | encode  |   encode base64         |
+  ------------------------------------
+  | decode  |   decode base64         |
+  ------------------------------------
+  | mangle  |   compress only         |
+  ------------------------------------
+  | js      |   log javascript output |
+  ------------------------------------
+  | compile |   compile and run       |
+  ------------------------------------
+  | count   |   bite size             |
+  ------------------------------------
+  | run     |   interpret and run     |
+  ------------------------------------
+  | link    |   create link           |
+  ------------------------------------
+  | local   |   create local link     |
+  ------------------------------------
+  | basic   |   run no extensions     |
+  ------------------------------------
+        `)
+  }
 }
