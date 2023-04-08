@@ -28,7 +28,10 @@ const DomExtension: Extension = {
     create_element: () => {
       return {}
     },
-    add_to: () => {
+    insert: () => {
+      return {}
+    },
+    append_to: () => {
       return {}
     },
     get_element_by_id: () => {

@@ -1190,15 +1190,19 @@ export default class Inventory {
     for (const el of elements) container.appendChild(el)
     return container
   }
+  static _dom_insert_self_into_container = (el, container) => {
+    container.appendChild(el)
+    return el
+  }
   static _dom_create_element = (type) => {
     return document.createElement(Inventory._dom_elements_map.get(type) ?? type)
   }
   static _dom_set_attribute = (el, key, value) => {
-    el.setAttribute(key, value)
+    el.setAttribute(Inventory._dom_attributes_map.get(key) ?? key, value)
     return el
   }
   static _dom_get_attribute = (el, key) => {
-    return el.getAttribute(key)
+    return el.getAttribute(Inventory._dom_attributes_map.get(key) ?? key)
   }
   static _dom_set_text_content = (el, content) => {
     el.textContent = content
@@ -1223,6 +1227,12 @@ export default class Inventory {
   static _dom_elements_map = new Map([
     ['bt', 'button'],
     ['ar', 'article'],
+  ])
+  static _dom_attributes_map = new Map([
+    ['cs', 'class'],
+    ['w', 'width'],
+    ['h', 'height'],
+    ['oc', 'onclick'],
   ])
   static _dom_set_style = (el, styles) => {
     styles.forEach((value, key) => {

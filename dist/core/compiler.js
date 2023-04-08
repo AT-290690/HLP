@@ -526,9 +526,15 @@ const compile = () => {
                     return `Inventory._dom_get_attribute(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)})`;
                 case 'dom::create_element':
                     return `Inventory._dom_create_element(${dfs(tree.args[0], locals)})`;
-                case 'dom::add_to': {
+                case 'dom::insert': {
                     const [container, ...rest] = tree.args;
-                    return `Inventory._dom_insert_into_container(${dfs(container, locals)}, ${rest.map((x) => dfs(x, locals)).join(',')})`;
+                    return `Inventory._dom_insert_into_container(${dfs(container, locals)}, ${rest.map((x) => dfs(x, locals)).join(',')});`;
+                }
+                case 'dom::append_to': {
+                    const [item, container] = tree.args;
+                    return `Inventory._dom_insert_self_into_container(
+            ${dfs(item, locals)},
+            ${dfs(container, locals)});`;
                 }
                 case 'dom::get_element_by_id':
                     return `Inventory._dom_get_element_by_id(${dfs(tree.args[0], locals)})`;

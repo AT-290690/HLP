@@ -11,9 +11,9 @@
     get_cell; -> [x; y; .: . [cells; % [+ [x; * [rows; y]]; bound]]];
     cells_container; |> [dom::get_root []; dom::set_style [::["w"; px [340]]]];
 
-    make_button; -> [x; : [:= [b; |> [dom::create_element["bt"];
-                                      dom::set_text_content["*"]]];
-                                      dom::add_to[cells_container; b]; b]];
+    make_button; -> [x; |> [dom::create_element["bt"];
+                                      dom::set_text_content["*"];
+                                      dom::append_to[cells_container]]];
     fill; -> [cell; is_alive; dom::set_style [cell; :: ["c"; "tr"; "b"; "s1b"; "bg"; ? [is_alive; "#000"; "#fff"]]]];
 
   make_grid; -> [cells; : [

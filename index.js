@@ -119,7 +119,7 @@ while (argv.length) {
       break
     case '-types':
       writeFileSync(
-        `./src/core/${value}.d.ts`,
+        `./src/core/tokens.d.ts`,
         `export type Token = ${Object.keys(tokens)
           .map((x) => `"${x}"`)
           .join('\n|')}`,

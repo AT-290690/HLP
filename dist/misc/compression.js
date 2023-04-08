@@ -89,17 +89,15 @@ export const shortRunes = generateCompressionRunes(0);
 const dfs = (tree, definitions = new Set()) => {
     for (const node of tree) {
         if (node.type !== 'value') {
-            if (node.type === 'word' && node.name.length > 1) {
+            if (node.type === 'word' && node.name.length > 1)
                 definitions.add(node.name);
-            }
             else if (node.type === 'apply') {
                 if (node.operator.type === 'word') {
                     node.args
                         .filter((expr) => expr.type === 'word')
                         .forEach(({ name }) => {
-                        if (name && name.length > 2 && name[0] !== '_') {
+                        if (name && name.length > 1 && name[0] !== '_')
                             definitions.add(name);
-                        }
                     });
                 }
                 else
