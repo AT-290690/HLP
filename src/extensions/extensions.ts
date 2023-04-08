@@ -49,6 +49,18 @@ const DomExtension: Extension = {
     event: () => {
       return {}
     },
+    css_link: () => {
+      return {}
+    },
+    load_bulma: () => {
+      return {}
+    },
+    container: () => {
+      return {}
+    },
+    add_class: () => {
+      return {}
+    },
   },
 }
 const StringExtension: Extension = {

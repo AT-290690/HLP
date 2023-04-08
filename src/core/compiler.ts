@@ -765,6 +765,22 @@ const compile = () => {
             tree.args[1],
             locals
           )}, ${dfs(tree.args[2], locals)});`
+        case 'dom::css_link':
+          return `Inventory._dom_css_link(${dfs(tree.args[0], locals)});`
+        case 'dom::load_bulma':
+          return `Inventory._dom_load_bulma(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )}, ${dfs(tree.args[2], locals)});`
+        case 'dom::container':
+          return `Inventory._dom_container(${tree.args
+            .map((x) => dfs(x, locals))
+            .join(',')});`
+        case 'dom::add_class':
+          return `Inventory._dom_add_class(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )});`
         default: {
           if (!(token in tokens)) {
             if (token)

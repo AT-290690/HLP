@@ -1186,6 +1186,11 @@ export default class Inventory {
   static _call = (e, t) => t(e)
   static _dom_get_element_by_id = (id) => document.getElementById(id)
   static _dom_div = () => document.createElement('div')
+  static _dom_container = (...elements) => {
+    const container = document.createElement('div')
+    for (const el of elements) container.appendChild(el)
+    return container
+  }
   static _dom_insert_into_container = (container, ...elements) => {
     for (const el of elements) container.appendChild(el)
     return container
@@ -1260,5 +1265,25 @@ export default class Inventory {
         )
     )
     return el
+  }
+  static _dom_css_link = (href) => {
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = href
+    link.crossorigin = 'anonymous'
+    document.head.appendChild(link)
+    return link
+  }
+  static _dom_load_bulma = (v1, v2, v3) => {
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = `https://cdn.jsdelivr.net/npm/bulma@${v1}.${v2}.${v3}/css/bulma.min.css`
+    link.crossorigin = 'anonymous'
+    document.head.appendChild(link)
+    return link
+  }
+  static _dom_add_class = (element, ...classlist) => {
+    classlist.forEach((cls) => element.classList.add(cls))
+    return element
   }
 }
