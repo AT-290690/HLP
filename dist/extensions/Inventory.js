@@ -1191,6 +1191,15 @@ export default class Inventory {
     for (const el of elements) container.appendChild(el)
     return container
   }
+  static _dom_remove_from_container = (container, ...elements) => {
+    for (const el of elements) container.removeChild(el)
+    return container
+  }
+  static _dom_remove_self_from_container = (el) => el.parentNode.removeChild(el)
+  static _dom_insert_self_into_container = (el, container) => {
+    container.appendChild(el)
+    return el
+  }
   static _dom_insert_into_container = (container, ...elements) => {
     for (const el of elements) container.appendChild(el)
     return container
