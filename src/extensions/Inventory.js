@@ -1226,6 +1226,7 @@ export default class Inventory {
     ['w', 'width'],
     ['h', 'height'],
     ['mw', 'max-width'],
+    ['mh', 'max-height'],
     ['m', 'margin'],
     ['p', 'padding'],
     ['b', 'border'],
@@ -1241,8 +1242,12 @@ export default class Inventory {
     ['x', 'center'],
   ])
   static _dom_elements_map = new Map([
+    ['d', 'div'],
     ['bt', 'button'],
     ['ar', 'article'],
+    ['sc', 'section'],
+    ['sp', 'span'],
+    ['ip', 'input'],
   ])
   static _dom_attributes_map = new Map([
     ['cs', 'class'],
@@ -1250,7 +1255,9 @@ export default class Inventory {
     ['h', 'height'],
     ['oc', 'onclick'],
   ])
-  static _dom_events_map = new Map([['clk', 'click']])
+  static _dom_events_map = new Map([
+    ['cl', 'click', 'kp', 'keypress', 'kd', 'keydown', 'ku', 'keyup'],
+  ])
   static _dom_set_style = (el, styles) => {
     styles.forEach((value, key) => {
       el.style[`${Inventory._dom_style_map.get(key) ?? key}`] = `${

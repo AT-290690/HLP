@@ -222,6 +222,8 @@ const tokens = {
                 name = word.name;
                 if (name.includes('.') || name.includes('-'))
                     throw new SyntaxError(`Invalid use of operation := [] [variable name must not contain . or -] but got ${name}`);
+                if (name in tokens)
+                    throw new SyntaxError(`Invalid use of operation := [] variable name ${name} is a reserved word`);
             }
             else {
                 env[name] = evaluate(args[i], env);

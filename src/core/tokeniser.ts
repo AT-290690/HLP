@@ -215,7 +215,7 @@ const tokens: Record<string, Interpration> = {
   [':=']: (args, env) => {
     if (!args.length)
       throw new SyntaxError('Invalid number of arguments for := []')
-    let name
+    let name: string
     for (let i = 0; i < args.length; ++i) {
       if (i % 2 === 0) {
         const word = args[i]
@@ -227,6 +227,10 @@ const tokens: Record<string, Interpration> = {
         if (name.includes('.') || name.includes('-'))
           throw new SyntaxError(
             `Invalid use of operation := [] [variable name must not contain . or -] but got ${name}`
+          )
+        if (name in tokens)
+          throw new SyntaxError(
+            `Invalid use of operation := [] variable name ${name} is a reserved word`
           )
       } else {
         env[name] = evaluate(args[i], env)
