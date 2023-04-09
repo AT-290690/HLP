@@ -99,6 +99,8 @@ const register = {
     ':.union': 'Inventory._setUnion',
     ':.xor': 'Inventory._setXor',
     ':.->.:': 'Inventory._setValues',
+    '`': 'Inventory._cast',
+    '.:...': 'Inventory._fill',
 };
 const compile = () => {
     const vars = new Set();
@@ -117,7 +119,7 @@ const compile = () => {
                                 ? ';return ' + res.toString().trimStart()
                                 : res;
                         })
-                            .join('')}})()`;
+                            .join('')}})();`;
                     }
                     else {
                         const res = dfs(tree.args[0], locals);
@@ -163,7 +165,7 @@ const compile = () => {
                             if (i !== len - 1)
                                 out += `${name}=${obj}.at(${i}),`;
                             else
-                                out += `${name}=${obj}.slice(${i})`;
+                                out += `${name}=${obj}.slice(${i});`;
                         }
                     }
                     out += `));`;
@@ -205,7 +207,7 @@ const compile = () => {
                 case '||':
                     return ('(' +
                         tree.args
-                            .map((x) => `(${dfs(x, locals)})`)
+                            .map((x) => `(${dfs(x, locals)});`)
                             .join(tree.operator.name) +
                         ');');
                 case '%':
@@ -252,10 +254,6 @@ const compile = () => {
                         .map((x) => dfs(x, locals))
                         .join(',')}).every(x => !Inventory.of(${dfs(first, locals)}).isEqual(Inventory.of(x)));`;
                 }
-                case '`':
-                    return `Inventory._cast(${dfs(tree.args[0], locals)})`;
-                case '.:...':
-                    return `Inventory._fill(${dfs(tree.args[0], locals)});`;
                 case '.:find>>':
                     return `${dfs(tree.args[0], locals)}.find(${dfs(tree.args[1], locals)});`;
                 case '.:find<<':
@@ -360,6 +358,8 @@ const compile = () => {
                 case '::keys':
                 case '::entries':
                 case ':.->.:':
+                case '`':
+                case '.:...':
                     return `${register[token]}(${dfs(tree.args[0], locals)});`;
                 case '::.!=':
                 case '?==':
@@ -561,18 +561,18 @@ const compile = () => {
                 case 'dom_css_link':
                 case 'dom_detach':
                 case 'dom_create_element':
-                    return `${register[token]}(${dfs(tree.args[0], locals)})`;
+                    return `${register[token]}(${dfs(tree.args[0], locals)});`;
                 case 'dom_remove':
                 case 'dom_set_text_content':
                 case 'dom_set_style':
                 case 'dom_set_value':
                 case 'dom_add_class':
-                    return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)})`;
+                    return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
                 case 'dom_set_attribute':
                 case 'dom_get_attribute':
                 case 'dom_event':
                 case 'dom_load_bulma':
-                    return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)})`;
+                    return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)});`;
                 case 'dom_insert': {
                     const [container, ...rest] = tree.args;
                     return `${register[token]}(${dfs(container, locals)}, ${rest
