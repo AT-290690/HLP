@@ -1191,6 +1191,15 @@ export default class Inventory {
     for (const el of elements) container.appendChild(el)
     return container
   }
+  static _dom_remove_from_container = (container, ...elements) => {
+    for (const el of elements) container.removeChild(el)
+    return container
+  }
+  static _dom_remove_self_from_container = (el) => el.parentNode.removeChild(el)
+  static _dom_insert_self_into_container = (el, container) => {
+    container.appendChild(el)
+    return el
+  }
   static _dom_insert_into_container = (container, ...elements) => {
     for (const el of elements) container.appendChild(el)
     return container
@@ -1234,6 +1243,8 @@ export default class Inventory {
     ['s2b', 'solid 2px black'],
     ['s1w', 'solid 1px white'],
     ['s2w', 'solid 2px white'],
+    ['s1t', 'solid 1px transparent'],
+    ['s2t', 'solid 2px transparent'],
     ['pos', 'position'],
     ['al', 'align'],
     ['txal', 'text-align'],
@@ -1253,7 +1264,6 @@ export default class Inventory {
     ['cs', 'class'],
     ['w', 'width'],
     ['h', 'height'],
-    ['oc', 'onclick'],
   ])
   static _dom_events_map = new Map([
     ['cl', 'click', 'kp', 'keypress', 'kd', 'keydown', 'ku', 'keyup'],
@@ -1304,5 +1314,32 @@ export default class Inventory {
   }
   static _dom_get_body = () => {
     return document.body
+  }
+  static _dom_clear = (el) => {
+    el.value = ''
+    return el
+  }
+  static _dom_add_to_box = (el, items) => {
+    items.forEach((item) => el.appendChild(item))
+    return el
+  }
+  static _dom_box = (items) => {
+    const container = document.createElement('div')
+    items.forEach((item) => container.appendChild(item))
+    return container
+  }
+  static _dom_click = (el, callback) => {
+    el.addEventListener('click', (e) =>
+      callback(
+        new Map([
+          ['el', e.target],
+          ['key', e.key],
+          ['code', e.code],
+          ['value', e.value],
+          ['text', e.textContent],
+        ])
+      )
+    )
+    return el
   }
 }

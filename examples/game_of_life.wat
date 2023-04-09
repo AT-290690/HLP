@@ -1,7 +1,8 @@
 ;; app
 ' [view; next; alive; x; y];
+|> [dom_get_body []; dom_set_style [:: ["bg"; 0]]];
 := [
-    px; -> [u; ~[`[u]; "px"]];
+    px; -> [u; ~ [` [u]; "px"]];
     N; 17;
     factor; 1;
     r; * [N; factor];
@@ -9,12 +10,12 @@
     cols; N; rows; N;
     bound; * [rows; cols]; cells; .: [];
     get_cell; -> [x; y; .: . [cells; % [+ [x; * [rows; y]]; bound]]];
-    cells_container; |> [dom_get_root []; dom_set_style [::["w"; px [340]]]];
+    cells_container; |> [dom_get_root []; dom_set_style [:: ["w"; px [380]]]];
 
     make_button; -> [x; |> [dom_create_element["bt"];
-                                      dom_set_text_content["*"];
-                                      dom_append_to[cells_container]]];
-    fill; -> [cell; is_alive; dom_set_style [cell; :: ["c"; "tr"; "b"; "s1b"; "bg"; ? [is_alive; "#000"; "#fff"]]]];
+                           dom_set_text_content["*"];
+                    dom_append_to[cells_container]]];
+    fill; -> [cell; is_alive; dom_set_style [cell; :: ["c"; "tr"; "b"; "s2t"; "bg"; ? [is_alive; "#fff"; 0]]]];
 
   make_grid; -> [cells; : [
 

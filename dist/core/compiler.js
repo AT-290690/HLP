@@ -84,6 +84,10 @@ const register = {
     dom_load_bulma: 'Inventory._dom_load_bulma',
     dom_container: 'Inventory._dom_container',
     dom_add_class: 'Inventory._dom_add_class',
+    dom_clear: 'Inventory._dom_clear',
+    dom_add_to_box: 'Inventory._dom_add_to_box',
+    dom_box: 'Inventory._dom_box',
+    dom_click: 'Inventory._dom_click',
     '=>': 'Inventory._call',
     '::.=': 'Inventory._mapSet',
     '::.!=': 'Inventory._mapRemove',
@@ -561,12 +565,16 @@ const compile = () => {
                 case 'dom_css_link':
                 case 'dom_detach':
                 case 'dom_create_element':
+                case 'dom_clear':
+                case 'dom_box':
                     return `${register[token]}(${dfs(tree.args[0], locals)});`;
                 case 'dom_remove':
                 case 'dom_set_text_content':
                 case 'dom_set_style':
                 case 'dom_set_value':
                 case 'dom_add_class':
+                case 'dom_add_to_box':
+                case 'dom_click':
                     return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
                 case 'dom_set_attribute':
                 case 'dom_get_attribute':

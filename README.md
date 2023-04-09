@@ -21,8 +21,9 @@ here is a more complex example
 ```rs
 ;; app
 ' [view; next; alive; x; y];
+|> [dom_get_body []; dom_set_style [:: ["bg"; 0]]];
 := [
-    px; -> [u; ~[`[u]; "px"]];
+    px; -> [u; ~ [` [u]; "px"]];
     N; 17;
     factor; 1;
     r; * [N; factor];
@@ -30,12 +31,12 @@ here is a more complex example
     cols; N; rows; N;
     bound; * [rows; cols]; cells; .: [];
     get_cell; -> [x; y; .: . [cells; % [+ [x; * [rows; y]]; bound]]];
-    cells_container; |> [dom_get_root []; dom_set_style [::["w"; px [340]]]];
+    cells_container; |> [dom_get_root []; dom_set_style [:: ["w"; px [380]]]];
 
     make_button; -> [x; |> [dom_create_element["bt"];
-                                      dom_set_text_content["*"];
-                                      dom_append_to[cells_container]]];
-    fill; -> [cell; is_alive; dom_set_style [cell; :: ["c"; "tr"; "b"; "s1b"; "bg"; ? [is_alive; "#000"; "#fff"]]]];
+                           dom_set_text_content["*"];
+                    dom_append_to[cells_container]]];
+    fill; -> [cell; is_alive; dom_set_style [cell; :: ["c"; "tr"; "b"; "s2t"; "bg"; ? [is_alive; "#fff"; 0]]]];
 
   make_grid; -> [cells; : [
 
@@ -98,4 +99,4 @@ time_set_interval[-> [: [update_state []; render []]]; 100];
 
 click to run it:
 
-[game_of_life.hlp](https://at-290690.github.io/hlp?l=xaBbYTA7YjA7YzA7eDt5xaTFiVtkMDvFilt1O8WZW8WhW3XFpCJweCLFo047MTc7ZTA7MTtyO8WVW047ZTDFpGjEC3LEF8WUMcWkZjA7TjtnxAVoMMQaZzA7ZjDFpGkwO8WNW8WkasVaeDt5O8S7W8QVl1vFk1t4xyp5xaNoMMK3MztrMDvFj1vDjlvFpMOCW8WOWyJ3IjtkMFszNDDCtzQ7bMdGxY9bwqhbImJ0IsWkwqNbIirECL9ba8VEbcUldDA7dTA7w4LECcRIYyI7InRyIjsiYiI7InMxxAZiZyI7xZpbdTA7IiMwMDAiOyIjZmZmIsRpbsVE5AConlvEp1vkANOKW3bFD8WaW8WbW8WXxA9mMMWjxYBbaDtyxaPFoOQA3%2BUBR3UwO8KwWzA7McWkd8oLeOUA3GwwW3LFpG0wWzHFo%2BYAm2PlAKpiMDt3MDthMDt4MMWjxLPEfHQwwrc2O2%2FoAIt5xn%2BJW3nmAXLFi8QW5gDraTvEC55bxZ%2FEHprkAJ9pO2cwxaR5O8WAW3nkARfFieQBOcQY5AGYdDA7ajDlALGjeTDEQng7ecRucOYBsI5beDswO3nkALfFDDE7eTswxwzFlMwOxCbmAI%2FIKMoOxirOHs4cMcWjceUAxFg7WecA3nowxVyLW%2BQAi4pbQegA9uYAssWTW1g7xLrEF3jFo8WTW1nHDnnkAbfFn8Q%2FxZPFBprEM8S6xAZjMMWk5QFNejDFo3LFWG8w6gE%2B5AKXxmV1zDJCMDtx5wEk5AFTh8QexZ1bQjA7MsWjxK%2FEJ2LmAK3JHpzEHjPUHsWbW3XEDYPQIjHCtzg7c%2F8AlOgAlKPFj1vGDWEw5QJGdeQCLsVLY8gnYjDCtzc7bsRMxaTCqlvFilvFnltyMFvFpHMwW%2BQCCzEwMMWk)
+[game_of_life.hlp](https://at-290690.github.io/hlp?l=xaBbYTA7YjA7YzA7eDt5xaTFj1vDjVvFpMOCW8WOWyJiZyI7MMK3MzvFiVtkMDvFilt1O8WZW8WhW3XFpCJweCLFo047MTc7ZTA7MTtyO8WVW047ZTDFpGjEC3LEF8WUMcWkZjA7TjtnxAVoMMQaZzA7ZjDFpGkwO8XEbWrFWng7eTvEu1vEFZdbxZNbeMcqecWjaOUAhGswO%2BQAn47qAJ93IjtkMFszODDCtzQ7bMdGxY9bwqhbImJ0IsWkwqNbIirECL9ba8VEbcUldDA7dTA7w4LECcRIYyI7InRyIjsiYiI7InMydMQKZyI7xZpbdTA7IiNmZmblAQc0O27FP%2BQAo55bxKdb5ADOilt2xQ%2FFmlvFm1vFl8QPZjDFo8WAW2g7csWjxaDkANrFpMWJxE3CsFswOzHFpHfKC3jlANdsMFtyxaRtMFsxxaPmAJZj5QClYjA7dzA7YTA7eDDFo8SzxHx0MMK3Njtv6ACLecZ%2FiVt55gFtxYvEFuYA5mk7xAueW8WfxB6a5ACfaTtnMMWkeTvFgFt55wHaeOQBcmnlAZN0MDtqMOUAsaN5MMRCeDt5xG5w5gGrjlt4OzA7eeQAt8UMMTt5OzDHDMWUzA7EJuYAj8goyg7GKs4ezhwxxaNx5QDEWDtZ5wDeejDFXItb5ACLiltB6AD25gCyxZNbWDvEusQXeMWjxZNbWccOeeQBt8WfxD%2FFk8UGmsQzxLrEBmMwxaTlAU16MMWjcsVYbzDqAT7kApLGZXXMMkIwO3HnASTkAVOHxB7FnVtCMDsyxaPEr8QnYuYArckenMQeM9QexZtbdcQNg9AiMcK3ODtz%2FwCU6ACUo8WPW8YNYTDlAkZ15AIuxUtjyCdiMMK3NztuxEzFpMKqW8WKW8WeW3IwW8WkczBb5AILMTAwxaQ%3D)

@@ -74,6 +74,18 @@ const DomExtension: Extension = {
     add_class: () => {
       return {}
     },
+    clear: () => {
+      return {}
+    },
+    add_to_box: () => {
+      return {}
+    },
+    box: () => {
+      return {}
+    },
+    click: () => {
+      return {}
+    },
   },
 }
 const StringExtension: Extension = {

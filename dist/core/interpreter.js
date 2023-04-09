@@ -8,6 +8,8 @@ export const evaluate = (expr, env) => {
         case 'word':
             if (expr.name in env)
                 return env[expr.name];
+            else if (expr.name in env[';;runes'])
+                return env[';;runes'][expr.name];
             else
                 throw new ReferenceError(`Undefined variable: ${expr.name}`);
         case 'apply': {

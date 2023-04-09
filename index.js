@@ -132,6 +132,11 @@ while (argv.length) {
           .join('\n|')}`,
         'utf-8'
       )
+      writeFileSync(
+        `./dist/extensions/Inventory.js`,
+        readFileSync('./src/extensions/Inventory.js'),
+        'utf-8'
+      )
       break
     case '-build':
       buildProject(value, type)
