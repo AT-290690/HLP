@@ -21,7 +21,7 @@ here is a more complex example
 ```rs
 ;; app
 ' [view; next; alive; x; y];
-|> [dom_get_body []; dom_set_style [:: ["bg"; 0]]];
+|> [dom_get_body []; dom_set_style [:: ["bg"; "#000"]]];
 := [
     px; -> [u; ~ [` [u]; "px"]];
     N; 17;
@@ -99,4 +99,4 @@ time_set_interval[-> [: [update_state []; render []]]; 100];
 
 click to run it:
 
-[game_of_life.hlp](https://at-290690.github.io/hlp?l=xaRbYTA7YjA7YzA7eDt5xajFk1vDjlvFqMODW8WSWyJiZyI7MMK3MzvFjVtkMDvFjlt1O8WdW8WlW3XFqCJweCLFp047MTc7ZTA7MTtyO8WZW047ZTDFqGjEC3LEF8WYMcWoZjA7TjtnxAVoMMQaZzA7ZjDFqGkwO8WRW8WoasVaeDt5O8S%2FW8QVm1vFl1t4xyp5xado5QCEazA75ACfj%2BoAn3ciO2QwWzM4MMK3NDtsx0bFk1vCqFsiYnQixajCo1siKiLFqMOAW2vFRG3FJXQwO3UwO8ODxAnESGMiOyJ0ciI7ImIiOyJzMnTECmciO8WeW3UwOyIjZmZm5QEHNDtuxT%2FkAKOiW8SrW%2BQAzo5bdsUPxZ5bxZ9bxZvED2YwxafFhFtoO3LFp8Wk5ADaxajFjcRNwrBbMDsxxah3ygt45QDXbDBbcsWobTBbMcWn5gCWY%2BUApWIwO3cwO2EwO3gwxafEt8R8dDDCtzY7b%2BgAi3nGf41beeYBbcWPxBbmAOZpO8QLolvFo8QenuQAn2k7ZzDFqHk7xYRbeecB2njkAXJp5QGTdDA7ajDlALGneTDEQng7ecRucOYBq5JbeDswO3nkALfFDDE7eTswxwzFmMwOxCbmAI%2FIKMoOxirOHs4cMcWnceUAxFg7WecA3nowxVyPW%2BQAi45bQegA9uYAssWXW1g7xL7EF3jFp8WXW1nHDnnkAbfFo8Q%2FxZfFBp7EM8S%2BxAZjMMWo5QFNejDFp3LFWG8w6gE%2B5AKSxmV1zDJCMDtx5wEk5AFTi8QexaFbQjA7MsWnxLPEJ2LmAK3JHqDEHjPUHsWfW3XEDYfQIjHCtzg7c%2F8AlOgAlKfFk1vGDWEw5QJGdeQCLsVLY8gnYjDCtzc7bsRMxajCqlvFjlvFoltyMFvFqHMwW%2BQCCzEwMMWo)
+[game_of_life.hlp](https://at-290690.github.io/hlp/?l=xaRbYTA7YjA7YzA7eDt5xajFk1vDjlvFqMODW8WSWyJiZyI7IiMwMDAiwrczO8WNW2QwO8WOW3U7xZ1bxaVbdcWoInB4IsWnTjsxNztlMDsxO3I7xZlbTjtlMMWoaMQLcsQXxZgxxahmMDtOO2fEBWgwxBpnMDtmMMWoaTA7xZFbxahqxVp4O3k7xL9bxBWbW8WXW3jHKnnFp2gw5ACEazA75ACkj%2BoApHciO2QwWzM4MMK3NDtsx0bFk1vCqFsiYnQixajCo1siKiLFqMOAW2vFRG3FJXQwO3UwO8ODxAnESGMiOyJ0ciI7ImIiOyJzMnTECmciO8WeW3UwOyIjZmZmIjvFZG7FP%2BQAo6JbxKtb5ADOjlt2xQ%2FFnlvFn1vFm8QPZjDFp8WEW2g7csWnxaTkANrFqMWNxE3CsFswOzHFqHfKC3jlANdsMFtyxahtMFsxxafmAJZj5QClYjA7dzA7YTA7eDDFp8S3xHx0MMK3Njtv6ACLecZ%2FjVt55gFtxY%2FEFuYA5mk7xAuiW8WjxB6e5ACfaTtnMMWoeTvFhFt55wHaeOQBcmnlAZN0MDtqMOUAsad5MMRCeDt5xG5w5gGrklt4OzA7eeQAt8UMMTt5OzDHDMWYzA7EJuYAj8goyg7GKs4ezhwxxadx5QDEWDtZ5wDeejDFXI9b5ACLjltB6AD25gCyxZdbWDvEvsQXeMWnxZdbWccOeeQBt8WjxD%2FFl8UGnsQzxL7EBmMwxajlAU16MMWncsVYbzDqAT7kApLGZXXMMkIwO3HnASTkAVOLxB7FoVtCMDsyxafEs8QnYuYArckeoMQeM9QexZ9bdcQNh9AiMcK3ODtz%2FwCU6ACUp8WTW8YNYTDlAkZ15AIuxUtjyCdiMMK3NztuxEzFqMKqW8WOW8WiW3IwW8WoczBb5AILMTAwxag%3D)
