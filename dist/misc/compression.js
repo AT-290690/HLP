@@ -96,6 +96,7 @@ const dfs = (tree, definitions = new Set()) => {
                     node.args
                         .filter((expr) => expr.type === 'word')
                         .forEach(({ name }) => {
+                        // arguments omitting
                         if (name && name.length > 1 && name[0] !== '_')
                             definitions.add(name);
                     });
@@ -143,10 +144,10 @@ export const compress = (source) => {
         }
         return { full, short };
     });
-    for (const { full, short } of shortDefinitions)
-        result = result.replaceAll(new RegExp(`\\b${full}\\b`, 'g'), short);
     for (const [_, { full, short }] of shortRunes)
         result = result.replaceAll(full, short);
+    for (const { full, short } of shortDefinitions)
+        result = result.replaceAll(new RegExp(`\\b${full}\\b`, 'g'), short);
     const arr = result.split('" "');
     strings.forEach((str, i) => (arr[i] += str));
     return arr.join('');
