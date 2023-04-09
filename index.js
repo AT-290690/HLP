@@ -13,6 +13,7 @@ import {
   encodeBase64,
   compress,
   decodeBase64,
+  decompress,
 } from './dist/misc/compression.js'
 import { readdirSync, readFileSync, writeFileSync } from 'fs'
 import { tokens } from './dist/core/tokeniser.js'
@@ -113,6 +114,12 @@ while (argv.length) {
   switch (flag) {
     case '-type':
       type = value
+      break
+    case '-trim':
+      logSuccessMessage(removeNoCode(file).split('];]').join(']]'))
+      break
+    case '-mini':
+      logSuccessMessage(decompress(compress(file)))
       break
     case '-file':
       file = readFileSync(value, 'utf-8')

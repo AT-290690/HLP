@@ -20,6 +20,86 @@ const semiColumnEdgeCases = new Set([
     ';;',
     ';]',
 ]);
+const register = {
+    math_factorial: 'Inventory._math_factorial',
+    math_permutations: 'Inventory._math_permutations',
+    math_permutations_array: 'Inventory._math_permutations_array',
+    math_abs: 'Math.abs',
+    math_sqrt: 'Math.sqrt',
+    math_sign: 'Math.sign',
+    math_trunc: 'Math.trunc',
+    math_exp: 'Math.exp',
+    math_floor: 'Math.floor',
+    math_round: 'Math.round',
+    math_random: 'Math.random',
+    math_max: 'Math.max',
+    math_min: 'Math.min',
+    math_sin: 'Math.sin',
+    math_cos: 'Math.cos',
+    math_tan: 'Math.tan',
+    math_tanh: 'Math.tanh',
+    math_atan: '`Math.atan',
+    math_atan2: 'Math.atan2',
+    math_acos: 'Math.acos',
+    math_acosh: 'Math.acosh',
+    math_asin: 'Math.asin',
+    math_asinh: 'Math.asinh',
+    math_atanh: 'Math.atanh',
+    math_hypot: 'Math.hypot',
+    math_fround: 'Math.fround',
+    math_log: 'Math.log',
+    math_log10: 'Math.log10',
+    math_log2: 'Math.log2',
+    math_MIN_INT: 'Number.MIN_SAFE_INTEGER',
+    math_MAX_INT: 'Number.MAX_SAFE_INTEGER',
+    math_infinity: 'Number.POSITIVE_INFINITY',
+    math_PI: 'Math.PI',
+    math_E: 'Math.E',
+    math_LN10: 'Math.LN10',
+    math_LOG10E: 'Math.LOG10E',
+    math_SQRT1_2: 'Math.SQRT1_2',
+    math_SQRT2: 'Math.SQRT2',
+    math_parse_int: 'parseInt',
+    math_number: 'Number',
+    time_set_timeout: 'setTimeout',
+    time_set_interval: 'setInterval',
+    time_set_animation: 'requestAnimationFrame',
+    dom_get_body: 'Inventory._dom_get_body',
+    dom_set_attribute: 'Inventory._dom_set_attribute',
+    dom_get_attribute: 'Inventory._dom_get_attribute',
+    dom_div: 'Inventory._dom_div',
+    dom_get_value: 'Inventory._dom_get_value',
+    dom_set_value: 'Inventory._dom_set_value',
+    dom_create_element: 'Inventory._dom_create_element',
+    dom_insert: 'Inventory._dom_insert_into_container',
+    dom_append_to: 'Inventory._dom_insert_self_into_container',
+    dom_remove: 'Inventory._dom_remove_from_container',
+    dom_detach: 'Inventory._dom_remove_self_from_container',
+    dom_get_element_by_id: 'Inventory._dom_get_element_by_id',
+    dom_set_text_content: 'Inventory._dom_set_text_content',
+    dom_set_style: 'Inventory._dom_set_style',
+    dom_get_root: 'Inventory._dom_get_root',
+    dom_event: 'Inventory._dom_add_event',
+    dom_css_link: 'Inventory._dom_css_link',
+    dom_load_bulma: 'Inventory._dom_load_bulma',
+    dom_container: 'Inventory._dom_container',
+    dom_add_class: 'Inventory._dom_add_class',
+    '=>': 'Inventory._call',
+    '::.=': 'Inventory._mapSet',
+    '::.!=': 'Inventory._mapRemove',
+    '?==': 'Inventory._checkType',
+    '!throw': 'Inventory._throw',
+    '::entries': 'Inventory._mapEntries',
+    '::->.:': 'Inventory._mapValues',
+    '::keys': 'Inventory._mapKeys',
+    ':..!=': 'Inventory._setRemove',
+    ':..=': 'Inventory._setSet',
+    ':.difference': 'Inventory._setDifference',
+    ':.intersection': 'Inventory._setIntersection',
+    ':.union': 'Inventory._setUnion',
+    ':.xor': 'Inventory._setXor',
+    ':.->.:': 'Inventory._setValues',
+};
 const compile = () => {
     const vars = new Set();
     const dfs = (tree, locals) => {
@@ -275,25 +355,28 @@ const compile = () => {
                 case '::.':
                     return `${dfs(tree.args[0], locals)}.get(${dfs(tree.args[1], locals)});`;
                 case '::.=':
-                    return `Inventory._mapSet(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)});`;
-                case '::.!=':
-                    return `Inventory._mapRemove(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
-                case '?==':
-                    return `Inventory._checkType(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
-                case '!throw':
-                    return `Inventory._throw(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
+                    return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)});`;
+                case '::->.:':
+                case '::keys':
                 case '::entries':
-                    return `Inventory._mapEntries(${dfs(tree.args[0], locals)});`;
+                case ':.->.:':
+                    return `${register[token]}(${dfs(tree.args[0], locals)});`;
+                case '::.!=':
+                case '?==':
+                case '!throw':
+                case ':..!=':
+                case ':..=':
+                case ':.difference':
+                case ':.intersection':
+                case ':.union':
+                case ':.xor':
+                    return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
                 case '.:add_at': {
                     const [first, second, ...rest] = tree.args.map((item) => dfs(item, locals));
                     return `${first}.addAt(${second}, ...${rest});`;
                 }
                 case '.:remove_from':
                     return `${dfs(tree.args[0], locals)}.removeFrom(${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)});`;
-                case '::->.:':
-                    return `Inventory._mapValues(${dfs(tree.args[0], locals)});`;
-                case '::keys':
-                    return `Inventory._mapKeys(${dfs(tree.args[0], locals)});`;
                 case '.:rotate':
                     return `${dfs(tree.args[0], locals)}.rotate(${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)});`;
                 case '.:slice':
@@ -321,28 +404,14 @@ const compile = () => {
                     return `${array}.reduceRight(${callback}, ${out});`;
                 }
                 case '=>': {
-                    return `Inventory._call(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
+                    return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
                 }
                 case ':.':
                     return ('new Set([' + tree.args.map((x) => dfs(x, locals)).join(',') + ']);');
-                case ':..!=':
-                    return `Inventory._setRemove(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
-                case ':..=':
-                    return `Inventory._setSet(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
                 case ':..?':
                     return `${dfs(tree.args[0], locals)}.has(${dfs(tree.args[1], locals)});`;
                 case ':.size':
                     return `${dfs(tree.args[0], locals)}.size(${dfs(tree.args[1], locals)});`;
-                case ':.difference':
-                    return `Inventory._setDifference(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
-                case ':.intersection':
-                    return `Inventory._setIntersection(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
-                case ':.union':
-                    return `Inventory._setUnion(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
-                case ':.xor':
-                    return `Inventory._setXor(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
-                case ':.->.:':
-                    return `Inventory._setValues(${dfs(tree.args[0], locals)});`;
                 case '.:->:.':
                     return `${dfs(tree.args[0], locals)}.uniform();`;
                 case '~*': {
@@ -382,26 +451,17 @@ const compile = () => {
                     return `(${dfs(tree.args[0], locals)}>>${dfs(tree.args[1], locals)});`;
                 case 'bit_un_right_shift':
                     return `(${dfs(tree.args[0], locals)}>>>${dfs(tree.args[1], locals)});`;
-                case 'math_factorial':
-                    return `Inventory._math_factorial(${dfs(tree.args[0], locals)});`;
-                case 'math_permutations':
-                    return `Inventory._math_permutations(${dfs(tree.args[0], locals)}, ${dfs(tree.args[0], locals)});`;
-                case 'math_permutations_array':
-                    return `Inventory._math_permutations_array(${dfs(tree.args[0], locals)});`;
                 case 'math_lerp': {
                     const [start, end, amt] = tree.args.map((x) => dfs(x, locals));
                     return `((1 - ${amt}) * ${start} + ${amt} * ${end});`;
                 }
-                case 'math_abs':
-                    return `Math.abs(${dfs(tree.args[0], locals)});`;
                 case 'math_mod': {
                     const left = dfs(tree.args[0], locals);
                     const right = dfs(tree.args[1], locals);
                     return `(((${left} % ${right}) + ${right}) % ${right});`;
                 }
                 case 'math_clamp':
-                    ;
-                    `Math.min(Math.max(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}), ${dfs(tree.args[2], locals)});`;
+                    return `Math.min(Math.max(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}), ${dfs(tree.args[2], locals)});`;
                 case 'math_sqrt':
                     return `Math.sqrt(${dfs(tree.args[0], locals)});`;
                 case 'math_add':
@@ -416,83 +476,58 @@ const compile = () => {
                     return `(${dfs(tree.args[0], locals)}**2);`;
                 case 'math_divide':
                     return `(${dfs(tree.args[0], locals)}/${dfs(tree.args[1], locals)});`;
-                case 'math_sign':
-                    return `Math.sign(${dfs(tree.args[0], locals)});`;
-                case 'math_trunc':
-                    return `Math.trunc(${dfs(tree.args[0], locals)});`;
-                case 'math_exp':
-                    return `Math.exp(${dfs(tree.args[0], locals)});`;
-                case 'math_floor':
-                    return `Math.floor(${dfs(tree.args[0], locals)});`;
-                case 'math_round':
-                    return `Math.round(${dfs(tree.args[0], locals)});`;
-                case 'math_random':
-                    return `Math.random();`;
                 case 'math_random_int': {
                     const min = dfs(tree.args[0], locals);
                     const max = dfs(tree.args[1], locals);
                     return ` Math.floor(Math.random() * (${max} - ${min} + 1) + ${min});`;
                 }
+                case 'math_MIN_INT':
+                case 'math_MAX_INT':
+                case 'math_infinity':
+                case 'math_PI':
+                case 'math_E':
+                case 'math_LN10':
+                case 'math_LOG10E':
+                case 'math_SQRT1_2':
+                case 'math_SQRT2':
+                    return register[token];
+                case 'math_random':
+                    return `${register[token]}()`;
                 case 'math_max':
-                    return `Math.max(${tree.args.map((x) => dfs(x, locals))});`;
                 case 'math_min':
-                    return `Math.min(${tree.args.map((x) => dfs(x, locals))});`;
+                    return `${register[token]}(${tree.args.map((x) => dfs(x, locals))});`;
                 case 'math_sin':
-                    return `Math.sin(${dfs(tree.args[0], locals)});`;
                 case 'math_cos':
-                    return `Math.cos(${dfs(tree.args[0], locals)});`;
                 case 'math_tan':
-                    return `Math.tan(${dfs(tree.args[0], locals)});`;
                 case 'math_tanh':
-                    return `Math.tanh(${dfs(tree.args[0], locals)});`;
                 case 'math_atan':
-                    return `Math.atan(${dfs(tree.args[0], locals)});`;
                 case 'math_atan2':
-                    return `Math.atan2(${dfs(tree.args[0], locals)});`;
                 case 'math_acos':
-                    return `Math.acos(${dfs(tree.args[0], locals)});`;
                 case 'math_acosh':
-                    return `Math.acosh(${dfs(tree.args[0], locals)});`;
                 case 'math_asin':
-                    return `Math.asin(${dfs(tree.args[0], locals)});`;
                 case 'math_asinh':
-                    return `Math.asinh(${dfs(tree.args[0], locals)});`;
                 case 'math_atanh':
-                    return `Math.atanh(${dfs(tree.args[0], locals)});`;
-                case 'math_hypot':
-                    return `Math.hypot(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
                 case 'math_fround':
-                    return `Math.fround(${dfs(tree.args[0], locals)});`;
                 case 'math_log':
-                    return `Math.log(${dfs(tree.args[0], locals)});`;
                 case 'math_log10':
-                    return `Math.log10(${dfs(tree.args[0], locals)});`;
                 case 'math_log2':
-                    return `Math.log2(${dfs(tree.args[0], locals)});`;
+                case 'math_number':
+                case 'math_factorial':
+                case 'math_permutations':
+                case 'math_permutations_array':
+                case 'math_abs':
+                case 'math_sign':
+                case 'math_trunc':
+                case 'math_exp':
+                case 'math_floor':
+                case 'math_round':
+                    return `${register[token]}(${dfs(tree.args[0], locals)});`;
+                case 'math_hypot':
+                    return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
+                case 'math_parse_int':
+                    return `${register[token]}(${dfs(tree.args[0], locals).toString()}, ${dfs(tree.args[1], locals)});`;
                 case 'math_sum':
                     return `((${dfs(tree.args[0], locals)}).reduce((acc, item) => (acc += item), 0));`;
-                case 'math_MIN_INT':
-                    return `Number.MIN_SAFE_INTEGER`;
-                case 'math_MAX_INT':
-                    return `Number.MAX_SAFE_INTEGER`;
-                case 'math_infinity':
-                    return `Number.POSITIVE_INFINITY`;
-                case 'math_PI':
-                    return `Math.PI`;
-                case 'math_E':
-                    return `Math.E`;
-                case 'math_LN10':
-                    return `Math.LN10`;
-                case 'math_LOG10E':
-                    return `Math.LOG10E`;
-                case 'math_SQRT1_2':
-                    return `Math.SQRT1_2`;
-                case 'math_SQRT2':
-                    return `Math.SQRT2`;
-                case 'math_parse_int':
-                    return `parseInt(${dfs(tree.args[0], locals).toString()}, ${dfs(tree.args[1], locals)});`;
-                case 'math_number':
-                    return `Number(${dfs(tree.args[0], locals)});`;
                 case 'math_negative':
                     return `-(${dfs(tree.args[0], locals)});`;
                 case 'text_make_regexp':
@@ -512,65 +547,48 @@ const compile = () => {
                 case 'text_trim_end':
                     return `(${dfs(tree.args[0], locals)}).trimEnd();`;
                 case 'time_set_timeout':
-                    return `setTimeout(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
                 case 'time_set_interval':
-                    return `setInterval(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
+                    return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
                 case 'time_set_animation': {
-                    return `requestAnimationFrame(${dfs(tree.args[0], locals)});`;
+                    return `${register[token]}(${dfs(tree.args[0], locals)});`;
                 }
+                case 'dom_get_root':
+                case 'dom_get_body':
+                    return `${register[token]}();`;
                 case 'dom_div':
-                    return `Inventory._dom_div(${dfs(tree.args[0], locals)})`;
-                case 'dom_set_attribute':
-                    return `Inventory._dom_set_attribute(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)})`;
-                case 'dom_get_attribute':
-                    return `Inventory._dom_get_attribute(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)})`;
                 case 'dom_get_value':
-                    return `Inventory._dom_get_value(${dfs(tree.args[0], locals)})`;
-                case 'dom_set_value':
-                    return `Inventory._dom_set_value(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)})`;
+                case 'dom_get_element_by_id':
+                case 'dom_css_link':
+                case 'dom_detach':
                 case 'dom_create_element':
-                    return `Inventory._dom_create_element(${dfs(tree.args[0], locals)})`;
+                    return `${register[token]}(${dfs(tree.args[0], locals)})`;
+                case 'dom_remove':
+                case 'dom_set_text_content':
+                case 'dom_set_style':
+                case 'dom_set_value':
+                case 'dom_add_class':
+                    return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)})`;
+                case 'dom_set_attribute':
+                case 'dom_get_attribute':
+                case 'dom_event':
+                case 'dom_load_bulma':
+                    return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)})`;
                 case 'dom_insert': {
                     const [container, ...rest] = tree.args;
-                    return `Inventory._dom_insert_into_container(${dfs(container, locals)}, ${rest.map((x) => dfs(x, locals)).join(',')});`;
+                    return `${register[token]}(${dfs(container, locals)}, ${rest
+                        .map((x) => dfs(x, locals))
+                        .join(',')});`;
                 }
                 case 'dom_append_to': {
                     const [item, container] = tree.args;
-                    return `Inventory._dom_insert_self_into_container(
+                    return `${register[token]}(
             ${dfs(item, locals)},
             ${dfs(container, locals)});`;
                 }
-                case 'dom_remove': {
-                    return `Inventory._dom_remove_from_container(
-            ${dfs(tree.args[0], locals)},
-            ${dfs(tree.args[1], locals)});`;
-                }
-                case 'dom_detach': {
-                    return `Inventory._dom_remove_self_from_container(
-            ${dfs(tree.args[0], locals)});`;
-                }
-                case 'dom_get_element_by_id':
-                    return `Inventory._dom_get_element_by_id(${dfs(tree.args[0], locals)})`;
-                case 'dom_set_text_content':
-                    return `Inventory._dom_set_text_content(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)})`;
-                case 'dom_set_style':
-                    return `Inventory._dom_set_style(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)})`;
-                case 'dom_get_root':
-                    return `Inventory._dom_get_root();`;
-                case 'dom_event':
-                    return `Inventory._dom_add_event(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)});`;
-                case 'dom_css_link':
-                    return `Inventory._dom_css_link(${dfs(tree.args[0], locals)});`;
-                case 'dom_load_bulma':
-                    return `Inventory._dom_load_bulma(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)});`;
                 case 'dom_container':
-                    return `Inventory._dom_container(${tree.args
+                    return `${register[token]}(${tree.args
                         .map((x) => dfs(x, locals))
                         .join(',')});`;
-                case 'dom_add_class':
-                    return `Inventory._dom_add_class(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
-                case 'dom_get_body':
-                    return `Inventory._dom_get_body();`;
                 default: {
                     if (!(token in tokens)) {
                         if (token)
@@ -591,7 +609,7 @@ const compile = () => {
             }
         }
         else if (tree.type === 'word')
-            return tree.name;
+            return tree.name in register ? register[tree.name] : tree.name;
         else if (tree.type === 'value')
             return tree.class === 'string' ? `"${tree.value}"` : tree.value;
     };

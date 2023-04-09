@@ -79,33 +79,32 @@ tokens['~*'] = (args, env) => {
 const OFFSET = 161
 const generateCompressionRunes = (start) => {
   return Object.keys(tokens)
-    .map((t) => `${t}[`)
     .sort((a, b) => (a.length > b.length ? -1 : 1))
     .concat(['][', ']];', '];'])
-    .reduce((acc, t, i) => {
+    .reduce((acc, full, i) => {
       const short = String.fromCharCode(start + i + OFFSET)
       acc.set(short, {
-        full: t,
+        full,
         short,
       })
       return acc
     }, new Map())
 }
 export const shortRunes = generateCompressionRunes(0)
-
 const dfs = (tree: Expression[], definitions = new Set()) => {
   for (const node of tree) {
     if (node.type !== 'value') {
-      if (node.type === 'word' && node.name.length > 1)
-        definitions.add(node.name)
-      else if (node.type === 'apply') {
+      if (node.type === 'word' && node.name.length > 1) {
+        if (!(node.name in tokens)) definitions.add(node.name)
+      } else if (node.type === 'apply') {
         if (node.operator.type === 'word') {
           node.args
             .filter((expr): expr is Word => expr.type === 'word')
             .forEach(({ name }) => {
               // arguments omitting
-              if (name && name.length > 1 && name[0] !== '_')
-                definitions.add(name)
+              if (name && name.length > 1 && name[0] !== '_') {
+                if (!(name in tokens)) definitions.add(name)
+              }
             })
         } else dfs(node.operator.args, definitions)
       }
@@ -132,7 +131,7 @@ export const compress = (source: string) => {
           acc.result += ']'.repeat(acc.occurance)
           acc.occurance = 0
         } else {
-          acc.result += "'" + acc.occurance
+          acc.result += '·' + acc.occurance
           acc.occurance = 0
         }
         acc.result += item
@@ -141,7 +140,7 @@ export const compress = (source: string) => {
     },
     { result: '', occurance: 0 }
   )
-  if (occurance > 0) result += "'" + occurance
+  if (occurance > 0) result += '·' + occurance
   let index = 0
   let count = 0
   const shortDefinitions = definitions.map((full) => {
@@ -162,17 +161,17 @@ export const compress = (source: string) => {
 
   const arr = result.split('" "')
   strings.forEach((str, i) => (arr[i] += str))
-
   return arr.join('')
 }
 export const decompress = (raw: string) => {
   const strings = raw.match(/"([^"]*)"/g) || []
   const value = raw.replaceAll(/"([^"]*)"/g, '" "')
-  const suffix = [...new Set(value.match(/\'+?\d+/g))]
+  const suffix = [...new Set(value.match(/·+?\d+/g))]
   const runes = suffix.reduce(
     (acc, m) => acc.split(m).join(']'.repeat(parseInt(m.substring(1)))),
     value
   )
+
   let result = ''
   for (const tok of runes) {
     if (shortRunes.has(tok)) {
