@@ -1,8 +1,8 @@
 ;; app
 := [counter; 0];
 |> [
-  dom::create_element ["bt"];
-  dom::set_text_content [counter];
-  dom::append_to[dom::get_root[]];
-  dom::event["click"; -> [e; key; dom::set_text_content[::.[e; "el"]; += [counter]]]]
+  dom_create_element ["bt"];
+  dom_set_text_content [counter];
+  dom_append_to[dom_get_root[]];
+  dom_event["click"; -> [e; key; dom_set_text_content[::.[e; "el"]; += [counter]]]]
 ];

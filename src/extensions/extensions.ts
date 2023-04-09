@@ -6,7 +6,7 @@ import Inventory from './Inventory.js'
 type Extension = Record<string, Record<string, Interpration>>
 
 const TimeExtension: Extension = {
-  'time::': {
+  time_: {
     set_timeout: (args, env) =>
       setTimeout(evaluate(args[0], env), evaluate(args[1], env)),
     set_interval: (args, env) =>
@@ -15,7 +15,7 @@ const TimeExtension: Extension = {
   },
 }
 const DomExtension: Extension = {
-  'dom::': {
+  dom_: {
     div: () => {
       return {}
     },
@@ -28,12 +28,25 @@ const DomExtension: Extension = {
     create_element: () => {
       return {}
     },
+    remove: () => {
+      return {}
+    },
+    detach: () => {
+      return {}
+    },
     insert: () => {
       return {}
     },
     append_to: () => {
       return {}
     },
+    get_body: () => {
+      return {}
+    },
+    set_value: () => {
+      return {}
+    },
+    get_value: () => 1,
     get_element_by_id: () => {
       return {}
     },
@@ -64,7 +77,7 @@ const DomExtension: Extension = {
   },
 }
 const StringExtension: Extension = {
-  'text::': {
+  text_: {
     trim: (args, env) => evaluate(args[0], env).trim(),
     trim_start: (args, env) => evaluate(args[0], env).trimStart(),
     trim_end: (args, env) => evaluate(args[0], env).trimEnd(),
@@ -79,7 +92,7 @@ const StringExtension: Extension = {
   },
 }
 const MathExtension: Extension = {
-  'math::': {
+  math_: {
     factorial: (args, env) => Inventory._math_factorial(evaluate(args[0], env)),
     permutations: (args, env) =>
       Inventory._math_factorial(evaluate(args[0], env), evaluate(args[1], env)),
@@ -120,7 +133,7 @@ const MathExtension: Extension = {
       const max = evaluate(args[0], env)
       const min = evaluate(args[1], env)
       if (!Number.isInteger(max) || !Number.isInteger(min))
-        throw new TypeError('math::random_int arguments must both be integeres')
+        throw new TypeError('math_random_int arguments must both be integeres')
       return Math.floor(Math.random() * (max - min + 1) + min)
     },
     max: (args, env) => Math.max(...args.map((x) => evaluate(x, env))),
@@ -177,7 +190,7 @@ const MathExtension: Extension = {
   },
 }
 const BitExtension: Extension = {
-  'bit::': {
+  bit_: {
     make_bit: (args, env) => (evaluate(args[0], env) >>> 0).toString(2),
     and: (args, env) => evaluate(args[0], env) & evaluate(args[1], env),
     not: (args, env) => ~evaluate(args[0], env),

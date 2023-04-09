@@ -30,20 +30,20 @@ here is a more complex example
     cols; N; rows; N;
     bound; * [rows; cols]; cells; .: [];
     get_cell; -> [x; y; .: . [cells; % [+ [x; * [rows; y]]; bound]]];
-    cells_container; |> [dom::get_root []; dom::set_style [::["w"; px [340]]]];
+    cells_container; |> [dom_get_root []; dom_set_style [::["w"; px [340]]]];
 
-    make_button; -> [x; |> [dom::create_element["bt"];
-                                      dom::set_text_content["*"];
-                                      dom::append_to[cells_container]]];
-    fill; -> [cell; is_alive; dom::set_style [cell; :: ["c"; "tr"; "b"; "s1b"; "bg"; ? [is_alive; "#000"; "#fff"]]]];
+    make_button; -> [x; |> [dom_create_element["bt"];
+                                      dom_set_text_content["*"];
+                                      dom_append_to[cells_container]]];
+    fill; -> [cell; is_alive; dom_set_style [cell; :: ["c"; "tr"; "b"; "s1b"; "bg"; ? [is_alive; "#000"; "#fff"]]]];
 
   make_grid; -> [cells; : [
 
 *loop [bound; -> [count; : [
   ? [! [% [count; cols]]; += [h; r]];
   ' [x; y];
-  := [is_alive; math::random_int [0; 1];
-      next_is_alive;math::random_int [0; 1];
+  := [is_alive; math_random_int [0; 1];
+      next_is_alive;math_random_int [0; 1];
       rect;|> [make_button [r]; fill [1]];
       cell; :: [alive; is_alive;
                 next; next_is_alive;
@@ -93,7 +93,7 @@ render; -> [iterate_cells [cells; -> [cell; x; y; : [
   :: . = [cell; alive; :: . [cell; next]]]]]]];
 
   make_grid [cells];
-time::set_interval[-> [: [update_state []; render []]]; 100];
+time_set_interval[-> [: [update_state []; render []]]; 100];
 ```
 
 click to run it:

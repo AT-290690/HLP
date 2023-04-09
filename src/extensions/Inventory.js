@@ -1209,6 +1209,11 @@ export default class Inventory {
   static _dom_get_attribute = (el, key) => {
     return el.getAttribute(Inventory._dom_attributes_map.get(key) ?? key)
   }
+  static _dom_set_value = (el, val) => {
+    el.value = val
+    return el
+  }
+  static _dom_get_value = (el) => el.value
   static _dom_set_text_content = (el, content) => {
     el.textContent = content
     return el
@@ -1231,6 +1236,8 @@ export default class Inventory {
     ['pos', 'position'],
     ['al', 'align'],
     ['txal', 'text-align'],
+    ['l', 'left'],
+    ['r', 'right'],
     ['x', 'center'],
   ])
   static _dom_elements_map = new Map([
@@ -1261,6 +1268,8 @@ export default class Inventory {
             ['el', e.target],
             ['key', e.key],
             ['code', e.code],
+            ['value', e.value],
+            ['text', e.textContent],
           ])
         )
     )
@@ -1285,5 +1294,8 @@ export default class Inventory {
   static _dom_add_class = (element, ...classlist) => {
     classlist.forEach((cls) => element.classList.add(cls))
     return element
+  }
+  static _dom_get_body = () => {
+    return document.body
   }
 }

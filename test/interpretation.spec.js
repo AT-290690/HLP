@@ -87,22 +87,22 @@ describe('interpretation should work as expected', () => {
       runFromInterpreted(`;; max_sub_array_recursive
       := [loop; -> [i; nums; maxGlobal; maxSoFar;
           ? [< [i; .:length [nums]]; : [
-          = [maxGlobal; math::max [maxGlobal; = [maxSoFar; math::max [0; + [maxSoFar; .: . [nums; i]]]]]];
+          = [maxGlobal; math_max [maxGlobal; = [maxSoFar; math_max [0; + [maxSoFar; .: . [nums; i]]]]]];
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
-      [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; math::negative[math::infinity[]]; math::negative[math::infinity[]]]`),
+      [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; math_negative[math_infinity[]]; math_negative[math_infinity[]]]`),
       21
     )
     strictEqual(
       runFromInterpreted(
         `:= [max_sub_array_sum; -> [nums; : [
-       := [max_global; * [math::infinity[]; -1];
+       := [max_global; * [math_infinity[]; -1];
            max_so_far;  max_global];
        * loop [.: length [nums]; -> [i;
                = [max_global;
-                  math::max [max_global;
+                  math_max [max_global;
                        = [max_so_far;
-                        math::max [0;
+                        math_max [0;
                                + [max_so_far;
                                   .: . [nums; i]]]]]]]]]]];
     max_sub_array_sum [.: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]];`
@@ -119,7 +119,7 @@ describe('interpretation should work as expected', () => {
   := [median; + [first;
   - [* [last; * [+ [1; last]; 0.5]];
       * [first; * [+ [1; first]; 0.5]]]]];
-  == [math::sum [NUMBERS]; median]
+  == [math_sum [NUMBERS]; median]
       `),
       1
     )
@@ -157,11 +157,11 @@ describe('interpretation should work as expected', () => {
   it('import should work', () => {
     deepStrictEqual(
       runFromInterpreted(`
-      .:map>> [.: [1.123; 3.14; 4.9]; -> [x; math::floor[x]]];
+      .:map>> [.: [1.123; 3.14; 4.9]; -> [x; math_floor[x]]];
       `).items,
       [1, 3, 4]
     )
-    strictEqual(runFromInterpreted(`math::PI[]`), Math.PI)
+    strictEqual(runFromInterpreted(`math_PI[]`), Math.PI)
   })
 
   it('nested pipes should work', () => {
@@ -660,7 +660,7 @@ describe('interpretation should work as expected', () => {
         * [10000; first_element];
         => [-> [x;
             |> [x; - [232321]]]]]]];
-        .: map << [-> [x; math::abs[x]]];
+        .: map << [-> [x; math_abs[x]]];
       ]];
 
     .: [is_even[.:<[out]]; is_odd[.:>[out]]]`).items,

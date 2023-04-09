@@ -144,7 +144,6 @@ export const compileHtml = (source: string, scripts = '') => {
   const inlined = wrapInBody(removeNoCode(source))
   const { top, program } = compileToJs(parse(inlined))
   return `
-<style>body { background: #0e0e0e } </style><body>
 ${scripts}
 <script>
 ${Inventory.toString()}

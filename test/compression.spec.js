@@ -95,18 +95,18 @@ describe('compression should work as expected', () => {
       `;; max_sub_array_recursive
       := [loop; -> [i; nums; maxGlobal; maxSoFar;
           ? [< [i; .:length [nums]]; : [
-          = [maxGlobal; math::max [maxGlobal; = [maxSoFar; math::max [0; + [maxSoFar; .: . [nums; i]]]]]];
+          = [maxGlobal; math_max [maxGlobal; = [maxSoFar; math_max [0; + [maxSoFar; .: . [nums; i]]]]]];
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
-      [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; math::negative[math::infinity[]]; math::negative[math::infinity[]]]`,
+      [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; math_negative[math_infinity[]]; math_negative[math_infinity[]]]`,
       `:= [max_sub_array_sum; -> [nums; : [
-        := [max_global; * [math::infinity[]; -1];
+        := [max_global; * [math_infinity[]; -1];
             max_so_far;  max_global];
         * loop [.: length [nums]; -> [i;
                 = [max_global;
-                   math::max [max_global;
+                   math_max [max_global;
                         = [max_so_far;
-                         math::max [0;
+                         math_max [0;
                                 + [max_so_far;
                                    .: . [nums; i]]]]]]]]]]];
      max_sub_array_sum [.: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]];`,
@@ -128,7 +128,7 @@ describe('compression should work as expected', () => {
       := [median; + [first;
       - [* [last; * [+ [1; last]; 0.5]];
           * [first; * [+ [1; first]; 0.5]]]]];
-      == [math::sum [NUMBERS]; median]
+      == [math_sum [NUMBERS]; median]
           `,
     ]
       .map((source) => {
@@ -217,7 +217,7 @@ describe('compression should work as expected', () => {
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
       ))
   it('import should work', () =>
-    [` .:map>> [.: [1.123; 3.14; 4.9]; -> [x; math::floor[x]]];`, 'math::PI[]']
+    [` .:map>> [.: [1.123; 3.14; 4.9]; -> [x; math_floor[x]]];`, 'math_PI[]']
       .map((source) => {
         const comp = compress(source)
         const decomp = decompress(comp)
@@ -745,7 +745,7 @@ describe('compression should work as expected', () => {
             * [10000; first_element];
             => [-> [x;
                 |> [x; - [232321]]]]]]];
-            .: map << [-> [x; math::abs[x]]];
+            .: map << [-> [x; math_abs[x]]];
           ]];
 
         .: [is_even[.:<[out]]; is_odd[.:>[out]]]`,
@@ -874,7 +874,7 @@ describe('compression should work as expected', () => {
         deepEqual(runFromInterpreted(source), runFromCompiled(source))
       ))
   it('compressoin should be idemptent', () => {
-    const source = `'[a0;b0;c0;x;y];:=[d0;->[u;~[\`[u];"px"]];N;17;e0;1;r;*[N;e0];h;*[r;e0;-1];f0;N;g0;N;h0;*[g0;f0];i0;.:[];j0;->[x;y;.:.[i0;%[+[x;*[g0;y]];h0]]];k0;|>[dom::get_root[];dom::set_style[::["w";d0[340]]]];l0;->[x;|>[dom::create_element["bt"];dom::set_text_content["*"];dom::append_to[k0]]];m0;->[t0;u0;dom::set_style[t0;::["c";"tr";"b";"s1b";"bg";?[u0;"#000";"#fff"]]]];n0;->[i0;:[*loop[h0;->[v0;:[?[![%[v0;f0]];+=[h;r]];'[x;y];:=[u0;math::random_int[0;1];w0;math::random_int[0;1];x0;|>[l0[r];m0[1]];t0;::[c0;u0;b0;w0;a0;x0]];.:>=[i0;t0]]]]]];o0;->[i0;y0;:[:=[y;-1];>>[i0;->[t0;i;i0;:[=[y;?[%[i;g0];y;+=[y]]];:=[x;%[i;f0];t0;j0[x;y]];y0[t0;x;y]]]]]];p0;.:[::[x;0;y;1];::[x;1;y;0];::[x;-1;y;0];::[x;0;y;-1];::[x;1;y;-1];::[x;-1;y;-1];::[x;1;y;1];::[x;-1;y;1]];q0;->[X;Y;:[:=[z0;0];>>[p0;->[A0;:[:=[t0;j0[+[X;::.[A0;x]];+[Y;::.[A0;y]]]];=[z0;+[z0;?[t0;::.[t0;c0];0]]]]]];z0]];r0;->[o0[i0;->[t0;x;y;:[:=[u0;::.[t0;c0];B0;q0[x;y]];?[&&[u0;<[B0;2]];::.=[t0;b0;0];?[&&[u0;>[B0;3]];::.=[t0;b0;0];?[&&[![u0];==[B0;3]];::.=[t0;b0;1]]]]]]]];s0;->[o0[i0;->[t0;x;y;:[:=[u0;::.[t0;c0]];|>[::.[t0;a0];m0[u0]];::.=[t0;c0;::.[t0;b0]]]]]]];n0[i0];time::set_interval[->[:[r0[];s0[]]];100];`
+    const source = `'[a0;b0;c0;x;y];:=[d0;->[u;~[\`[u];"px"]];N;17;e0;1;r;*[N;e0];h;*[r;e0;-1];f0;N;g0;N;h0;*[g0;f0];i0;.:[];j0;->[x;y;.:.[i0;%[+[x;*[g0;y]];h0]]];k0;|>[dom_get_root[];dom_set_style[::["w";d0[340]]]];l0;->[x;|>[dom_create_element["bt"];dom_set_text_content["*"];dom_append_to[k0]]];m0;->[t0;u0;dom_set_style[t0;::["c";"tr";"b";"s1b";"bg";?[u0;"#000";"#fff"]]]];n0;->[i0;:[*loop[h0;->[v0;:[?[![%[v0;f0]];+=[h;r]];'[x;y];:=[u0;math_random_int[0;1];w0;math_random_int[0;1];x0;|>[l0[r];m0[1]];t0;::[c0;u0;b0;w0;a0;x0]];.:>=[i0;t0]]]]]];o0;->[i0;y0;:[:=[y;-1];>>[i0;->[t0;i;i0;:[=[y;?[%[i;g0];y;+=[y]]];:=[x;%[i;f0];t0;j0[x;y]];y0[t0;x;y]]]]]];p0;.:[::[x;0;y;1];::[x;1;y;0];::[x;-1;y;0];::[x;0;y;-1];::[x;1;y;-1];::[x;-1;y;-1];::[x;1;y;1];::[x;-1;y;1]];q0;->[X;Y;:[:=[z0;0];>>[p0;->[A0;:[:=[t0;j0[+[X;::.[A0;x]];+[Y;::.[A0;y]]]];=[z0;+[z0;?[t0;::.[t0;c0];0]]]]]];z0]];r0;->[o0[i0;->[t0;x;y;:[:=[u0;::.[t0;c0];B0;q0[x;y]];?[&&[u0;<[B0;2]];::.=[t0;b0;0];?[&&[u0;>[B0;3]];::.=[t0;b0;0];?[&&[![u0];==[B0;3]];::.=[t0;b0;1]]]]]]]];s0;->[o0[i0;->[t0;x;y;:[:=[u0;::.[t0;c0]];|>[::.[t0;a0];m0[u0]];::.=[t0;c0;::.[t0;b0]]]]]]];n0[i0];time_set_interval[->[:[r0[];s0[]]];100];`
     strictEqual(source, decompress(compress(source)))
   })
 })

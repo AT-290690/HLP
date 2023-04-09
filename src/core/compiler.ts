@@ -532,255 +532,273 @@ const compile = () => {
           return '0'
         case 'array':
           return 'new Inventory()'
-        case 'bit::make_bit':
+        case 'bit_make_bit':
           return `((${dfs(tree.args[0], locals)}>>>0).toString(2));`
-        case 'bit::and':
+        case 'bit_and':
           return `(${dfs(tree.args[0], locals)}&${dfs(tree.args[1], locals)});`
-        case 'bit::not':
+        case 'bit_not':
           return `~${dfs(tree.args[0], locals)};`
-        case 'bit::or':
+        case 'bit_or':
           return `(${dfs(tree.args[0], locals)}|${dfs(tree.args[1], locals)});`
-        case 'bit::xor':
+        case 'bit_xor':
           return `(${dfs(tree.args[0], locals)}^${dfs(tree.args[1], locals)});`
-        case 'bit::left_shift':
+        case 'bit_left_shift':
           return `(${dfs(tree.args[0], locals)}<<${dfs(tree.args[1], locals)});`
-        case 'bit::right_shift':
+        case 'bit_right_shift':
           return `(${dfs(tree.args[0], locals)}>>${dfs(tree.args[1], locals)});`
-        case 'bit::un_right_shift':
+        case 'bit_un_right_shift':
           return `(${dfs(tree.args[0], locals)}>>>${dfs(
             tree.args[1],
             locals
           )});`
-        case 'math::factorial':
+        case 'math_factorial':
           return `Inventory._math_factorial(${dfs(tree.args[0], locals)});`
-        case 'math::permutations':
+        case 'math_permutations':
           return `Inventory._math_permutations(${dfs(
             tree.args[0],
             locals
           )}, ${dfs(tree.args[0], locals)});`
-        case 'math::permutations_array':
+        case 'math_permutations_array':
           return `Inventory._math_permutations_array(${dfs(
             tree.args[0],
             locals
           )});`
-        case 'math::lerp': {
+        case 'math_lerp': {
           const [start, end, amt] = tree.args.map((x) => dfs(x, locals))
           return `((1 - ${amt}) * ${start} + ${amt} * ${end});`
         }
-        case 'math::abs':
+        case 'math_abs':
           return `Math.abs(${dfs(tree.args[0], locals)});`
-        case 'math::mod': {
+        case 'math_mod': {
           const left = dfs(tree.args[0], locals)
           const right = dfs(tree.args[1], locals)
           return `(((${left} % ${right}) + ${right}) % ${right});`
         }
-        case 'math::clamp':
+        case 'math_clamp':
           ;`Math.min(Math.max(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )}), ${dfs(tree.args[2], locals)});`
-        case 'math::sqrt':
+        case 'math_sqrt':
           return `Math.sqrt(${dfs(tree.args[0], locals)});`
-        case 'math::add':
+        case 'math_add':
           return `(${dfs(tree.args[0], locals)}+${dfs(tree.args[1], locals)});`
-        case 'math::sub':
+        case 'math_sub':
           return `(${dfs(tree.args[0], locals)}-${dfs(tree.args[1], locals)});`
-        case 'math::mult':
+        case 'math_mult':
           return `(${dfs(tree.args[0], locals)}*${dfs(tree.args[1], locals)});`
-        case 'math::pow':
+        case 'math_pow':
           return `(${dfs(tree.args[0], locals)}**${dfs(tree.args[1], locals)});`
-        case 'math::pow2':
+        case 'math_pow2':
           return `(${dfs(tree.args[0], locals)}**2);`
-        case 'math::divide':
+        case 'math_divide':
           return `(${dfs(tree.args[0], locals)}/${dfs(tree.args[1], locals)});`
-        case 'math::sign':
+        case 'math_sign':
           return `Math.sign(${dfs(tree.args[0], locals)});`
-        case 'math::trunc':
+        case 'math_trunc':
           return `Math.trunc(${dfs(tree.args[0], locals)});`
-        case 'math::exp':
+        case 'math_exp':
           return `Math.exp(${dfs(tree.args[0], locals)});`
-        case 'math::floor':
+        case 'math_floor':
           return `Math.floor(${dfs(tree.args[0], locals)});`
-        case 'math::round':
+        case 'math_round':
           return `Math.round(${dfs(tree.args[0], locals)});`
-        case 'math::random':
+        case 'math_random':
           return `Math.random();`
-        case 'math::random_int': {
+        case 'math_random_int': {
           const min = dfs(tree.args[0], locals)
           const max = dfs(tree.args[1], locals)
           return ` Math.floor(Math.random() * (${max} - ${min} + 1) + ${min});`
         }
-        case 'math::max':
+        case 'math_max':
           return `Math.max(${tree.args.map((x) => dfs(x, locals))});`
-        case 'math::min':
+        case 'math_min':
           return `Math.min(${tree.args.map((x) => dfs(x, locals))});`
-        case 'math::sin':
+        case 'math_sin':
           return `Math.sin(${dfs(tree.args[0], locals)});`
-        case 'math::cos':
+        case 'math_cos':
           return `Math.cos(${dfs(tree.args[0], locals)});`
-        case 'math::tan':
+        case 'math_tan':
           return `Math.tan(${dfs(tree.args[0], locals)});`
-        case 'math::tanh':
+        case 'math_tanh':
           return `Math.tanh(${dfs(tree.args[0], locals)});`
-        case 'math::atan':
+        case 'math_atan':
           return `Math.atan(${dfs(tree.args[0], locals)});`
-        case 'math::atan2':
+        case 'math_atan2':
           return `Math.atan2(${dfs(tree.args[0], locals)});`
-        case 'math::acos':
+        case 'math_acos':
           return `Math.acos(${dfs(tree.args[0], locals)});`
-        case 'math::acosh':
+        case 'math_acosh':
           return `Math.acosh(${dfs(tree.args[0], locals)});`
-        case 'math::asin':
+        case 'math_asin':
           return `Math.asin(${dfs(tree.args[0], locals)});`
-        case 'math::asinh':
+        case 'math_asinh':
           return `Math.asinh(${dfs(tree.args[0], locals)});`
-        case 'math::atanh':
+        case 'math_atanh':
           return `Math.atanh(${dfs(tree.args[0], locals)});`
-        case 'math::hypot':
+        case 'math_hypot':
           return `Math.hypot(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )});`
-        case 'math::fround':
+        case 'math_fround':
           return `Math.fround(${dfs(tree.args[0], locals)});`
-        case 'math::log':
+        case 'math_log':
           return `Math.log(${dfs(tree.args[0], locals)});`
-        case 'math::log10':
+        case 'math_log10':
           return `Math.log10(${dfs(tree.args[0], locals)});`
-        case 'math::log2':
+        case 'math_log2':
           return `Math.log2(${dfs(tree.args[0], locals)});`
-        case 'math::sum':
+        case 'math_sum':
           return `((${dfs(
             tree.args[0],
             locals
           )}).reduce((acc, item) => (acc += item), 0));`
-        case 'math::MIN_INT':
+        case 'math_MIN_INT':
           return `Number.MIN_SAFE_INTEGER`
-        case 'math::MAX_INT':
+        case 'math_MAX_INT':
           return `Number.MAX_SAFE_INTEGER`
-        case 'math::infinity':
+        case 'math_infinity':
           return `Number.POSITIVE_INFINITY`
-        case 'math::PI':
+        case 'math_PI':
           return `Math.PI`
-        case 'math::E':
+        case 'math_E':
           return `Math.E`
-        case 'math::LN10':
+        case 'math_LN10':
           return `Math.LN10`
-        case 'math::LOG10E':
+        case 'math_LOG10E':
           return `Math.LOG10E`
-        case 'math::SQRT1_2':
+        case 'math_SQRT1_2':
           return `Math.SQRT1_2`
-        case 'math::SQRT2':
+        case 'math_SQRT2':
           return `Math.SQRT2`
-        case 'math::parse_int':
+        case 'math_parse_int':
           return `parseInt(${dfs(tree.args[0], locals).toString()}, ${dfs(
             tree.args[1],
             locals
           )});`
-        case 'math::number':
+        case 'math_number':
           return `Number(${dfs(tree.args[0], locals)});`
-        case 'math::negative':
+        case 'math_negative':
           return `-(${dfs(tree.args[0], locals)});`
-        case 'text::make_regexp':
+        case 'text_make_regexp':
           return `new RegExp(${dfs(tree.args[0], locals)}),`
-        case 'text::match':
+        case 'text_match':
           return `(${dfs(tree.args[0], locals)}).match(${dfs(
             tree.args[1],
             locals
           )});`
-        case 'text::replace':
+        case 'text_replace':
           return `(${dfs(tree.args[0], locals)}).replace(${dfs(
             tree.args[1],
             locals
           )});`
-        case 'text::to_lower_case':
+        case 'text_to_lower_case':
           return `(${dfs(tree.args[0], locals)}).toLowerCase();`
-        case 'text::to_upper_case':
+        case 'text_to_upper_case':
           return `(${dfs(tree.args[0], locals)}).toUpperCase();`
-        case 'text::trim':
+        case 'text_trim':
           return `(${dfs(tree.args[0], locals)}).trim();`
-        case 'text::trim_start':
+        case 'text_trim_start':
           return `(${dfs(tree.args[0], locals)}).trimStart();`
-        case 'text::trim_end':
+        case 'text_trim_end':
           return `(${dfs(tree.args[0], locals)}).trimEnd();`
-        case 'time::set_timeout':
+        case 'time_set_timeout':
           return `setTimeout(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )});`
-        case 'time::set_interval':
+        case 'time_set_interval':
           return `setInterval(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )});`
-        case 'time::set_animation': {
+        case 'time_set_animation': {
           return `requestAnimationFrame(${dfs(tree.args[0], locals)});`
         }
-        case 'dom::div':
+        case 'dom_div':
           return `Inventory._dom_div(${dfs(tree.args[0], locals)})`
-        case 'dom::set_attribute':
+        case 'dom_set_attribute':
           return `Inventory._dom_set_attribute(${dfs(
             tree.args[0],
             locals
           )}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)})`
-        case 'dom::get_attribute':
+        case 'dom_get_attribute':
           return `Inventory._dom_get_attribute(${dfs(
             tree.args[0],
             locals
           )}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)})`
-        case 'dom::create_element':
+        case 'dom_get_value':
+          return `Inventory._dom_get_value(${dfs(tree.args[0], locals)})`
+        case 'dom_set_value':
+          return `Inventory._dom_set_value(${dfs(tree.args[0], locals)}, ${dfs(
+            tree.args[1],
+            locals
+          )})`
+        case 'dom_create_element':
           return `Inventory._dom_create_element(${dfs(tree.args[0], locals)})`
-        case 'dom::insert': {
+        case 'dom_insert': {
           const [container, ...rest] = tree.args
           return `Inventory._dom_insert_into_container(${dfs(
             container,
             locals
           )}, ${rest.map((x) => dfs(x, locals)).join(',')});`
         }
-        case 'dom::append_to': {
+        case 'dom_append_to': {
           const [item, container] = tree.args
           return `Inventory._dom_insert_self_into_container(
             ${dfs(item, locals)},
             ${dfs(container, locals)});`
         }
-        case 'dom::get_element_by_id':
+        case 'dom_remove': {
+          return `Inventory._dom_remove_from_container(
+            ${dfs(tree.args[0], locals)},
+            ${dfs(tree.args[1], locals)});`
+        }
+        case 'dom_detach': {
+          return `Inventory._dom_remove_self_from_container(
+            ${dfs(tree.args[0], locals)});`
+        }
+        case 'dom_get_element_by_id':
           return `Inventory._dom_get_element_by_id(${dfs(
             tree.args[0],
             locals
           )})`
-        case 'dom::set_text_content':
+        case 'dom_set_text_content':
           return `Inventory._dom_set_text_content(${dfs(
             tree.args[0],
             locals
           )}, ${dfs(tree.args[1], locals)})`
-        case 'dom::set_style':
+        case 'dom_set_style':
           return `Inventory._dom_set_style(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )})`
-        case 'dom::get_root':
+        case 'dom_get_root':
           return `Inventory._dom_get_root();`
-        case 'dom::event':
+        case 'dom_event':
           return `Inventory._dom_add_event(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )}, ${dfs(tree.args[2], locals)});`
-        case 'dom::css_link':
+        case 'dom_css_link':
           return `Inventory._dom_css_link(${dfs(tree.args[0], locals)});`
-        case 'dom::load_bulma':
+        case 'dom_load_bulma':
           return `Inventory._dom_load_bulma(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )}, ${dfs(tree.args[2], locals)});`
-        case 'dom::container':
+        case 'dom_container':
           return `Inventory._dom_container(${tree.args
             .map((x) => dfs(x, locals))
             .join(',')});`
-        case 'dom::add_class':
+        case 'dom_add_class':
           return `Inventory._dom_add_class(${dfs(tree.args[0], locals)}, ${dfs(
             tree.args[1],
             locals
           )});`
+        case 'dom_get_body':
+          return `Inventory._dom_get_body();`
         default: {
           if (!(token in tokens)) {
             if (token)
