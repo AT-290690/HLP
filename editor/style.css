@@ -138,7 +138,7 @@ body {
 .cm-editor {
   border: none;
   padding-inline-start: 2px;
-
+  font-size: 14px;
   /* border-bottom: 1px solid var(--border);
   border-bottom: none; */
 }
