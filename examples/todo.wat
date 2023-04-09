@@ -4,21 +4,21 @@ dom_load_bulma [0; 9; 4];
     ;; aliases
     element; dom_create_element; 
     value; dom_get_value;
-    attribute; dom_set_attribute;
+    set; dom_set_attribute;
+    get; dom_get_attribute;
     class; dom_add_class; 
     style; dom_set_style;
     text; dom_set_text_content;
+    attach; dom_append_to;
     detach; dom_detach;
-    append; dom_append_to;
     clear; dom_clear;
     add; dom_add_to_box;
     box; dom_box;
     click; dom_click
 ];
-
 := [root; |> [dom_get_root []]];
 := [add_todo; -> [e; : [
-                   append [add [
+                   attach [add [
                     |> [:= [component; 
                             element ["li"]]; 
                             class ["panel-block"]]; .: [
@@ -46,7 +46,7 @@ dom_load_bulma [0; 9; 4];
                 |> [box [.: [
                     := [todo_input; |> [element ["ip"]; 
                                         class ["input"]; 
-                                        attribute ["placeholder"; "Add a new task"]]]]]; 
+                                        set ["placeholder"; "Add a new task"]]]]]; 
                     class ["control"]; 
                     class ["is-expanded"]];
                 |> [box [.: [
@@ -61,4 +61,4 @@ dom_load_bulma [0; 9; 4];
                   class ["has-addons"]];
              := [todo_root; |> [element ["ul"]; 
                                 class ["panel"]]]]]]]]]; 
-    append [root]]
+    attach [root]]
