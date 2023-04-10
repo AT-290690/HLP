@@ -1,2 +1,2 @@
-import { testFile } from 'jsdoc-spec'
-testFile({ filePath: process.argv[2], fn: process.argv[3] })
+import { cli } from 'jsdoc-spec'
+cli()

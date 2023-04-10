@@ -21,7 +21,7 @@ here is a more complex example
 ```rs
 ;; app
 ' [view; next; alive; x; y];
-|> [dom_get_body []; dom_set_style [:: ["bg"; "#000"]]];
+|> [dom_get_body []; dom_set_style [:: ["bg"; 0]]];
 := [
     px; -> [u; ~ [` [u]; "px"]];
     N; 17;
@@ -33,7 +33,7 @@ here is a more complex example
     get_cell; -> [x; y; .: . [cells; % [+ [x; * [rows; y]]; bound]]];
     cells_container; |> [dom_get_root []; dom_set_style [:: ["w"; px [380]]]];
 
-    make_button; -> [x; |> [dom_create_element["bt"];
+    make_button; -> [|> [dom_create_element["bt"];
                            dom_set_text_content["*"];
                     dom_append_to[cells_container]]];
     fill; -> [cell; is_alive; dom_set_style [cell; :: ["c"; "tr"; "b"; "s2t"; "bg"; ? [is_alive; "#fff"; 0]]]];
@@ -53,7 +53,7 @@ here is a more complex example
 
 iterate_cells; -> [cells; callback; : [
 := [y; -1];
->> [cells; -> [cell; i; cells; : [
+>> [cells; -> [cell; i; : [
   = [y; ? [% [i; rows];
   y; += [y]]];
   := [x; % [i; cols];
@@ -88,7 +88,7 @@ update_state; -> [iterate_cells [cells; -> [cell; x; y; : [
               == [neighbors; 3]];
   :: . = [cell; next; 1]]]]]]]];
 
-render; -> [iterate_cells [cells; -> [cell; x; y; : [
+render; -> [iterate_cells [cells; -> [cell; : [
   := [is_alive; :: . [cell; alive]];
   |> [:: . [cell; view]; fill [is_alive]];
   :: . = [cell; alive; :: . [cell; next]]]]]]];

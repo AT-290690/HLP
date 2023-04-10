@@ -161,6 +161,9 @@ while (argv.length) {
     case '-js':
       compile(file)
       break
+    case '-mjs':
+      compile(decompress(compress(file)))
+      break
     case '-c':
     case '-count':
       count(file)

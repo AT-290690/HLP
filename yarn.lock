@@ -315,10 +315,10 @@ js-yaml@4.1.0:
   dependencies:
     argparse "^2.0.1"
 
-jsdoc-spec@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/jsdoc-spec/-/jsdoc-spec-1.0.6.tgz#6549c7197af71bb881a683243ec0d46373833ba2"
-  integrity sha512-0lq5Z4wkP4TxphNIka7er2g2Dh/FqL3O15S2zr07TTBAwRKjAWGyZ14/pwun1aqUeiQKcSo36MqnyaUx99VLKA==
+jsdoc-spec@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/jsdoc-spec/-/jsdoc-spec-1.0.8.tgz#b0b6f8f2c5fe6099956db6605664647082329663"
+  integrity sha512-r1EGIT43ZaDCswR79jmykfAGjNasFkJCxhoh9IPrq/qgGsI/Mt4CEmaMwZU8LsLTxt8LqknZt3HPS/Nkm4GFVA==
 
 locate-path@^6.0.0:
   version "6.0.0"
