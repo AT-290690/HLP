@@ -22,6 +22,9 @@ const DomExtension: Extension = {
     set_attribute: () => {
       return {}
     },
+    set_attributes: () => {
+      return {}
+    },
     get_attribute: () => {
       return {}
     },
@@ -66,6 +69,9 @@ const DomExtension: Extension = {
       return {}
     },
     load_bulma: () => {
+      return {}
+    },
+    load_milligram: () => {
       return {}
     },
     container: () => {

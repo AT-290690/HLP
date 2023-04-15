@@ -1215,6 +1215,15 @@ export default class Inventory {
     el.setAttribute(Inventory._dom_attributes_map.get(key) ?? key, value)
     return el
   }
+  static _dom_set_attributes = (el, attributes) => {
+    attributes.forEach((value, key) => {
+      el.setAttribute(
+        `${Inventory._dom_attributes_map.get(key) ?? key}`,
+        `${Inventory._dom_attributes_map.get(value) ?? value}`
+      )
+    })
+    return el
+  }
   static _dom_get_attribute = (el, key) => {
     return el.getAttribute(Inventory._dom_attributes_map.get(key) ?? key)
   }
@@ -1234,8 +1243,11 @@ export default class Inventory {
     ['tr', 'transparent'],
     ['w', 'width'],
     ['h', 'height'],
-    ['mw', 'max-width'],
-    ['mh', 'max-height'],
+    ['mx-w', 'max-width'],
+    ['mx-h', 'max-height'],
+    ['mn-w', 'min-width'],
+    ['mn-h', 'min-height'],
+    ['ft-c', 'fit-content'],
     ['m', 'margin'],
     ['p', 'padding'],
     ['b', 'border'],
@@ -1304,6 +1316,31 @@ export default class Inventory {
     const link = document.createElement('link')
     link.rel = 'stylesheet'
     link.href = `https://cdn.jsdelivr.net/npm/bulma@${v1}.${v2}.${v3}/css/bulma.min.css`
+    link.crossorigin = 'anonymous'
+    document.head.appendChild(link)
+    return link
+  }
+  static _dom_load_milligram = (v1, v2, v3) => {
+    {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      // 1.4.1
+      link.href = `https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic`
+      link.crossorigin = 'anonymous'
+      document.head.appendChild(link)
+    }
+    {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      // 1.4.1
+      link.href = `https://cdnjs.cloudflare.com/ajax/libs/normalize/${0}.${0}.${1}/normalize.css`
+      link.crossorigin = 'anonymous'
+      document.head.appendChild(link)
+    }
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    // 1.4.1
+    link.href = `https://cdnjs.cloudflare.com/ajax/libs/milligram/${v1}.${v2}.${v3}/milligram.css`
     link.crossorigin = 'anonymous'
     document.head.appendChild(link)
     return link

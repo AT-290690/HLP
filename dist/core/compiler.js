@@ -66,6 +66,7 @@ const register = {
     time_set_animation: 'requestAnimationFrame',
     dom_get_body: 'Inventory._dom_get_body',
     dom_set_attribute: 'Inventory._dom_set_attribute',
+    dom_set_attributes: 'Inventory._dom_set_attributes',
     dom_get_attribute: 'Inventory._dom_get_attribute',
     dom_div: 'Inventory._dom_div',
     dom_get_value: 'Inventory._dom_get_value',
@@ -82,6 +83,7 @@ const register = {
     dom_event: 'Inventory._dom_add_event',
     dom_css_link: 'Inventory._dom_css_link',
     dom_load_bulma: 'Inventory._dom_load_bulma',
+    dom_load_milligram: 'Inventory._dom_load_milligram',
     dom_container: 'Inventory._dom_container',
     dom_add_class: 'Inventory._dom_add_class',
     dom_clear: 'Inventory._dom_clear',
@@ -577,9 +579,11 @@ const compile = () => {
                 case 'dom_click':
                     return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`;
                 case 'dom_set_attribute':
+                case 'dom_set_attributes':
                 case 'dom_get_attribute':
                 case 'dom_event':
                 case 'dom_load_bulma':
+                case 'dom_load_milligram':
                     return `${register[token]}(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)});`;
                 case 'dom_insert': {
                     const [container, ...rest] = tree.args;
