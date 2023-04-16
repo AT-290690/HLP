@@ -90,13 +90,13 @@ describe('interpretation should work as expected', () => {
           = [maxGlobal; math_max [maxGlobal; = [maxSoFar; math_max [0; + [maxSoFar; .: . [nums; i]]]]]];
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
-      [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; math_negative[math_infinity[]]; math_negative[math_infinity[]]]`),
+      [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; math_negative[math_infinity]; math_negative[math_infinity]]`),
       21
     )
     strictEqual(
       runFromInterpreted(
         `:= [max_sub_array_sum; -> [nums; : [
-       := [max_global; * [math_infinity[]; -1];
+       := [max_global; * [math_infinity; -1];
            max_so_far;  max_global];
        * loop [.: length [nums]; -> [i;
                = [max_global;
@@ -161,7 +161,7 @@ describe('interpretation should work as expected', () => {
       `).items,
       [1, 3, 4]
     )
-    strictEqual(runFromInterpreted(`math_PI[]`), Math.PI)
+    strictEqual(runFromInterpreted(`math_PI`), Math.PI)
   })
 
   it('nested pipes should work', () => {

@@ -192,19 +192,20 @@ const MathExtension: Extension = {
     log: (args, env) => Math.log(evaluate(args[0], env)),
     sum: (args, env) =>
       evaluate(args[0], env).reduce((acc, item) => (acc += item), 0),
-    MIN_INT: () => Number.MIN_SAFE_INTEGER,
-    MAX_INT: () => Number.MAX_SAFE_INTEGER,
-    infinity: () => Number.POSITIVE_INFINITY,
     negative: (args, env) => -evaluate(args[0], env),
-    PI: () => Math.PI,
-    E: () => Math.E,
-    LN10: () => Math.LN10,
-    LOG10E: () => Math.LOG10E,
-    SQRT1_2: () => Math.SQRT1_2,
-    SQRT2: () => Math.SQRT2,
     parse_int: (args, env) =>
       parseInt(evaluate(args[0], env).toString(), evaluate(args[1], env)),
     number: (args, env) => Number(evaluate(args[0], env)),
+
+    MIN_INT: Number.MIN_SAFE_INTEGER,
+    MAX_INT: Number.MAX_SAFE_INTEGER,
+    infinity: Number.POSITIVE_INFINITY,
+    PI: Math.PI,
+    E: Math.E,
+    LN10: Math.LN10,
+    LOG10E: Math.LOG10E,
+    SQRT1_2: Math.SQRT1_2,
+    SQRT2: Math.SQRT2,
   },
 }
 const BitExtension: Extension = {

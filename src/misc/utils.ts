@@ -140,13 +140,13 @@ export const isBalancedParenthesis = (sourceCode: string) => {
     else if (str[i] in pairs) if (stack.pop() !== pairs[str[i]]) ++count
   return count - stack.length
 }
-export const handleUnbalancedParens = (sourceCode: string) => {
-  const diff = isBalancedParenthesis(sourceCode)
+export const handleUnbalancedParens = (source: string) => {
+  const diff = isBalancedParenthesis(source)
   if (diff !== 0)
     throw new SyntaxError(
       `Parenthesis are unbalanced by ${diff > 0 ? '+' : ''}${diff} "]"`
     )
-  return sourceCode
+  return source
 }
 export const compilePlain = (source: string) => {
   const inlined = wrapInBody(removeNoCode(source))

@@ -1,1 +1,3 @@
-:= [x; 10]; := [y; 3]; := [temp; x]; = [x; y]; = [y; temp]
+;; log
+:= [floor; math_floor];
+floor [10]

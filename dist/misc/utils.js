@@ -133,11 +133,11 @@ export const isBalancedParenthesis = (sourceCode) => {
                 ++count;
     return count - stack.length;
 };
-export const handleUnbalancedParens = (sourceCode) => {
-    const diff = isBalancedParenthesis(sourceCode);
+export const handleUnbalancedParens = (source) => {
+    const diff = isBalancedParenthesis(source);
     if (diff !== 0)
         throw new SyntaxError(`Parenthesis are unbalanced by ${diff > 0 ? '+' : ''}${diff} "]"`);
-    return sourceCode;
+    return source;
 };
 export const compilePlain = (source) => {
     const inlined = wrapInBody(removeNoCode(source));
