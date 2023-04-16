@@ -1,6 +1,6 @@
 import { compileToJs } from '../core/compiler.js'
 import { parse } from '../core/parser.js'
-import { runFromAST } from '../core/interpreter.js'
+import { RUNES_NAMESPACE, runFromAST } from '../core/interpreter.js'
 import { tokens } from '../core/tokeniser.js'
 import Inventory from '../extensions/Inventory.js'
 /**
@@ -29,6 +29,31 @@ export const extractChecks = (source: string) =>
   (source.match(new RegExp(/(?<=;; @check).*?(?=\n)/gm)) ?? [])
     .filter(Boolean)
     .map((x) => x.trim())
+export const extractAliases = (source) => {
+  const aliases =
+    source.match(new RegExp(/(?:;; @aliases\n:=)((.|[\r\n])*?)(?:\];)/gm)) ?? []
+  aliases.forEach((x) => {
+    source = source.replaceAll(x, '')
+  })
+  return {
+    source,
+    aliases: aliases
+      .flatMap((a) => a.match(new RegExp(/(?=\[)((.|[\r\n])*?)(?=\])/gm)))
+      .map((x) =>
+        x
+          .substring(1)
+          .replaceAll('\n', '')
+          .split(';')
+          .map((x) => x.trim())
+      )
+      .flat()
+      .reduce((acc, x, i) => {
+        if (i % 2 !== 0) acc.at(-1)[1] = x
+        else acc.push([x])
+        return acc
+      }, []),
+  }
+}
 export const handleHangingSemi = (source: string) =>
   source[source.length - 1] === ';'
     ? source.substring(0, source.length - 1)
@@ -92,7 +117,7 @@ export const runFromCompiled = (source: string) => eval(compileModule(source))
  */
 export const exe = (source: string, env = {}) => {
   const ENV = protolessModule(env)
-  ENV[';;runes'] = protolessModule(tokens)
+  ENV[RUNES_NAMESPACE] = protolessModule(tokens)
   const AST = parse(wrapInBody(source))
   return runFromAST(AST, ENV).result
 }
@@ -150,15 +175,4 @@ ${Inventory.toString()}
 </script>
 <script> (() => { ${top}${program} })()</script>
 </body>`
-}
-
-export const compileExecutable = (source: string) => {
-  const inlined = wrapInBody(removeNoCode(source))
-  const ENV = protolessModule({})
-  ENV[';;runes'] = protolessModule(tokens)
-  const AST = parse(inlined)
-  // const { AST } = cell(ENV, false)(inlined)
-  const { top, program } = compileToJs(AST)
-  return `${Inventory.toString()}
-  ${top}${program}`
 }

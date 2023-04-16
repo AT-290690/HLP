@@ -1,4 +1,4 @@
-import { evaluate } from './interpreter.js';
+import { RUNES_NAMESPACE, evaluate } from './interpreter.js';
 import Inventory from '../extensions/Inventory.js';
 import { extensions } from '../extensions/extensions.js';
 export const VOID = 0;
@@ -226,7 +226,11 @@ const tokens = {
                     throw new SyntaxError(`Invalid use of operation := [] variable name ${name} is a reserved word`);
             }
             else {
-                env[name] = evaluate(args[i], env);
+                const arg = args[i];
+                if (arg.type === 'word' && arg.name in env[RUNES_NAMESPACE])
+                    env[RUNES_NAMESPACE][name] = env[RUNES_NAMESPACE][arg.name];
+                else
+                    env[name] = evaluate(arg, env);
             }
         }
         return env[name];
