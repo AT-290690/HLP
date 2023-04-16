@@ -199,7 +199,7 @@ const MathExtension: Extension = {
 
     MIN_INT: Number.MIN_SAFE_INTEGER,
     MAX_INT: Number.MAX_SAFE_INTEGER,
-    infinity: Number.POSITIVE_INFINITY,
+    INFINITY: Number.POSITIVE_INFINITY,
     PI: Math.PI,
     E: Math.E,
     LN10: Math.LN10,

@@ -185,7 +185,7 @@ const MathExtension = {
         number: (args, env) => Number(evaluate(args[0], env)),
         MIN_INT: Number.MIN_SAFE_INTEGER,
         MAX_INT: Number.MAX_SAFE_INTEGER,
-        infinity: Number.POSITIVE_INFINITY,
+        INFINITY: Number.POSITIVE_INFINITY,
         PI: Math.PI,
         E: Math.E,
         LN10: Math.LN10,

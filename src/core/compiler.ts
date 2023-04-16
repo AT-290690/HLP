@@ -54,7 +54,7 @@ const register: Partial<Record<Token, string>> = {
   math_log2: 'Math.log2',
   math_MIN_INT: 'Number.MIN_SAFE_INTEGER',
   math_MAX_INT: 'Number.MAX_SAFE_INTEGER',
-  math_infinity: 'Number.POSITIVE_INFINITY',
+  math_INFINITY: 'Number.POSITIVE_INFINITY',
   math_PI: 'Math.PI',
   math_E: 'Math.E',
   math_LN10: 'Math.LN10',
@@ -650,7 +650,7 @@ const compile = () => {
         }
         case 'math_MIN_INT':
         case 'math_MAX_INT':
-        case 'math_infinity':
+        case 'math_INFINITY':
         case 'math_PI':
         case 'math_E':
         case 'math_LN10':

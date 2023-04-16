@@ -98,9 +98,9 @@ describe('compression should work as expected', () => {
           = [maxGlobal; math_max [maxGlobal; = [maxSoFar; math_max [0; + [maxSoFar; .: . [nums; i]]]]]];
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
-      [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; math_negative[math_infinity]; math_negative[math_infinity]]`,
+      [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; math_negative[math_INFINITY]; math_negative[math_INFINITY]]`,
       `:= [max_sub_array_sum; -> [nums; : [
-        := [max_global; * [math_infinity; -1];
+        := [max_global; * [math_INFINITY; -1];
             max_so_far;  max_global];
         * loop [.: length [nums]; -> [i;
                 = [max_global;
@@ -886,7 +886,7 @@ describe('compression should work as expected', () => {
     ;[
       `'[a0;b0;c0;x;y];:=[d0;->[u;~[\`[u];"px"]];N;17;e0;1;r;*[N;e0];h;*[r;e0;-1];f0;N;g0;N;h0;*[g0;f0];i0;.:[];j0;->[x;y;.:.[i0;%[+[x;*[g0;y]];h0]]];k0;|>[dom_get_root[];dom_set_style[::["w";d0[340]]]];l0;->[x;|>[dom_create_element["bt"];dom_set_text_content["*"];dom_append_to[k0]]];m0;->[t0;u0;dom_set_style[t0;::["c";"tr";"b";"s1b";"bg";?[u0;"#000";"#fff"]]]];n0;->[i0;:[*loop[h0;->[v0;:[?[![%[v0;f0]];+=[h;r]];'[x;y];:=[u0;math_random_int[0;1];w0;math_random_int[0;1];x0;|>[l0[r];m0[1]];t0;::[c0;u0;b0;w0;a0;x0]];.:>=[i0;t0]]]]]];o0;->[i0;y0;:[:=[y;-1];>>[i0;->[t0;i;i0;:[=[y;?[%[i;g0];y;+=[y]]];:=[x;%[i;f0];t0;j0[x;y]];y0[t0;x;y]]]]]];p0;.:[::[x;0;y;1];::[x;1;y;0];::[x;-1;y;0];::[x;0;y;-1];::[x;1;y;-1];::[x;-1;y;-1];::[x;1;y;1];::[x;-1;y;1]];q0;->[X;Y;:[:=[z0;0];>>[p0;->[A0;:[:=[t0;j0[+[X;::.[A0;x]];+[Y;::.[A0;y]]]];=[z0;+[z0;?[t0;::.[t0;c0];0]]]]]];z0]];r0;->[o0[i0;->[t0;x;y;:[:=[u0;::.[t0;c0];B0;q0[x;y]];?[&&[u0;<[B0;2]];::.=[t0;b0;0];?[&&[u0;>[B0;3]];::.=[t0;b0;0];?[&&[![u0];==[B0;3]];::.=[t0;b0;1]]]]]]]];s0;->[o0[i0;->[t0;x;y;:[:=[u0;::.[t0;c0]];|>[::.[t0;a0];m0[u0]];::.=[t0;c0;::.[t0;b0]]]]]]];n0[i0];time_set_interval[->[:[r0[];s0[]]];100];`,
       `dom_load_bulma[0;9;4];:=[a0;dom_create_element;b0;dom_get_value;c0;dom_set_attribute;d0;dom_add_class;e0;dom_set_style;f0;dom_set_text_content;g0;dom_detach;h0;dom_append_to;i0;->[e;dom_set_value[e;""]];j0;->[c;a;:[>>[a;->[x;h0[x;c]]];c]];k0;->[a;:[:=[c;a0["div"]];>>[a;->[x;h0[x;c]]];c]];l0;->[e;c;dom_event[e;"click";c]]];:=[m0;|>[dom_get_root[]]];:=[n0;->[e;:[h0[j0[|>[:=[p0;a0["li"]];d0["panel-block"]];.:[j0[|>[a0["span"];d0["panel-icon"]];.:[|>[a0["span"];f0["✔"]]]];|>[a0["span"];f0[b0[q0]];d0["mr-2"]];|>[a0["button"];d0["delete"];d0["is-pulled-right"];l0[->[dom_detach[p0]]]]]];o0];i0[q0]]]];|>[k0[.:[j0[|>[a0["section"];d0["section"]];.:[k0[.:[|>[a0["h1"];d0["title"];f0["To-Do List"]];|>[k0[.:[|>[k0[.:[:=[q0;|>[a0["input"];d0["input"];c0["placeholder";"Add a new task"]]]]];d0["control"];d0["is-expanded"]];|>[k0[.:[|>[a0["button"];d0["button"];d0["is-primary"];f0["Add"];l0[n0]]]];d0["control"]]]];d0["field"];d0["has-addons"]];:=[o0;|>[a0["ul"];d0["panel"]]]]]]]]];h0[m0]]`,
-      `:=[a0;->[i;b0;c0;d0;?[<[i;.:length[b0]];:[=[c0;math_max[c0;=[d0;math_max[0;+[d0;.:.[b0;i]]]]]];a0[+=[i];b0;c0;d0]];c0]]][0;.:[1;-2;10;-5;12;3;-2;3;-199;10];*[math_infinity;-1];*[math_infinity;-1]]`,
+      `:=[a0;->[i;b0;c0;d0;?[<[i;.:length[b0]];:[=[c0;math_max[c0;=[d0;math_max[0;+[d0;.:.[b0;i]]]]]];a0[+=[i];b0;c0;d0]];c0]]][0;.:[1;-2;10;-5;12;3;-2;3;-199;10];*[math_INFINITY;-1];*[math_INFINITY;-1]]`,
     ].forEach((source) => strictEqual(source, decompress(compress(source))))
   })
 })
