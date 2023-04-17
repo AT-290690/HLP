@@ -196,6 +196,11 @@ const tokens = {
         args.forEach((arg) => (value = evaluate(arg, env)));
         return value;
     },
+    ['void:']: (args, env) => {
+        let value = VOID;
+        args.forEach((arg) => (value = evaluate(arg, env)));
+        return value;
+    },
     ['===']: (args, env) => {
         if (args.length < 2)
             throw new RangeError('Invalid number of arguments to ===');
@@ -513,7 +518,7 @@ const tokens = {
     ['|>']: (args, env) => evaluate(args[0], env),
     ['!throw']: (args, env) => {
         if (!evaluate(args[0], env))
-            throw new Error(`${evaluate(args[1], env)} failed!`);
+            throw new Error(`${args[1] ? evaluate(args[1], env) : 'Something'} failed!`);
     },
     ['?==']: (args, env) => {
         if (!args.length || args.length > 2)

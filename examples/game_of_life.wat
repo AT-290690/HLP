@@ -1,6 +1,6 @@
 ;; app
 ' [view; next; alive; x; y];
-|> [dom_get_body []; dom_set_style [:: ["bg"; 0]]];
+|> [dom_get_body []; dom_set_style [:: ["bg"; "#000"]]];
 := [
     px; -> [u; ~ [` [u]; "px"]];
     N; 17;

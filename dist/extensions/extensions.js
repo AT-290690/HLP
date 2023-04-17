@@ -8,6 +8,19 @@ const TimeExtension = {
         set_animation: (args, env) => requestAnimationFrame(evaluate(args[0], env)),
     },
 };
+const UnitsExtension = {
+    units_: {
+        pixels: (args, env) => `${evaluate(args[0], env)}px`,
+        percent: (args, env) => `${evaluate(args[0], env)}percent`,
+        viewport_height: (args, env) => `${evaluate(args[0], env)}vh`,
+        viewport_width: (args, env) => `${evaluate(args[0], env)}vw`,
+        centimeters: (args, env) => `${evaluate(args[0], env)}cm`,
+        millimeters: (args, env) => `${evaluate(args[0], env)}mm`,
+        inches: (args, env) => `${evaluate(args[0], env)}in`,
+        points: (args, env) => `${evaluate(args[0], env)}pt`,
+        picas: (args, env) => `${evaluate(args[0], env)}pc`,
+    },
+};
 const DomExtension = {
     dom_: {
         div: () => {
@@ -212,6 +225,7 @@ const Extensions = {
     ...StringExtension,
     ...TimeExtension,
     ...DomExtension,
+    ...UnitsExtension,
 };
 const extensions = {};
 for (const ext in Extensions) {

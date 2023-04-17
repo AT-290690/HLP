@@ -20,6 +20,17 @@ const semiColumnEdgeCases = new Set([
     ';;',
     ';]',
 ]);
+const units = {
+    units_pixels: 'px',
+    units_percent: '%',
+    units_viewport_height: 'vh',
+    units_viewport_width: 'vw',
+    units_centimeters: 'cm',
+    units_millimeters: 'mm',
+    units_inches: 'in',
+    units_points: 'pt',
+    units_picas: 'pc',
+};
 const register = {
     math_factorial: 'Inventory._math_factorial',
     math_permutations: 'Inventory._math_permutations',
@@ -148,9 +159,6 @@ const compile = () => {
                     out += `), ${name});`;
                     return out;
                 }
-                // dead code
-                case 'aliases=':
-                    return '';
                 case '<-::': {
                     let out = '((';
                     const obj = dfs(tree.args.pop(), locals);
@@ -602,6 +610,21 @@ const compile = () => {
                     return `${register[token]}(${tree.args
                         .map((x) => dfs(x, locals))
                         .join(',')});`;
+                case 'units_pixels':
+                case 'units_percent':
+                case 'units_viewport_height':
+                case 'units_viewport_width':
+                case 'units_centimeters':
+                case 'units_millimeters':
+                case 'units_inches':
+                case 'units_points':
+                case 'units_picas':
+                    return `"${dfs(tree.args[0], locals)}${units[token]}"`;
+                    break;
+                // dead code
+                case 'aliases=':
+                case 'void:':
+                    return '';
                 default:
                     undefined: {
                         if (!(token in tokens)) {

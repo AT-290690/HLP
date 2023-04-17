@@ -19,9 +19,9 @@ here is a more complex example
 ## Game of Life
 
 ```rs
-;; app
+;; share
 ' [view; next; alive; x; y];
-|> [dom_get_body []; dom_set_style [:: ["bg"; 0]]];
+|> [dom_get_body []; dom_set_style [:: ["bg"; "#000"]]];
 := [
     px; -> [u; ~ [` [u]; "px"]];
     N; 17;
@@ -99,7 +99,7 @@ time_set_interval[-> [: [update_state []; render []]]; 100];
 
 click to run it:
 
-[game_of_life.hlp](https://at-290690.github.io/hlp?l=J1t2aWV3O25leHQ7YWxpdmU7eDt5XTvFlVvDhVvDkFtdO8WUWyJiZyI7MMK3MzvFj1thMDvFkFt1O35bYFt1XTsicHgiXV07TjsxNztiMDsxO3I7KltOO2IwXTtoOypbcsQVLTFdO2MwO047ZMQFZTA7KltkMDtjMF07ZjA7xZNbXTtnxVV4O3k7xYFbZjA7JVsrW3jGJ3ldXTtlxX1oMOgAmJHnAJh3IjthMFszODDCtzQ7acVExCKCW8KjW8KpWyJidCJdOyIqIl07aMVCasUjdDA7cTA7w4XECcRGYyI7InRyIjsiYiI7InMydMQKZyI7P1txMDsiI2ZmZuUA%2FTQ7a8U%2BZjA7OlvErVtlxQ5jb3VudDs6Wz9bIVslxw5jMF1dO8WGW2g7cl1dOyfkANdd5AE6cTA7wrJbMDsxXTtyygtz5QDWajBbaTBbcl07MV1dO%2BYAmOYBj3Ew5gGdcjA75QGqc8RdxLnkAId0MMK3Njts6ACWY2FsbGJhY2s7OlvFj1t55QF2xZHEGuYA9Gk7Ols9W3k7P1slW2k7ZDBd5AFuhlt55wHYeDvEF%2BQBlXQwO2cw5QC2XclVxEF4O3nEcW3lAbTFlFt4OzA7eeQAw8UMMTt5OzDHDC3MDcQl5QCMyCbJDcUnzRvNGuQBC27lAL5YO1nmANZ1MMVXkVvkAIWQW2RpcsYY5gCzK1tYO8WAxRZ4XV07K1tZyA955AHAPcQ%2FK8QFP8QxxYDEBuUBZl3kAeE2O3XkAVxvxVpsMOoBOeQCl8Vmcc81djA7bugBKT9bxY3EITxbdjA7MuQBpLXEKuUBvDDKHz7EHzPWHyFbceQA3YnTIzHCtzg7cPEAmvQAluUDvWowW8YU5AI0XTtx5QI1xU%2FFJccxxFvCtzc7a8RTXTvCrFvFkFs6W28wW107cDBb5AIZMTAwXTs%3D)
+[game_of_life.hlp](https://at-290690.github.io/hlp?l=J1t2aWV3O25leHQ7YWxpdmU7eDt5XTvFnlvDiVvDlVtdO8WdWyJiZyI7IiMwMDAiwrczO8WYW2EwO8WZW3U7fltgW3VdOyJweCJdXTtOOzE3O2IwOzE7cjsqW047YjBdO2g7KltyxBUtMV07YzA7TjtkxAVlMDsqW2QwO2MwXTtmMDvFnFtdO2fFVXg7eTvFiltmMDslWytbeMYneV1dO2UwxH1oMOgAnZbnAJ13IjthMFszODDCtzQ7acVExCKGW8KkW8KrWyJidCJdOyIqIl07aMVCasUjdDA7cTA7w4nECcRGYyI7InRyIjsiYiI7InMydMQKZyI7P1txMDsiI2ZmZiI7xWFrxT5mMDs6W8S2W2XFDmNvdW50OzpbP1shWyXHDmMwXV07xY9baDtyXV07J%2BQA113kATpxMDvCtlswOzFdO3LKC3PlANZqMFtpMFtyXTsxXV075gCY5gGUcTDmAaJyMDvlAa9zxV2C5ACHdDDCtzY7bOgAlmNhbGxiYWNrOzpbxZhbeeUBdsWaxBrmAPRpOzpbPVt5Oz9bJVtpO2QwXeQBbo9beecB2Hg7xBfkAZV0MDtnMOUAtl3JVcRBeDt5xHFt5QG0xZ1beDswO3nkAMPFDDE7eTswxwwtzA3EJeUAjMgmyQ3FJ80bzRrkAQtu5QC%2BWDtZ5gDWdTDFV5pb5ACFmVtkaXLGGOYAsytbWDvFicUWeF1dOytbWcgPeeQBwD3EPyvEBT%2FEMcXlAgHlAWZd5AHhNjt15AFcb8VabDDqATnkApfFZnHPNXYwO27oASk%2FW8WWxCE8W3YwOzJdXTvEvsQq5QG8MMofPsQfM9YfIVtx5ADdktMjMcK3ODtw8QCa9ACW5QPCajBbxhTkAjRdO3HkANnGT8UlxzHEW8K3NztrxFNdO8KuW8WZWzpbbzBbXTtwMFvkAhkxMDBdOw%3D%3D)
 
 try the [editor](https://at-290690.github.io/hlp/editor)
 (type **spec** for language manual)

@@ -75,7 +75,7 @@ tokens['~*'] = (args, env) => {
 const OFFSET = 161;
 const generateCompressionRunes = (start) => {
     return Object.keys(tokens)
-        .filter((x) => x.length > 1 && x !== 'aliases=')
+        .filter((x) => x.length > 1 && x !== 'aliases=' && x !== 'void:')
         .sort((a, b) => (a.length > b.length ? -1 : 1))
         .concat(['][', ']];', '];'])
         .reduce((acc, full, i) => {
@@ -150,10 +150,7 @@ export const pruneTree = (tree, memo = new Map()) => {
                 node.name = memo.get(node.name);
         }
         else if (node.type === 'apply') {
-            if (node &&
-                node.type === 'apply' &&
-                node.operator.type === 'word' &&
-                node.operator.name === 'aliases=') {
+            if (node.operator.type === 'word' && node.operator.name === 'aliases=') {
                 node.args
                     .reduce((acc, item, i) => {
                     if (i % 2 === 0)
@@ -166,6 +163,10 @@ export const pruneTree = (tree, memo = new Map()) => {
                     if (left.type === 'word' && right.type === 'word')
                         memo.set(left.name, right.name);
                 });
+                tree[i] = VOID_CODE;
+            }
+            else if (node.operator.type === 'word' &&
+                node.operator.name === 'void:') {
                 tree[i] = VOID_CODE;
             }
             else {
