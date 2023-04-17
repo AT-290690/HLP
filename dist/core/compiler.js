@@ -625,7 +625,7 @@ const compile = () => {
         else if (tree.type === 'word')
             return tree.name in register ? register[tree.name] : tree.name;
         else if (tree.type === 'value')
-            return (tree.class === 'string' ? `"${tree.value}"` : tree.value) + ';';
+            return tree.class === 'string' ? `"${tree.value}"` : tree.value;
     };
     return { dfs, vars };
 };
