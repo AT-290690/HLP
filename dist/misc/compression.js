@@ -75,6 +75,7 @@ tokens['~*'] = (args, env) => {
 const OFFSET = 161;
 const generateCompressionRunes = (start) => {
     return Object.keys(tokens)
+        .filter((x) => x.length > 1 && x !== 'aliases=')
         .sort((a, b) => (a.length > b.length ? -1 : 1))
         .concat(['][', ']];', '];'])
         .reduce((acc, full, i) => {
