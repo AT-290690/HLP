@@ -29,31 +29,6 @@ export const extractChecks = (source: string) =>
   (source.match(new RegExp(/(?<=;; @check).*?(?=\n)/gm)) ?? [])
     .filter(Boolean)
     .map((x) => x.trim())
-export const extractAliases = (source) => {
-  const aliases =
-    source.match(new RegExp(/(?:;; @aliases\n:=)((.|[\r\n])*?)(?:\];)/gm)) ?? []
-  aliases.forEach((x) => {
-    source = source.replaceAll(x, '')
-  })
-  return {
-    source,
-    aliases: aliases
-      .flatMap((a) => a.match(new RegExp(/(?=\[)((.|[\r\n])*?)(?=\])/gm)))
-      .map((x) =>
-        x
-          .substring(1)
-          .replaceAll('\n', '')
-          .split(';')
-          .map((x) => x.trim())
-      )
-      .flat()
-      .reduce((acc, x, i) => {
-        if (i % 2 !== 0) acc.at(-1)[1] = x
-        else acc.push([x])
-        return acc
-      }, []),
-  }
-}
 export const handleHangingSemi = (source: string) =>
   source[source.length - 1] === ';'
     ? source.substring(0, source.length - 1)

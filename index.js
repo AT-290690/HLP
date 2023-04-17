@@ -8,6 +8,7 @@ import {
   extractTests,
   handleHangingSemi,
   removeNoCode,
+  wrapInBody,
 } from './dist/misc/utils.js'
 import {
   encodeBase64,
@@ -17,6 +18,8 @@ import {
 } from './dist/misc/compression.js'
 import { readdirSync, readFileSync, writeFileSync } from 'fs'
 import { tokens } from './dist/core/tokeniser.js'
+import { stringify } from './dist/core/stringify.js'
+import { parse } from './dist/core/parser.js'
 const logBoldMessage = (msg) => console.log('\x1b[1m', msg, '\x1b[0m')
 const logErrorMessage = (msg) =>
   console.log('\x1b[31m', '\x1b[1m', msg, '\x1b[0m')
@@ -120,6 +123,11 @@ while (argv.length) {
       break
     case '-mini':
       logSuccessMessage(decompress(compress(file)))
+      break
+    case '-str':
+      logSuccessMessage(
+        stringify(parse(decompress(compress(wrapInBody(file)))).args)
+      )
       break
     case '-file':
       file = readFileSync(value, 'utf-8')

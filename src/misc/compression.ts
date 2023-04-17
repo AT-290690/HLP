@@ -117,6 +117,27 @@ interface Compression {
   result: string
   occurance: number
 }
+// export const pruneTree = (
+//   tree: Expression[],
+//   aliases: Map<string, string> = new Map()
+// ): Expression[] => {
+//   for (const node of tree)
+//     if (node.type === 'apply' && node.operator.type === 'word')
+//       if (
+//         node.operator.name === ':=' &&
+//         node.args.every((arg) => arg.type === 'word')
+//       ) {
+//         let temp: string
+//         node.args.forEach((variable, index) => {
+//           if (variable.type === 'word')
+//             if (index % 2 === 0) temp = variable.name
+//             else aliases.set(temp, variable.name)
+//         })
+//         node.args.length = 0
+//       } else if (aliases.has(node.operator.name))
+//         node.operator.name = aliases.get(node.operator.name)
+//   return tree
+// }
 export const compress = (source: string) => {
   const raw: string = removeNoCode(source).split('];]').join(']]')
   const strings = raw.match(/"([^"]*)"/g) || []
@@ -171,12 +192,10 @@ export const decompress = (raw: string) => {
     (acc, m) => acc.split(m).join(']'.repeat(parseInt(m.substring(1)))),
     value
   )
-
   let result = ''
   for (const tok of runes) {
-    if (shortRunes.has(tok)) {
-      result += shortRunes.get(tok).full
-    } else result += tok
+    if (shortRunes.has(tok)) result += shortRunes.get(tok).full
+    else result += tok
   }
   const arr = result.split('" "')
   strings.forEach((str, i) => (arr[i] += str))
