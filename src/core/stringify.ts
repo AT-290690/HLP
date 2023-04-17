@@ -2,7 +2,7 @@ import { Expression } from '.'
 
 export const stringify = (tree: Expression[], out = '') => {
   for (const node of tree) {
-    if (node.type === 'value')
+    if (node.type === 'value' && node.class !== 'void')
       out += (node.class === 'string' ? `"${node.value}"` : node.value) + ';'
     else if (node.type === 'word') out += node.name + ';'
     else if (node.type === 'apply') {

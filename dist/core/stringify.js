@@ -1,6 +1,6 @@
 export const stringify = (tree, out = '') => {
     for (const node of tree) {
-        if (node.type === 'value')
+        if (node.type === 'value' && node.class !== 'void')
             out += (node.class === 'string' ? `"${node.value}"` : node.value) + ';';
         else if (node.type === 'word')
             out += node.name + ';';

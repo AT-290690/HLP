@@ -1,7 +1,7 @@
 ;; app
 dom_load_bulma [0; 9; 4]; 
 := [
-    ;; aliases
+    ;; aliases=
     element; dom_create_element; 
     value; dom_get_value;
     set; dom_set_attribute;

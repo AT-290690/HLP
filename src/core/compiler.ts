@@ -120,7 +120,10 @@ const compile = () => {
   const dfs = (tree: Expression, locals: Set<string>) => {
     if (!tree) return ''
     if (tree.type === 'apply') {
-      const token = tree.operator.name as Token
+      const token =
+        tree.operator.type === 'word'
+          ? (tree.operator.name as Token)
+          : undefined
       switch (token) {
         case ':': {
           if (tree.args.length > 1) {
@@ -151,6 +154,9 @@ const compile = () => {
           out += `), ${name});`
           return out
         }
+        // dead code
+        case 'aliases=':
+          return ''
         case '<-::': {
           let out = '(('
           const obj = dfs(tree.args.pop(), locals)
@@ -216,18 +222,12 @@ const compile = () => {
         case '<=':
         case '>':
         case '<':
-          return (
-            '(' +
-            tree.args.map((x) => dfs(x, locals)).join(tree.operator.name) +
-            ');'
-          )
+          return '(' + tree.args.map((x) => dfs(x, locals)).join(token) + ');'
         case '&&':
         case '||':
           return (
             '(' +
-            tree.args
-              .map((x) => `(${dfs(x, locals)});`)
-              .join(tree.operator.name) +
+            tree.args.map((x) => `(${dfs(x, locals)});`).join(token) +
             ');'
           )
         case '%':
@@ -793,29 +793,30 @@ const compile = () => {
             .map((x) => dfs(x, locals))
             .join(',')});`
 
-        default: {
-          if (!(token in tokens)) {
-            if (token)
-              return (
-                token +
-                '(' +
-                tree.args.map((x) => dfs(x, locals)).join(',') +
-                ');'
-              )
-            else {
-              return `(${dfs(tree.operator, locals)})(${tree.args
-                .map((x) => dfs(x, locals))
-                .join(',')});`
+        default:
+          undefined: {
+            if (!(token in tokens)) {
+              if (token)
+                return (
+                  token +
+                  '(' +
+                  tree.args.map((x) => dfs(x, locals)).join(',') +
+                  ');'
+                )
+              else {
+                return `(${dfs(tree.operator, locals)})(${tree.args
+                  .map((x) => dfs(x, locals))
+                  .join(',')});`
+              }
+            } else {
+              unreachable(token)
             }
-          } else {
-            unreachable(token)
           }
-        }
       }
     } else if (tree.type === 'word')
       return tree.name in register ? register[tree.name] : tree.name
     else if (tree.type === 'value')
-      return tree.class === 'string' ? `"${tree.value}"` : tree.value
+      return (tree.class === 'string' ? `"${tree.value}"` : tree.value) + ';'
   }
   return { dfs, vars }
 }

@@ -1,7 +1,6 @@
 ;; app
 dom_load_milligram [1; 4; 1]; 
-:= [
-    ;; aliases
+aliases = [
     element; dom_create_element; 
     value; dom_get_value;
     set; dom_set_attribute;
@@ -36,7 +35,7 @@ dom_load_milligram [1; 4; 1];
 ;; app
 dom_load_milligram [1; 4; 1]; 
 := [
-    ;; aliases
+    ;; aliases=
     element; dom_create_element; 
     value; dom_get_value;
     set; dom_set_attribute;

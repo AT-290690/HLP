@@ -18,7 +18,10 @@ export const evaluate = (expr: Expression, env: Expression) => {
         return tokens[expr.operator.name](expr.args, env)
       const op = evaluate(expr.operator, env)
       if (typeof op !== 'function')
-        throw new TypeError(expr.operator.name + ' is not a -> []')
+        throw new TypeError(
+          (expr.operator.type === 'word' ? expr.operator.name : 'void') +
+            ' is not a -> []'
+        )
       return op.apply(
         undefined,
         expr.args.map((arg) => evaluate(arg, env))

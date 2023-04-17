@@ -60,6 +60,7 @@ const ABC = [
   'Y',
   'Z',
 ]
+export const VOID_CODE: Expression = { type: 'value', value: 0, class: 'void' }
 tokens['~*'] = (args, env) => {
   if (!args.length) throw new RangeError('Invalid number of arguments to ~* []')
   const callback = evaluate(args.pop(), env)
@@ -123,9 +124,8 @@ const traverseAndDefineVariables = (
                 definitions.set(variable.name, newName)
                 variable.name = newName
               }
-            } else if (shortRunes.decompressed.has(variable.name)) {
+            } else if (shortRunes.decompressed.has(variable.name))
               variable.name = shortRunes.decompressed.get(variable.name)
-            }
           }
         })
       }
@@ -165,21 +165,54 @@ interface Compression {
   result: string
   occurance: number
 }
+export const removeBody = (tree: Expression): Expression[] =>
+  tree.type === 'apply' ? tree.args : []
 
+export const pruneTree = (
+  tree: Expression[],
+  memo: Map<string, string> = new Map()
+): Expression[] => {
+  for (let i = 0; i < tree.length; ++i) {
+    const node = tree[i]
+    if (node.type === 'word') {
+      if (memo.has(node.name)) node.name = memo.get(node.name)
+    } else if (node.type === 'apply') {
+      if (
+        node &&
+        node.type === 'apply' &&
+        node.operator.type === 'word' &&
+        node.operator.name === 'aliases='
+      ) {
+        node.args
+          .reduce((acc, item, i) => {
+            if (i % 2 === 0) acc.push([item])
+            else acc.at(-1).push(item)
+            return acc
+          }, [] as Array<Array<Expression>>)
+          .forEach(([left, right]) => {
+            if (left.type === 'word' && right.type === 'word')
+              memo.set(left.name, right.name)
+          })
+        tree[i] = VOID_CODE
+      } else {
+        pruneTree([node.operator], memo)
+        pruneTree(node.operator.args, memo)
+      }
+    }
+    if (node.type !== 'value') pruneTree(node.args, memo)
+  }
+  return tree
+}
 export const compress = (source: string) => {
-  const AST = parse(removeNoCode(wrapInBody(source)))
   const variablesMap = new Map()
-  const tree =
-    AST.type === 'apply'
-      ? traverseAndAssigneVariables(
-          traverseAndDefineVariables(
-            AST.args,
-            variablesMap,
-            shortDefinitionsCounter(0, 0)
-          ),
-          variablesMap
-        )
-      : []
+  const tree = traverseAndAssigneVariables(
+    traverseAndDefineVariables(
+      pruneTree(removeBody(parse(wrapInBody(removeNoCode(source)))), new Map()),
+      variablesMap,
+      shortDefinitionsCounter(0, 0)
+    ),
+    variablesMap
+  )
   let { result, occurance } = stringify(tree)
     .split('')
     .reduce(

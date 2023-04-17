@@ -1,5 +1,6 @@
 ;; app
-dom_load_bulma [0; 9; 4]; 
+ dom_load_milligram [1; 4; 1]; 
+;; dom_load_bulma [0; 9; 4]; 
 aliases = [
     element; dom_create_element; 
     value; dom_get_value;
@@ -10,27 +11,30 @@ aliases = [
     text; dom_set_text_content;
     attach; dom_append_to;
     detach; dom_detach;
+    insert; dom_insert;
     clear; dom_clear;
     add; dom_add_to_box;
     box; dom_box;
     click; dom_click
 ];
+
 := [root; |> [dom_get_root []]];
 := [add_todo; -> [e; : [
                    attach [add [
                     |> [:= [component; 
-                            element ["li"]]; 
-                            class ["panel-block"]]; .: [
+                            element ["li"]];
+                            class ["panel-block"]; class ["pin"]]; .: [
                               add [|> [element ["sp"]; 
                                        class ["panel-icon"]]; .: [
                                          |> [element ["sp"]; 
+                                             class ["pin"];
                                              text ["✔"]]]]; 
                                    |> [element ["sp"]; 
                                        text [value [todo_input]]; 
                                        class ["mr-2"]]; 
                                    |> [element ["bt"]; 
-                                       class ["delete"];
-                                       class ["is-pulled-right"]; 
+                                       text ["x"];
+                                       style [:: ["margin-left"; "15px"]];
                                        click [-> [dom_detach [component]]]]]]; 
                             todo_root];  
                      clear [todo_input]]]];
@@ -39,31 +43,23 @@ aliases = [
              class ["section"]]; .: [
             box [.: [
               |> [element ["h1"]; 
-                  class ["title"]; 
                   text ["To-Do List"]];
               |> [box [.: [
                 |> [box [.: [
-                    := [todo_input; |> [element ["ip"]; 
+                    := [todo_input; |> [element ["ip"];
+                                        style [:: ["c"; "#fff"]];
                                         class ["input"]; 
+                                        set ["type"; "text"];
                                         set ["placeholder"; "Add a new task"]]]]]; 
-                    class ["control"]; 
-                    class ["is-expanded"]];
+                    class ["pin"]];
                 |> [box [.: [
                     |> [element ["bt"]; 
                         class ["button"]; 
-                        class ["is-primary"];
                         text ["Add"];
                         click [add_todo]]]];
-                    class ["control"]]
+                    class ["pin"]]
                   ]]; 
-                  class ["field"]; 
-                  class ["has-addons"]];
+                  class ["pin"]];
              := [todo_root; |> [element ["ul"]; 
-                                class ["panel"]]]]]]]]]; 
-    attach [root]];
-
-
-
-
-
-
+                                class ["pin"]]]]]]]]]; 
+    attach [root]]

@@ -3,7 +3,7 @@ export interface Word {
   name: string
   args: Expression[]
 }
-export type Classes = 'function' | 'string' | 'number'
+export type Classes = 'function' | 'string' | 'number' | 'void'
 export interface Value {
   type: 'value'
   value: unknown

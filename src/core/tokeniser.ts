@@ -223,19 +223,21 @@ const tokens: Record<string, Interpration> = {
           throw new SyntaxError(
             `First argument of := [] must be word but got ${word.type ?? VOID}`
           )
+        if (word.name.includes('.') || word.name.includes('-'))
+          throw new SyntaxError(
+            `Invalid use of operation := [] [variable name must not contain . or -] but got ${word.name}`
+          )
+        if (word.name in tokens)
+          throw new SyntaxError(
+            `Invalid use of operation := [] variable name ${word.name} is a reserved word`
+          )
         name = word.name
-        if (name.includes('.') || name.includes('-'))
-          throw new SyntaxError(
-            `Invalid use of operation := [] [variable name must not contain . or -] but got ${name}`
-          )
-        if (name in tokens)
-          throw new SyntaxError(
-            `Invalid use of operation := [] variable name ${name} is a reserved word`
-          )
       } else {
         const arg = args[i]
         if (arg.type === 'word' && arg.name in env[RUNES_NAMESPACE])
-          env[RUNES_NAMESPACE][name] = env[RUNES_NAMESPACE][arg.name]
+          throw new SyntaxError(
+            'To define new names of existing words Use aliases= instead'
+          )
         else env[name] = evaluate(arg, env)
       }
     }
@@ -1276,6 +1278,28 @@ const tokens: Record<string, Interpration> = {
   ['string']: () => 0,
   ['array']: () => new Inventory(),
   ['object']: () => new Map(),
+  ['aliases=']: (args, env) => {
+    if (!args.length) return 0
+    let name: string
+    for (let i = 0; i < args.length; ++i) {
+      if (i % 2 === 0) {
+        const word = args[i]
+        if (word.type !== 'word')
+          throw new SyntaxError(
+            `First argument of aliases= [] must be word but got ${
+              word.type ?? VOID
+            }`
+          )
+        name = word.name
+      } else {
+        const arg = args[i]
+        if (arg.type === 'word' && arg.name in env[RUNES_NAMESPACE])
+          env[RUNES_NAMESPACE][name] = env[RUNES_NAMESPACE][arg.name]
+        else throw new SyntaxError('aliases= can only be words for aliases=[]')
+      }
+    }
+    return env[name]
+  },
   ...extensions,
 }
 

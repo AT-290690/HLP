@@ -220,7 +220,7 @@ describe('compression should work as expected', () => {
     [
       ` .:map>> [.: [1.123; 3.14; 4.9]; -> [x; math_floor[x]]];`,
       'math_PI',
-      `:= [
+      `aliases= [
         floor; math_floor;
         pi; math_PI
       ];
