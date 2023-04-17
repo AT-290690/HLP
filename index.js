@@ -77,7 +77,7 @@ const encodeUri = async (file) => {
   logWarningMessage(encoded)
 }
 const decodeUri = async (file) => {
-  const dencoded = decodeBase64(decodeURIComponent(file))
+  const dencoded = wrapInBody(decodeBase64(decodeURIComponent(file)))
   logWarningMessage(dencoded)
 }
 const compile = async (file) => {
@@ -125,8 +125,11 @@ while (argv.length) {
       logSuccessMessage(decompress(compress(file)))
       break
     case '-str':
+      logSuccessMessage(stringify(parse(wrapInBody(removeNoCode(file))).args))
+      break
+    case '-strc':
       logSuccessMessage(
-        stringify(parse(decompress(compress(wrapInBody(file)))).args)
+        stringify(parse(wrapInBody(decompress(compress(file)))).args)
       )
       break
     case '-file':

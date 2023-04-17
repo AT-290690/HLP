@@ -1,7 +1,7 @@
 export interface Word {
   type: 'word'
   name: string
-  args: (Apply | Value)[]
+  args: Expression[]
 }
 export type Classes = 'function' | 'string' | 'number'
 export interface Value {
@@ -10,7 +10,7 @@ export interface Value {
   class: Classes
 }
 export interface Apply {
-  operator: Word
+  operator: Word | Apply
   type: 'apply'
   args: Expression[]
 }

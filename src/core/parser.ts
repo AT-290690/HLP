@@ -34,7 +34,7 @@ export const parseApply = (expr: Expression, cursor: string) => {
         `Unexpected token - Expected ';' or ']'" but got "${cursor[0]}"`
       )
   }
-  if (expression.type === 'apply')
+  if (expression.type === 'apply' && expression.operator.type === 'word')
     if (expression.operator.name === '|>') pipeArgs(expression)
 
   return parseApply(expression, cursor.slice(1))

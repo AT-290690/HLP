@@ -5,6 +5,7 @@ import { evaluate } from '../core/interpreter.js'
 import Inventory from '../extensions/Inventory.js'
 import { runFromInterpreted, removeNoCode, wrapInBody } from '../misc/utils.js'
 import { Expression, Word } from '../core'
+import { stringify } from '../core/stringify.js'
 const ABC = [
   'a',
   'b',
@@ -81,125 +82,138 @@ const generateCompressionRunes = (start) => {
   return Object.keys(tokens)
     .sort((a, b) => (a.length > b.length ? -1 : 1))
     .concat(['][', ']];', '];'])
-    .reduce((acc, full, i) => {
-      const short = String.fromCharCode(start + i + OFFSET)
-      acc.set(short, {
-        full,
-        short,
-      })
-      return acc
-    }, new Map())
+    .reduce(
+      (acc, full, i) => {
+        const short = String.fromCharCode(start + i + OFFSET)
+        acc.compressed.set(short, full)
+        acc.decompressed.set(full, short)
+        return acc
+      },
+      { compressed: new Map(), decompressed: new Map() }
+    )
 }
 export const shortRunes = generateCompressionRunes(0)
-const dfs = (tree: Expression[], definitions = new Set()) => {
-  for (const node of tree) {
-    if (node.type !== 'value') {
-      if (node.type === 'word' && node.name.length > 1) {
-        if (!(node.name in tokens)) definitions.add(node.name)
-      } else if (node.type === 'apply') {
-        if (node.operator.type === 'word') {
-          node.args
-            .filter((expr): expr is Word => expr.type === 'word')
-            .forEach(({ name }) => {
-              // arguments omitting
-              if (name && name.length > 1 && name[0] !== '_') {
-                if (!(name in tokens)) definitions.add(name)
-              }
-            })
-        } else dfs(node.operator.args, definitions)
-      }
-      dfs(node.args, definitions)
-    }
-  }
-  return definitions
-}
-interface Compression {
-  result: string
-  occurance: number
-}
-// export const pruneTree = (
-//   tree: Expression[],
-//   aliases: Map<string, string> = new Map()
-// ): Expression[] => {
-//   for (const node of tree)
-//     if (node.type === 'apply' && node.operator.type === 'word')
-//       if (
-//         node.operator.name === ':=' &&
-//         node.args.every((arg) => arg.type === 'word')
-//       ) {
-//         let temp: string
-//         node.args.forEach((variable, index) => {
-//           if (variable.type === 'word')
-//             if (index % 2 === 0) temp = variable.name
-//             else aliases.set(temp, variable.name)
-//         })
-//         node.args.length = 0
-//       } else if (aliases.has(node.operator.name))
-//         node.operator.name = aliases.get(node.operator.name)
-//   return tree
-// }
-export const compress = (source: string) => {
-  const raw: string = removeNoCode(source).split('];]').join(']]')
-  const strings = raw.match(/"([^"]*)"/g) || []
-  const value = raw.replaceAll(/"([^"]*)"/g, '" "')
-  const AST = parse(wrapInBody(value))
-  const definitions = AST.type === 'apply' ? [...dfs(AST.args, new Set())] : []
-  let { result, occurance } = value.split('').reduce(
-    (acc: Compression, item: string) => {
-      if (item === ']') acc.occurance++
-      else {
-        if (acc.occurance < 3) {
-          acc.result += ']'.repeat(acc.occurance)
-          acc.occurance = 0
-        } else {
-          acc.result += '·' + acc.occurance
-          acc.occurance = 0
-        }
-        acc.result += item
-      }
-      return acc
-    },
-    { result: '', occurance: 0 }
-  )
-  if (occurance > 0) result += '·' + occurance
-  let index = 0
-  let count = 0
-  const shortDefinitions = definitions.map((full) => {
+const shortDefinitionsCounter = (index = 0, count = 0) => {
+  return () => {
     const short = ABC[index] + count
     ++index
     if (index === ABC.length) {
       index = 0
       ++count
     }
-    return { full, short }
-  })
+    return short
+  }
+}
+const compressCase = (node: Word): boolean =>
+  node.name && node.name.length > 1 && node.name[0] !== '_'
 
-  for (const [_, { full, short }] of shortRunes)
-    result = result.replaceAll(full, short)
+const traverseAndDefineVariables = (
+  tree: Expression[],
+  definitions: Map<string, string> = new Map(),
+  shortDefinitions: Function
+): Expression[] => {
+  for (const node of tree) {
+    if (node.type === 'apply') {
+      if (node.operator.type === 'word' && node.operator.name === ':=') {
+        node.args.forEach((variable, index) => {
+          if (variable.type === 'word') {
+            if (index % 2 === 0 && compressCase(variable)) {
+              if (!definitions.has(variable.name)) {
+                const newName = shortDefinitions()
+                definitions.set(variable.name, newName)
+                variable.name = newName
+              }
+            } else if (shortRunes.decompressed.has(variable.name)) {
+              variable.name = shortRunes.decompressed.get(variable.name)
+            }
+          }
+        })
+      }
+      traverseAndDefineVariables([node.operator], definitions, shortDefinitions)
+      traverseAndDefineVariables(
+        node.operator.args,
+        definitions,
+        shortDefinitions
+      )
+    }
+    if (node.type !== 'value')
+      traverseAndDefineVariables(node.args, definitions, shortDefinitions)
+  }
+  return tree
+}
 
-  for (const { full, short } of shortDefinitions)
-    result = result.replaceAll(new RegExp(`\\b${full}\\b`, 'g'), short)
+const traverseAndAssigneVariables = (
+  tree: Expression[],
+  definitions: Map<string, string> = new Map()
+): Expression[] => {
+  for (const node of tree) {
+    if (node.type === 'word' && compressCase(node)) {
+      if (shortRunes.decompressed.has(node.name))
+        node.name = shortRunes.decompressed.get(node.name)
+      else if (definitions.has(node.name))
+        node.name = definitions.get(node.name)
+    } else if (node.type === 'apply') {
+      traverseAndAssigneVariables([node.operator], definitions)
+      traverseAndAssigneVariables(node.operator.args, definitions)
+    }
+    if (node.type !== 'value')
+      traverseAndAssigneVariables(node.args, definitions)
+  }
+  return tree
+}
+interface Compression {
+  result: string
+  occurance: number
+}
 
-  const arr = result.split('" "')
-  strings.forEach((str, i) => (arr[i] += str))
-  return arr.join('')
+export const compress = (source: string) => {
+  const AST = parse(removeNoCode(wrapInBody(source)))
+  const variablesMap = new Map()
+  const tree =
+    AST.type === 'apply'
+      ? traverseAndAssigneVariables(
+          traverseAndDefineVariables(
+            AST.args,
+            variablesMap,
+            shortDefinitionsCounter(0, 0)
+          ),
+          variablesMap
+        )
+      : []
+  let { result, occurance } = stringify(tree)
+    .split('')
+    .reduce(
+      (acc: Compression, item: string) => {
+        if (item === ']') acc.occurance++
+        else {
+          if (acc.occurance < 3) {
+            acc.result += ']'.repeat(acc.occurance)
+            acc.occurance = 0
+          } else {
+            acc.result += '·' + acc.occurance
+            acc.occurance = 0
+          }
+          acc.result += item
+        }
+        return acc
+      },
+      { result: '', occurance: 0 }
+    )
+  if (occurance > 0) result += '·' + occurance
+  return result
 }
 export const decompress = (raw: string) => {
-  const strings = raw.match(/"([^"]*)"/g) || []
-  const value = raw.replaceAll(/"([^"]*)"/g, '" "')
-  const suffix = [...new Set(value.match(/·+?\d+/g))]
+  const suffix = [...new Set(raw.match(/·+?\d+/g))]
   const runes = suffix.reduce(
     (acc, m) => acc.split(m).join(']'.repeat(parseInt(m.substring(1)))),
-    value
+    raw
   )
   let result = ''
   for (const tok of runes) {
-    if (shortRunes.has(tok)) result += shortRunes.get(tok).full
+    if (shortRunes.compressed.has(tok)) result += shortRunes.compressed.get(tok)
     else result += tok
   }
-  const arr = result.split('" "')
-  strings.forEach((str, i) => (arr[i] += str))
-  return arr.join('')
+  return result
 }
 export const encodeBase64 = (source: string) =>
   LZUTF8.compress(compress(source).trim(), { outputEncoding: 'Base64' })
