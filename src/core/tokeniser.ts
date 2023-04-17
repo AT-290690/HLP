@@ -233,13 +233,12 @@ const tokens: Record<string, Interpration> = {
             `Invalid use of operation := [] [variable name must not contain . or -] but got ${word.name}`
           )
         if (word.name in tokens)
-          throw new SyntaxError(
-            `Invalid use of operation := [] variable name ${word.name} is a reserved word`
-          )
+          throw new SyntaxError(`${word.name} is a reserved word`)
+
         name = word.name
       } else {
         const arg = args[i]
-        if (arg.type === 'word' && arg.name in env[RUNES_NAMESPACE])
+        if (arg.type === 'word' && arg.name in tokens)
           throw new SyntaxError(
             'To define new names of existing words Use aliases= instead'
           )
@@ -340,7 +339,7 @@ const tokens: Record<string, Interpration> = {
     if (args[0].type === 'apply' || args[0].type === 'value') {
       const entity = evaluate(args[0], env)
       if (!(entity instanceof Map))
-        throw new TypeError(`:: ${args[0]} is not a instance of :: at .? []`)
+        throw new TypeError(`:: ${args[0]} is not an instance of :: at .? []`)
       return +entity.has(prop[0])
     } else {
       const entityName = args[0].name
@@ -348,7 +347,7 @@ const tokens: Record<string, Interpration> = {
         if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
           if (!(scope[entityName] instanceof Map))
             throw new TypeError(
-              `:: ${entityName} is not a instance of :: at .? []`
+              `:: ${entityName} is not an instance of :: at .? []`
             )
           return +scope[entityName].has(prop[0])
         }
@@ -371,9 +370,21 @@ const tokens: Record<string, Interpration> = {
     }
     if (args[0].type === 'apply' || args[0].type === 'value') {
       const entity = evaluate(args[0], env)
+      if (!(entity instanceof Map))
+        throw new TypeError(
+          `:: ${
+            args[0].type === 'apply' && args[0].operator.type === 'word'
+              ? args[0].operator.name
+              : args[0].type
+          } is not an instance of :: at . []`
+        )
       if (entity == undefined || !entity.has(prop[0]))
         throw new RangeError(
-          `:: [${entity.name ?? ''}] doesnt have a . [${prop[0]}]`
+          `:: [${
+            args[0].type === 'apply' && args[0].operator.type === 'word'
+              ? args[0].operator.name
+              : args[0].type
+          }] doesnt have a . [${prop[0]}]`
         )
       const entityProperty = entity.get(prop[0])
       if (typeof entityProperty === 'function') {
@@ -390,7 +401,7 @@ const tokens: Record<string, Interpration> = {
             !(scope[entityName] instanceof Map)
           )
             throw new TypeError(
-              `:: ${entityName} is not a instance of :: at . []`
+              `:: ${entityName} is not an instance of :: at . []`
             )
           if (!scope[entityName].has(prop[0]))
             throw new RangeError(
@@ -429,7 +440,7 @@ const tokens: Record<string, Interpration> = {
         throw new TypeError(
           `:: ${
             entity.type === 'word' ? entity.name : entity
-          } is not a instance of :: at .= []`
+          } is not an instance of :: at .= []`
         )
       entity.set(prop[0], value)
       return entity
@@ -440,7 +451,7 @@ const tokens: Record<string, Interpration> = {
           const entity = scope[entityName]
           if (entity == undefined || !(entity instanceof Map))
             throw new TypeError(
-              `:: ${entityName} is not a instance of :: at .= []`
+              `:: ${entityName} is not an instance of :: at .= []`
             )
           entity.set(prop[0], value)
           return entity
@@ -455,7 +466,7 @@ const tokens: Record<string, Interpration> = {
 
     if (main.type === 'value') {
       if (main == undefined || !(main instanceof Map))
-        throw new TypeError(`:: ${main} is not a instance of :: at :: .!=  []`)
+        throw new TypeError(`:: ${main} is not an instance of :: at :: .!=  []`)
       main.delete(prop[0])
       return main
     }
@@ -477,7 +488,7 @@ const tokens: Record<string, Interpration> = {
           let temp = scope[entityName]
           if (temp == undefined || !(temp instanceof Map))
             throw new TypeError(
-              `:: ${entityName} is not a instance of :: at :: .!=  []`
+              `:: ${entityName} is not an instance of :: at :: .!=  []`
             )
 
           if (!temp.has(prop[0])) {
@@ -494,7 +505,7 @@ const tokens: Record<string, Interpration> = {
       const entity = evaluate(main, env)
       if (entity == undefined || !(entity instanceof Map))
         throw new TypeError(
-          `:: ${entity} is not a instance of :: at :: .!=  []`
+          `:: ${entity} is not an instance of :: at :: .!=  []`
         )
       entity.delete(prop[0])
       return entity
@@ -507,7 +518,13 @@ const tokens: Record<string, Interpration> = {
     args.forEach((a) => {
       if (a.type !== 'word')
         throw new SyntaxError(
-          `Invalid use of operation ' [] setting ${a} (Arguments must be words)`
+          `Invalid use of operation ' [] setting ${
+            a.type === 'apply'
+              ? a.operator.type === 'word'
+                ? a.operator.name
+                : a
+              : a.value
+          } (Arguments must be words)`
         )
       name = a.name
       if (name.includes('.') || name.includes('-'))
@@ -594,7 +611,7 @@ const tokens: Record<string, Interpration> = {
       throw new SyntaxError('Invalid number of arguments for <- :: []')
     const obj = evaluate(args.pop(), env)
     if (!(obj instanceof Map))
-      throw new TypeError(`:: ${obj} is not a instance of :: at <-:: []`)
+      throw new TypeError(`:: ${obj} is not an instance of :: at <-:: []`)
     let names = []
     for (let i = 0; i < args.length; ++i) {
       const word = args[i]
@@ -622,7 +639,7 @@ const tokens: Record<string, Interpration> = {
       throw new SyntaxError('Invalid number of arguments for <-.: []')
     const obj = evaluate(args.pop(), env)
     if (!(obj.constructor.name === 'Inventory'))
-      throw new TypeError(`.: ${obj} is not a instance of .: []`)
+      throw new TypeError(`.: ${obj} is not an instance of .: []`)
     let names = []
     for (let i = 0; i < args.length; ++i) {
       const word = args[i]
@@ -1125,7 +1142,7 @@ const tokens: Record<string, Interpration> = {
     if (args[0].type === 'apply' || args[0].type === 'value') {
       const entity = evaluate(args[0], env)
       if (!(entity instanceof Set))
-        throw new TypeError(`:. ${args[0]} is not a instance of :. at .? []`)
+        throw new TypeError(`:. ${args[0]} is not an instance of :. at .? []`)
       return +entity.has(item)
     } else {
       const entityName = args[0].name
@@ -1133,7 +1150,7 @@ const tokens: Record<string, Interpration> = {
         if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
           if (!(scope[entityName] instanceof Set))
             throw new TypeError(
-              `:. ${entityName} is not a instance of :. at .? []`
+              `:. ${entityName} is not an instance of :. at .? []`
             )
           return +scope[entityName].has(item)
         }
@@ -1156,7 +1173,7 @@ const tokens: Record<string, Interpration> = {
         throw new TypeError(
           `:. ${
             entity.type === 'word' ? entity.name : entity
-          } is not a instance of :. at .= []`
+          } is not an instance of :. at .= []`
         )
       entity.add(item)
       return entity
@@ -1167,7 +1184,7 @@ const tokens: Record<string, Interpration> = {
           const entity = scope[entityName]
           if (entity == undefined || !(entity instanceof Set))
             throw new TypeError(
-              `:. ${entityName} is not a instance of :: at .= []`
+              `:. ${entityName} is not an instance of :: at .= []`
             )
           entity.add(item)
           return entity
@@ -1191,7 +1208,7 @@ const tokens: Record<string, Interpration> = {
         throw new TypeError(
           `:. ${
             entity.type === 'word' ? entity.name : entity
-          } is not a instance of :. at .= []`
+          } is not an instance of :. at .= []`
         )
       entity.delete(item)
       return entity
@@ -1202,7 +1219,7 @@ const tokens: Record<string, Interpration> = {
           const entity = scope[entityName]
           if (entity == undefined || !(entity instanceof Set))
             throw new TypeError(
-              `:. ${entityName} is not a instance of :: at .= []`
+              `:. ${entityName} is not an instance of :: at .= []`
             )
           entity.delete(item)
           return entity
@@ -1280,11 +1297,11 @@ const tokens: Record<string, Interpration> = {
   // gets re-assigned when
   // the core is initialised
   ['~*']: () => {},
-  ['void']: () => VOID,
-  ['number']: () => 0,
-  ['string']: () => 0,
-  ['array']: () => new Inventory(),
-  ['object']: () => new Map(),
+  ['void']: VOID,
+  ['number']: 0,
+  ['string']: 0,
+  ['array']: new Inventory(),
+  ['object']: new Map(),
   ['aliases=']: (args, env) => {
     if (!args.length) return 0
     let name: string
@@ -1297,12 +1314,20 @@ const tokens: Record<string, Interpration> = {
               word.type ?? VOID
             }`
           )
+        if (word.name in tokens)
+          throw new SyntaxError(`${word.name} is a reserved word`)
         name = word.name
       } else {
         const arg = args[i]
-        if (arg.type === 'word' && arg.name in env[RUNES_NAMESPACE])
-          env[RUNES_NAMESPACE][name] = env[RUNES_NAMESPACE][arg.name]
-        else throw new SyntaxError('aliases= can only be words for aliases=[]')
+        if (arg.type === 'word') {
+          if (arg.name in tokens)
+            env[RUNES_NAMESPACE][name] = env[RUNES_NAMESPACE][arg.name]
+          else if (arg.name in env) env[name] = env[arg.name]
+          else
+            throw new TypeError(
+              'Attempt to alias undefined function at aliases=[]'
+            )
+        } else throw new SyntaxError('aliases= can only be words at aliases=[]')
       }
     }
     return env[name]

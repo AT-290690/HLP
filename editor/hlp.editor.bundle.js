@@ -98,7 +98,7 @@ is_even [2]; ;; will return 1 because it's true
 coords; 
 ;; previous
 |> [coords; :: . ["history"]; .: . [-1]]    
-  `,{label:"spec",detail:"detailed language spec",type:"type"}),snippetCompletion(`;; app
+  `,{label:"spec",detail:"detailed language spec",type:"type"}),snippetCompletion("aliases = [${alias}; ${function}]",{label:"aliases",detail:"define aliases to existing functions",type:"type"}),snippetCompletion(`;; app
 ;; dom_load_milligram [1; 4; 1]; 
 ;; dom_load_bulma [0; 9; 4]; 
 aliases = [

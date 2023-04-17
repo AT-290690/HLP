@@ -1,8 +1,8 @@
 ;; log ;; validate ;; test
-;; @check := [is_number; -> [n; ?== [n; number[]]]]
-;; @check := [is_string; -> [n; ?== [n; string[]]]]
-;; @check := [is_array; -> [n; ?== [n; array[]]]]
-;; @check := [is_object; -> [n; ?== [n; object[]]]]
+;; @check := [is_number; -> [n; ?== [n; number]]]
+;; @check := [is_string; -> [n; ?== [n; string]]]
+;; @check := [is_array; -> [n; ?== [n; array]]]
+;; @check := [is_object; -> [n; ?== [n; object]]]
 ;; @check := [is_function; -> [n; ?== [n; -> [1]]]]
 ;; @check := [is_boolean; -> [n; || [== [n; 0]; == [n; 1]]]]
 ;; @check := [is_one_of; -> [key; strings; .: some [strings; -> [x; == [x; key]]]]]
@@ -14,6 +14,7 @@
 := [make_node; -> [v; l; r; : [
     ;; @check is_object [r]
     ;; @check is_object [l]
+    ;; @check is_number [v]
     :: [value; v; left; l; right; r]]]];
 
 ;; @mock := [t1; make_node[10; make_node[3; :: []; :: []]; make_node[4; :: []; :: []]]]

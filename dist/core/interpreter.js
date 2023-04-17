@@ -25,6 +25,7 @@ export const evaluate = (expr, env) => {
         }
     }
 };
-export const runFromAST = (AST, env) => {
-    return { result: evaluate(AST, env), env };
-};
+export const runFromAST = (AST, env) => ({
+    result: evaluate(AST, env),
+    env,
+});

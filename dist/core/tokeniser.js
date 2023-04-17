@@ -227,12 +227,12 @@ const tokens = {
                 if (word.name.includes('.') || word.name.includes('-'))
                     throw new SyntaxError(`Invalid use of operation := [] [variable name must not contain . or -] but got ${word.name}`);
                 if (word.name in tokens)
-                    throw new SyntaxError(`Invalid use of operation := [] variable name ${word.name} is a reserved word`);
+                    throw new SyntaxError(`${word.name} is a reserved word`);
                 name = word.name;
             }
             else {
                 const arg = args[i];
-                if (arg.type === 'word' && arg.name in env[RUNES_NAMESPACE])
+                if (arg.type === 'word' && arg.name in tokens)
                     throw new SyntaxError('To define new names of existing words Use aliases= instead');
                 else
                     env[name] = evaluate(arg, env);
@@ -326,7 +326,7 @@ const tokens = {
         if (args[0].type === 'apply' || args[0].type === 'value') {
             const entity = evaluate(args[0], env);
             if (!(entity instanceof Map))
-                throw new TypeError(`:: ${args[0]} is not a instance of :: at .? []`);
+                throw new TypeError(`:: ${args[0]} is not an instance of :: at .? []`);
             return +entity.has(prop[0]);
         }
         else {
@@ -334,7 +334,7 @@ const tokens = {
             for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
                 if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
                     if (!(scope[entityName] instanceof Map))
-                        throw new TypeError(`:: ${entityName} is not a instance of :: at .? []`);
+                        throw new TypeError(`:: ${entityName} is not an instance of :: at .? []`);
                     return +scope[entityName].has(prop[0]);
                 }
         }
@@ -352,8 +352,14 @@ const tokens = {
         }
         if (args[0].type === 'apply' || args[0].type === 'value') {
             const entity = evaluate(args[0], env);
+            if (!(entity instanceof Map))
+                throw new TypeError(`:: ${args[0].type === 'apply' && args[0].operator.type === 'word'
+                    ? args[0].operator.name
+                    : args[0].type} is not an instance of :: at . []`);
             if (entity == undefined || !entity.has(prop[0]))
-                throw new RangeError(`:: [${entity.name ?? ''}] doesnt have a . [${prop[0]}]`);
+                throw new RangeError(`:: [${args[0].type === 'apply' && args[0].operator.type === 'word'
+                    ? args[0].operator.name
+                    : args[0].type}] doesnt have a . [${prop[0]}]`);
             const entityProperty = entity.get(prop[0]);
             if (typeof entityProperty === 'function') {
                 const caller = entity;
@@ -369,7 +375,7 @@ const tokens = {
                 if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
                     if (scope[entityName] == undefined ||
                         !(scope[entityName] instanceof Map))
-                        throw new TypeError(`:: ${entityName} is not a instance of :: at . []`);
+                        throw new TypeError(`:: ${entityName} is not an instance of :: at . []`);
                     if (!scope[entityName].has(prop[0]))
                         throw new RangeError(`:: [${entityName ?? ''}] doesnt have a . [${prop[0]}]`);
                     const entityProperty = scope[entityName].get(prop[0]);
@@ -400,7 +406,7 @@ const tokens = {
         if (main.type === 'apply') {
             const entity = evaluate(main, env);
             if (entity == undefined || !(entity instanceof Map))
-                throw new TypeError(`:: ${entity.type === 'word' ? entity.name : entity} is not a instance of :: at .= []`);
+                throw new TypeError(`:: ${entity.type === 'word' ? entity.name : entity} is not an instance of :: at .= []`);
             entity.set(prop[0], value);
             return entity;
         }
@@ -410,7 +416,7 @@ const tokens = {
                 if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
                     const entity = scope[entityName];
                     if (entity == undefined || !(entity instanceof Map))
-                        throw new TypeError(`:: ${entityName} is not a instance of :: at .= []`);
+                        throw new TypeError(`:: ${entityName} is not an instance of :: at .= []`);
                     entity.set(prop[0], value);
                     return entity;
                 }
@@ -423,7 +429,7 @@ const tokens = {
         const main = args[0];
         if (main.type === 'value') {
             if (main == undefined || !(main instanceof Map))
-                throw new TypeError(`:: ${main} is not a instance of :: at :: .!=  []`);
+                throw new TypeError(`:: ${main} is not an instance of :: at :: .!=  []`);
             main.delete(prop[0]);
             return main;
         }
@@ -440,7 +446,7 @@ const tokens = {
                 if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
                     let temp = scope[entityName];
                     if (temp == undefined || !(temp instanceof Map))
-                        throw new TypeError(`:: ${entityName} is not a instance of :: at :: .!=  []`);
+                        throw new TypeError(`:: ${entityName} is not an instance of :: at :: .!=  []`);
                     if (!temp.has(prop[0])) {
                         throw new TypeError(`:: "${prop[0]}" doesn't exist in :: at :: .!=  []`);
                     }
@@ -451,7 +457,7 @@ const tokens = {
         if (main.type === 'apply') {
             const entity = evaluate(main, env);
             if (entity == undefined || !(entity instanceof Map))
-                throw new TypeError(`:: ${entity} is not a instance of :: at :: .!=  []`);
+                throw new TypeError(`:: ${entity} is not an instance of :: at :: .!=  []`);
             entity.delete(prop[0]);
             return entity;
         }
@@ -462,7 +468,11 @@ const tokens = {
         let name = '';
         args.forEach((a) => {
             if (a.type !== 'word')
-                throw new SyntaxError(`Invalid use of operation ' [] setting ${a} (Arguments must be words)`);
+                throw new SyntaxError(`Invalid use of operation ' [] setting ${a.type === 'apply'
+                    ? a.operator.type === 'word'
+                        ? a.operator.name
+                        : a
+                    : a.value} (Arguments must be words)`);
             name = a.name;
             if (name.includes('.') || name.includes('-'))
                 throw new SyntaxError(`Invalid use of operation ' [] (variable name must not contain . or -)`);
@@ -541,7 +551,7 @@ const tokens = {
             throw new SyntaxError('Invalid number of arguments for <- :: []');
         const obj = evaluate(args.pop(), env);
         if (!(obj instanceof Map))
-            throw new TypeError(`:: ${obj} is not a instance of :: at <-:: []`);
+            throw new TypeError(`:: ${obj} is not an instance of :: at <-:: []`);
         let names = [];
         for (let i = 0; i < args.length; ++i) {
             const word = args[i];
@@ -564,7 +574,7 @@ const tokens = {
             throw new SyntaxError('Invalid number of arguments for <-.: []');
         const obj = evaluate(args.pop(), env);
         if (!(obj.constructor.name === 'Inventory'))
-            throw new TypeError(`.: ${obj} is not a instance of .: []`);
+            throw new TypeError(`.: ${obj} is not an instance of .: []`);
         let names = [];
         for (let i = 0; i < args.length; ++i) {
             const word = args[i];
@@ -1024,7 +1034,7 @@ const tokens = {
         if (args[0].type === 'apply' || args[0].type === 'value') {
             const entity = evaluate(args[0], env);
             if (!(entity instanceof Set))
-                throw new TypeError(`:. ${args[0]} is not a instance of :. at .? []`);
+                throw new TypeError(`:. ${args[0]} is not an instance of :. at .? []`);
             return +entity.has(item);
         }
         else {
@@ -1032,7 +1042,7 @@ const tokens = {
             for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
                 if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
                     if (!(scope[entityName] instanceof Set))
-                        throw new TypeError(`:. ${entityName} is not a instance of :. at .? []`);
+                        throw new TypeError(`:. ${entityName} is not an instance of :. at .? []`);
                     return +scope[entityName].has(item);
                 }
         }
@@ -1047,7 +1057,7 @@ const tokens = {
         if (main.type === 'apply') {
             const entity = evaluate(main, env);
             if (entity == undefined || !(entity instanceof Set))
-                throw new TypeError(`:. ${entity.type === 'word' ? entity.name : entity} is not a instance of :. at .= []`);
+                throw new TypeError(`:. ${entity.type === 'word' ? entity.name : entity} is not an instance of :. at .= []`);
             entity.add(item);
             return entity;
         }
@@ -1057,7 +1067,7 @@ const tokens = {
                 if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
                     const entity = scope[entityName];
                     if (entity == undefined || !(entity instanceof Set))
-                        throw new TypeError(`:. ${entityName} is not a instance of :: at .= []`);
+                        throw new TypeError(`:. ${entityName} is not an instance of :: at .= []`);
                     entity.add(item);
                     return entity;
                 }
@@ -1073,7 +1083,7 @@ const tokens = {
         if (main.type === 'apply') {
             const entity = evaluate(main, env);
             if (entity == undefined || !(entity instanceof Set))
-                throw new TypeError(`:. ${entity.type === 'word' ? entity.name : entity} is not a instance of :. at .= []`);
+                throw new TypeError(`:. ${entity.type === 'word' ? entity.name : entity} is not an instance of :. at .= []`);
             entity.delete(item);
             return entity;
         }
@@ -1083,7 +1093,7 @@ const tokens = {
                 if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
                     const entity = scope[entityName];
                     if (entity == undefined || !(entity instanceof Set))
-                        throw new TypeError(`:. ${entityName} is not a instance of :: at .= []`);
+                        throw new TypeError(`:. ${entityName} is not an instance of :: at .= []`);
                     entity.delete(item);
                     return entity;
                 }
@@ -1154,11 +1164,11 @@ const tokens = {
     // gets re-assigned when
     // the core is initialised
     ['~*']: () => { },
-    ['void']: () => VOID,
-    ['number']: () => 0,
-    ['string']: () => 0,
-    ['array']: () => new Inventory(),
-    ['object']: () => new Map(),
+    ['void']: VOID,
+    ['number']: 0,
+    ['string']: 0,
+    ['array']: new Inventory(),
+    ['object']: new Map(),
     ['aliases=']: (args, env) => {
         if (!args.length)
             return 0;
@@ -1168,14 +1178,22 @@ const tokens = {
                 const word = args[i];
                 if (word.type !== 'word')
                     throw new SyntaxError(`First argument of aliases= [] must be word but got ${word.type ?? VOID}`);
+                if (word.name in tokens)
+                    throw new SyntaxError(`${word.name} is a reserved word`);
                 name = word.name;
             }
             else {
                 const arg = args[i];
-                if (arg.type === 'word' && arg.name in env[RUNES_NAMESPACE])
-                    env[RUNES_NAMESPACE][name] = env[RUNES_NAMESPACE][arg.name];
+                if (arg.type === 'word') {
+                    if (arg.name in tokens)
+                        env[RUNES_NAMESPACE][name] = env[RUNES_NAMESPACE][arg.name];
+                    else if (arg.name in env)
+                        env[name] = env[arg.name];
+                    else
+                        throw new TypeError('Attempt to alias undefined function at aliases=[]');
+                }
                 else
-                    throw new SyntaxError('aliases= can only be words for aliases=[]');
+                    throw new SyntaxError('aliases= can only be words at aliases=[]');
             }
         }
         return env[name];

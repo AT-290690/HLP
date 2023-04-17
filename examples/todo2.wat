@@ -20,7 +20,7 @@ aliases = [
 
 := [root; |> [dom_get_root []]];
 := [add_todo; -> [e; : [
-                   attach [add [
+                     ? [value [todo_input];  attach [add [
                     |> [:= [component; 
                             element ["li"]];
                             class ["panel-block"]; class ["pin"]]; .: [
@@ -35,8 +35,8 @@ aliases = [
                                    |> [element ["bt"]; 
                                        text ["x"];
                                        style [:: ["margin-left"; "15px"]];
-                                       click [-> [dom_detach [component]]]]]]; 
-                            todo_root];  
+                                       click [-> [detach [component]]]]]]; 
+                            todo_root]];  
                      clear [todo_input]]]];
 |> [box [.: [
     add [|> [element ["sc"];

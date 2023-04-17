@@ -810,7 +810,6 @@ const compile = () => {
         case 'units_points':
         case 'units_picas':
           return `"${dfs(tree.args[0], locals)}${units[token]}"`
-          break
         // dead code
         case 'aliases=':
         case 'void:':

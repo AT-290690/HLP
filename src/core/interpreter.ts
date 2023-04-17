@@ -29,6 +29,7 @@ export const evaluate = (expr: Expression, env: Expression) => {
     }
   }
 }
-export const runFromAST = (AST: Expression, env: Expression) => {
-  return { result: evaluate(AST, env), env }
-}
+export const runFromAST = (AST: Expression, env: Expression) => ({
+  result: evaluate(AST, env),
+  env,
+})

@@ -19,6 +19,8 @@ export type Interpration =
   | ((args: Expression[], env: Expression) => unknown)
   | number
   | string
+  | Map<any, any>
+  | Set<any>
 export interface Parsed {
   expr: Expression
   rest: string
