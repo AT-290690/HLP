@@ -593,7 +593,7 @@ const compile = () => {
           return out
         }
         case 'string':
-          return '0'
+          return '""'
         case 'number':
           return '0'
         case 'object':

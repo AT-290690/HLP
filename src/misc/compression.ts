@@ -116,19 +116,35 @@ const traverseAndDefineVariables = (
 ): Expression[] => {
   for (const node of tree) {
     if (node.type === 'apply') {
-      if (node.operator.type === 'word' && node.operator.name === ':=') {
-        node.args.forEach((variable, index) => {
-          if (variable.type === 'word') {
-            if (index % 2 === 0 && compressCase(variable)) {
-              if (!definitions.has(variable.name)) {
-                const newName = shortDefinitions()
-                definitions.set(variable.name, newName)
-                variable.name = newName
-              }
-            } else if (shortRunes.decompressed.has(variable.name))
-              variable.name = shortRunes.decompressed.get(variable.name)
-          }
-        })
+      if (node.operator.type === 'word') {
+        if (node.operator.name === ':=') {
+          // node.operator.name === "'"
+          node.args.forEach((variable, index) => {
+            if (variable.type === 'word') {
+              if (index % 2 === 0 && compressCase(variable)) {
+                if (!definitions.has(variable.name)) {
+                  const newName = shortDefinitions()
+                  definitions.set(variable.name, newName)
+                  variable.name = newName
+                }
+              } else if (shortRunes.decompressed.has(variable.name))
+                variable.name = shortRunes.decompressed.get(variable.name)
+            }
+          })
+        } else if (node.operator.name === "'") {
+          node.args.forEach((variable) => {
+            if (variable.type === 'word') {
+              if (compressCase(variable)) {
+                if (!definitions.has(variable.name)) {
+                  const newName = shortDefinitions()
+                  definitions.set(variable.name, newName)
+                  variable.name = newName
+                }
+              } else if (shortRunes.decompressed.has(variable.name))
+                variable.name = shortRunes.decompressed.get(variable.name)
+            }
+          })
+        }
       }
       traverseAndDefineVariables([node.operator], definitions, shortDefinitions)
       traverseAndDefineVariables(

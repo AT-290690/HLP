@@ -1299,7 +1299,7 @@ const tokens: Record<string, Interpration> = {
   ['~*']: () => {},
   ['void']: VOID,
   ['number']: 0,
-  ['string']: 0,
+  ['string']: '',
   ['array']: new Inventory(),
   ['object']: new Map(),
   ['aliases=']: (args, env) => {
