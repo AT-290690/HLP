@@ -245,9 +245,8 @@ const Extensions = {
   ...UnitsExtension,
 }
 const extensions = {}
-for (const ext in Extensions) {
-  for (const sub in Extensions[ext]) {
+for (const ext in Extensions)
+  for (const sub in Extensions[ext])
     extensions[`${ext}${sub}`] = Extensions[ext][sub]
-  }
-}
+
 export { extensions }

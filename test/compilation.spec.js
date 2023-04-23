@@ -589,6 +589,14 @@ describe('compilation should work as expected', () => {
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
+  it('logic operations should work', () =>
+    [
+      `
+    == [&& [|| [0; 0; 1]; 10]; 10]
+    `,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
   it(':. should work', () =>
     [
       ` :. [1; 2; 3; 4]`,

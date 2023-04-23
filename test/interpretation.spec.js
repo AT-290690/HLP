@@ -175,6 +175,14 @@ describe('interpretation should work as expected', () => {
       300
     )
   })
+  it('logic operations should work', () => {
+    strictEqual(
+      runFromInterpreted(`
+        == [&& [|| [0; 0; 1]; 10]; 10]
+        `),
+      1
+    )
+  })
   it('calling :: methods should work', () => {
     strictEqual(
       runFromInterpreted(`

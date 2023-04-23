@@ -1278,7 +1278,17 @@ export default class Inventory {
     ['h', 'height'],
   ])
   static _dom_events_map = new Map([
-    ['cl', 'click', 'kp', 'keypress', 'kd', 'keydown', 'ku', 'keyup'],
+    [
+      'cl',
+      'click',
+      'mousedown',
+      'kp',
+      'keypress',
+      'kd',
+      'keydown',
+      'ku',
+      'keyup',
+    ],
   ])
   static _dom_set_style = (el, styles) => {
     styles.forEach((value, key) => {
@@ -1299,6 +1309,14 @@ export default class Inventory {
             ['code', e.code],
             ['value', e.value],
             ['text', e.textContent],
+            ['x', e.x],
+            ['y', e.y],
+            ['ox', e.offsetX],
+            ['oy', e.offsetY],
+            ['cx', e.clientX],
+            ['cy', e.clientY],
+            ['px', e.pageX],
+            ['py', e.pageY],
           ])
         )
     )
@@ -1374,6 +1392,14 @@ export default class Inventory {
           ['code', e.code],
           ['value', e.value],
           ['text', e.textContent],
+          ['x', e.x],
+          ['y', e.y],
+          ['ox', e.offsetX],
+          ['oy', e.offsetY],
+          ['cx', e.clientX],
+          ['cy', e.clientY],
+          ['px', e.pageX],
+          ['py', e.pageY],
         ])
       )
     )

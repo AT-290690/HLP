@@ -72,23 +72,19 @@ tokens['~*'] = (args, env) => {
     });
     return 0;
 };
-const OFFSET = 161;
-const generateCompressionRunes = (start) => {
-    return Object.keys(tokens)
-        .filter((x) => x.length > 1 && x !== 'aliases=' && x !== 'void:')
-        .sort((a, b) => (a.length > b.length ? -1 : 1))
-        .concat(['][', ']];', '];'])
-        .reduce((acc, full, i) => {
-        const short = String.fromCharCode(start + i + OFFSET);
-        acc.compressed.set(short, full);
-        acc.decompressed.set(full, short);
-        return acc;
-    }, { compressed: new Map(), decompressed: new Map() });
-};
-export const shortRunes = generateCompressionRunes(0);
+export const shortRunes = Object.keys(tokens)
+    .filter((x) => x.length > 1 && x !== 'aliases=' && x !== 'void:')
+    .sort((a, b) => (a.length > b.length ? -1 : 1))
+    .concat(['][', ']];', '];'])
+    .reduce((acc, full, i) => {
+    const short = String.fromCharCode(i + 161);
+    acc.compressed.set(short, full);
+    acc.decompressed.set(full, short);
+    return acc;
+}, { compressed: new Map(), decompressed: new Map() });
 const shortDefinitionsCounter = (index = 0, count = 0) => {
     return () => {
-        const short = ABC[index] + count;
+        const short = `${ABC[index]}${count}`;
         ++index;
         if (index === ABC.length) {
             index = 0;

@@ -1374,6 +1374,14 @@ export default class Inventory {
           ['code', e.code],
           ['value', e.value],
           ['text', e.textContent],
+          ['x', e.x],
+          ['y', e.y],
+          ['ox', e.offsetX],
+          ['oy', e.offsetY],
+          ['cx', e.clientX],
+          ['cy', e.clientY],
+          ['px', e.pageX],
+          ['py', e.pageY],
         ])
       )
     )
