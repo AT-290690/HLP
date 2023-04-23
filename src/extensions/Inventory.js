@@ -1277,19 +1277,6 @@ export default class Inventory {
     ['w', 'width'],
     ['h', 'height'],
   ])
-  static _dom_events_map = new Map([
-    [
-      'cl',
-      'click',
-      'mousedown',
-      'kp',
-      'keypress',
-      'kd',
-      'keydown',
-      'ku',
-      'keyup',
-    ],
-  ])
   static _dom_set_style = (el, styles) => {
     styles.forEach((value, key) => {
       el.style[`${Inventory._dom_style_map.get(key) ?? key}`] = `${
@@ -1298,30 +1285,7 @@ export default class Inventory {
     })
     return el
   }
-  static _dom_add_event = (el, event, callback) => {
-    el.addEventListener(
-      `${Inventory._dom_events_map.get(event) ?? event}`,
-      (e) =>
-        callback(
-          new Map([
-            ['el', e.target],
-            ['key', e.key],
-            ['code', e.code],
-            ['value', e.value],
-            ['text', e.textContent],
-            ['x', e.x],
-            ['y', e.y],
-            ['ox', e.offsetX],
-            ['oy', e.offsetY],
-            ['cx', e.clientX],
-            ['cy', e.clientY],
-            ['px', e.pageX],
-            ['py', e.pageY],
-          ])
-        )
-    )
-    return el
-  }
+
   static _dom_css_link = (href) => {
     const link = document.createElement('link')
     link.rel = 'stylesheet'
@@ -1404,5 +1368,268 @@ export default class Inventory {
       )
     )
     return el
+  }
+  static _dom_key_down = (el, callback) => {
+    el.addEventListener('keydown', (e) =>
+      callback(
+        new Map([
+          ['el', e.target],
+          ['key', e.key],
+          ['code', e.code],
+          ['value', e.value],
+          ['text', e.textContent],
+          ['x', e.x],
+          ['y', e.y],
+          ['ox', e.offsetX],
+          ['oy', e.offsetY],
+          ['cx', e.clientX],
+          ['cy', e.clientY],
+          ['px', e.pageX],
+          ['py', e.pageY],
+        ])
+      )
+    )
+    return el
+  }
+
+  static _dom_key_up = (el, callback) => {
+    el.addEventListener('keyup', (e) =>
+      callback(
+        new Map([
+          ['el', e.target],
+          ['key', e.key],
+          ['code', e.code],
+          ['value', e.value],
+          ['text', e.textContent],
+          ['x', e.x],
+          ['y', e.y],
+          ['ox', e.offsetX],
+          ['oy', e.offsetY],
+          ['cx', e.clientX],
+          ['cy', e.clientY],
+          ['px', e.pageX],
+          ['py', e.pageY],
+        ])
+      )
+    )
+    return el
+  }
+  static _dom_mouse_down = (el, callback) => {
+    el.addEventListener('mousedown', (e) =>
+      callback(
+        new Map([
+          ['el', e.target],
+          ['key', e.key],
+          ['code', e.code],
+          ['value', e.value],
+          ['text', e.textContent],
+          ['x', e.x],
+          ['y', e.y],
+          ['ox', e.offsetX],
+          ['oy', e.offsetY],
+          ['cx', e.clientX],
+          ['cy', e.clientY],
+          ['px', e.pageX],
+          ['py', e.pageY],
+        ])
+      )
+    )
+    return el
+  }
+  static _dom_mouse_up = (el, callback) => {
+    el.addEventListener('mouseup', (e) =>
+      callback(
+        new Map([
+          ['el', e.target],
+          ['key', e.key],
+          ['code', e.code],
+          ['value', e.value],
+          ['text', e.textContent],
+          ['x', e.x],
+          ['y', e.y],
+          ['ox', e.offsetX],
+          ['oy', e.offsetY],
+          ['cx', e.clientX],
+          ['cy', e.clientY],
+          ['px', e.pageX],
+          ['py', e.pageY],
+        ])
+      )
+    )
+    return el
+  }
+
+  static _dom_canvas = () => document.createElement('canvas')
+
+  static _canvas_arc = (
+    ctx,
+    x,
+    y,
+    radius,
+    startAngle,
+    endAngle,
+    counterclockwise
+  ) => {
+    ctx.arc(x, y, radius, startAngle, endAngle, counterclockwise)
+    return ctx
+  }
+  static _canvas_arc_to = (ctx, x1, y1, x2, y2, radius) => {
+    ctx.arcTo(x1, y1, x2, y2, radius)
+    return ctx
+  }
+  static _canvas_begin_path = (ctx) => {
+    ctx.beginPath()
+    return ctx
+  }
+  static _canvas_bezier_curve_to = (ctx, cp1x, cp1y, cp2x, cp2y, x, y) => {
+    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
+    return ctx
+  }
+  static _canvas_clear_rect = (ctx, x, y, width, height) => {
+    ctx.clearRect(x, y, width, height)
+    return ctx
+  }
+  static _canvas_clip = (ctx, path, fillRule) => {
+    ctx.clip(path, fillRule)
+    return ctx
+  }
+  static _canvas_close_path = (ctx) => {
+    ctx.closePath()
+    return ctx
+  }
+  static _canvas_ellipse = (
+    ctx,
+    x,
+    y,
+    radiusX,
+    radiusY,
+    rotation,
+    startAngle,
+    endAngle,
+    counterclockwise
+  ) => {
+    ctx.ellipse(
+      x,
+      y,
+      radiusX,
+      radiusY,
+      rotation,
+      startAngle,
+      endAngle,
+      counterclockwise
+    )
+    return ctx
+  }
+  static _canvas_fill = (ctx, path, fillRule) => {
+    ctx.fill(path, fillRule)
+    return ctx
+  }
+  static _canvas_fill_rect = (ctx, x, y, width, height) => {
+    ctx.fillRect(x, y, width, height)
+    return ctx
+  }
+  static _canvas_fill_style = (ctx, color) => {
+    ctx.fillStyle = color
+    return ctx
+  }
+  static _canvas_get_context = (canvas, context) => {
+    return canvas.getContext(context)
+  }
+  static _canvas_get_image_data = (ctx, sx, sy, sw, sh /* settings */) => {
+    return ctx.getImageData(sx, sy, sw, sh)
+  }
+  static _canvas_draw_image = (
+    ctx,
+    image,
+    sx,
+    sy,
+    sWidth,
+    sHeight,
+    dx,
+    dy,
+    dWidth,
+    dHeight
+  ) => {
+    ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+    return ctx
+  }
+  static _canvas_get_transfom = (ctx) => ctx.getTransform()
+  static _canvas_set_transfom = (ctx, a, b, c, d, e, f) => {
+    ctx.setTranform(a, b, c, d, e, f)
+    return ctx
+  }
+  static _canvas_reset_transfom = (ctx) => {
+    ctx.resetTransform()
+    return ctx
+  }
+  static _canvas_is_point_in_path = (ctx, path, x, y, fillRule) => {
+    return ctx.isPointInPath(path, x, y, fillRule)
+  }
+  static _canvas_is_point_in_stroke = (ctx, path, x, y) => {
+    return ctx.isPointInStroke(path, x, y)
+  }
+  static _canvas_line_to = (ctx, x, y) => {
+    ctx.lineTo(x, y)
+    return ctx
+  }
+  static _canvas_line_width = (ctx, width) => {
+    ctx.lineWidth = width
+    return ctx
+  }
+  static _canvas_move_to = (ctx, x, y) => {
+    ctx.moveTo(x, y)
+    return ctx
+  }
+  static _canvas_quadratic_curve_to = (ctx, cpx, cpy, x, y) => {
+    ctx.quadraticCurveTo(cpx, cpy, x, y)
+    return ctx
+  }
+  static _canvas_rect = (ctx, x, y, width, height) => {
+    ctx.rect(x, y, width, height)
+    return ctx
+  }
+  static _canvas_reset = (ctx) => {
+    ctx.reset()
+    return ctx
+  }
+  static _canvas_reset_trasform = (ctx) => {
+    ctx.resetTransform()
+    return ctx
+  }
+  static _canvas_restore = (ctx) => {
+    ctx.restore()
+    return ctx
+  }
+  static _canvas_rotate = (ctx, angle) => {
+    ctx.rotate(angle)
+    return ctx
+  }
+  static _canvas_round_rect = (ctx, x, y, width, height, radii) => {
+    ctx.roundRect(x, y, width, height, radii)
+    return ctx
+  }
+  static _canvas_save = (ctx) => {
+    ctx.save()
+    return ctx
+  }
+  static _canvas_scale = (ctx, x, y) => {
+    ctx.scale(x, y)
+    return ctx
+  }
+  static _canvas_stroke = (ctx, path) => {
+    ctx.stroke(path)
+    return ctx
+  }
+  static _canvas_stroke_style = (ctx, color) => {
+    ctx.strokeStyle = color
+    return ctx
+  }
+  static _canvas_transform = (ctx, a, b, c, d, e, f) => {
+    ctx.transform(a, b, c, d, e, f)
+    return ctx
+  }
+  static _canvas_translate = (ctx, x, y) => {
+    ctx.translate(x, y)
+    return ctx
   }
 }

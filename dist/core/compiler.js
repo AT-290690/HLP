@@ -91,7 +91,11 @@ const register = {
     dom_set_text_content: 'Inventory._dom_set_text_content',
     dom_set_style: 'Inventory._dom_set_style',
     dom_get_root: 'Inventory._dom_get_root',
-    dom_event: 'Inventory._dom_add_event',
+    dom_click: 'Inventory._dom_click',
+    dom_mouse_down: 'Inventory._dom_mouse_down',
+    dom_mouse_up: 'Inventory.__dom_mouse_up',
+    dom_key_down: 'Inventory.__dom_key_down',
+    dom_key_up: 'Inventory.__dom_key_up',
     dom_css_link: 'Inventory._dom_css_link',
     dom_load_bulma: 'Inventory._dom_load_bulma',
     dom_load_milligram: 'Inventory._dom_load_milligram',
@@ -100,7 +104,42 @@ const register = {
     dom_clear: 'Inventory._dom_clear',
     dom_add_to_box: 'Inventory._dom_add_to_box',
     dom_box: 'Inventory._dom_box',
-    dom_click: 'Inventory._dom_click',
+    dom_canvas: 'Inventory._dom_canvas',
+    canvas_arc: 'Inventory._canvas_arc',
+    canvas_get_context: 'Inventory._canvas_get_context',
+    canvas_arc_to: 'Inventory._canvas_arc_to',
+    canvas_begin_path: 'Inventory._canvas_begin_path',
+    canvas_bezier_curve_to: 'Inventory._canvas_bezier_curve_to',
+    canvas_clear_rect: 'Inventory._canvas_clear_rect',
+    canvas_clip: 'Inventory._canvas_clip',
+    canvas_close_path: 'Inventory._canvas_close_path',
+    canvas_ellipse: 'Inventory._canvas_ellipse',
+    canvas_fill: 'Inventory._canvas_fill',
+    canvas_fill_rect: 'Inventory._canvas_fill_rect',
+    canvas_fill_style: 'Inventory._canvas_fill_style',
+    canvas_get_image_data: 'Inventory._canvas_get_image_data',
+    canvas_get_transform: 'Inventory._canvas_get_transform',
+    canvas_set_transform: 'Inventory._canvas_set_transform',
+    canvas_reset_transform: 'Inventory._canvas_reset_transform',
+    canvas_is_point_in_path: 'Inventory._canvas_is_point_in_path',
+    canvas_is_point_in_stroke: 'Inventory._canvas_is_point_in_stroke',
+    canvas_line_to: 'Inventory._canvas_line_to',
+    canvas_line_width: 'Inventory._canvas_line_width',
+    canvas_move_to: 'Inventory._canvas_move_to',
+    canvas_quadratic_curve_to: 'Inventory._canvas_quadratic_curve_to',
+    canvas_rect: 'Inventory._canvas_rect',
+    canvas_reset: 'Inventory._canvas_reset',
+    canvas_reset_trasform: 'Inventory._canvas_reset_trasform',
+    canvas_restore: 'Inventory._canvas_restore',
+    canvas_rotate: 'Inventory._canvas_rotate',
+    canvas_round_rect: 'Inventory._canvas_round_rect',
+    canvas_save: 'Inventory._canvas_save',
+    canvas_scale: 'Inventory._canvas_scale',
+    canvas_stroke: 'Inventory._canvas_stroke',
+    canvas_stroke_style: 'Inventory._canvas_stroke_style',
+    canvas_transform: 'Inventory._canvas_transform',
+    canvas_translate: 'Inventory._canvas_translate',
+    canvas_draw_image: 'Inventory._canvas_draw_image',
     '=>': 'Inventory._call',
     '::.=': 'Inventory._mapSet',
     '::.!=': 'Inventory._mapRemove',
@@ -565,17 +604,56 @@ const compile = (tree, locals) => {
             case 'dom_add_class':
             case 'dom_add_to_box':
             case 'dom_click':
+            case 'dom_mouse_down':
+            case 'dom_mouse_up':
+            case 'dom_key_down':
+            case 'dom_key_up':
             case 'time_set_timeout':
             case 'time_set_interval':
             case 'time_set_animation':
             case 'dom_set_attribute':
             case 'dom_set_attributes':
             case 'dom_get_attribute':
-            case 'dom_event':
             case 'dom_load_bulma':
             case 'dom_load_milligram':
             case 'dom_append_to':
             case 'dom_container':
+            case 'dom_canvas':
+            case 'canvas_arc':
+            case 'canvas_arc_to':
+            case 'canvas_begin_path':
+            case 'canvas_bezier_curve_to':
+            case 'canvas_clear_rect':
+            case 'canvas_clip':
+            case 'canvas_close_path':
+            case 'canvas_ellipse':
+            case 'canvas_fill':
+            case 'canvas_fill_rect':
+            case 'canvas_fill_style':
+            case 'canvas_get_context':
+            case 'canvas_get_image_data':
+            case 'canvas_get_transform':
+            case 'canvas_set_transform':
+            case 'canvas_reset_transform':
+            case 'canvas_is_point_in_path':
+            case 'canvas_is_point_in_stroke':
+            case 'canvas_line_to':
+            case 'canvas_line_width':
+            case 'canvas_move_to':
+            case 'canvas_quadratic_curve_to':
+            case 'canvas_rect':
+            case 'canvas_reset':
+            case 'canvas_reset_trasform':
+            case 'canvas_restore':
+            case 'canvas_rotate':
+            case 'canvas_round_rect':
+            case 'canvas_save':
+            case 'canvas_scale':
+            case 'canvas_stroke':
+            case 'canvas_stroke_style':
+            case 'canvas_transform':
+            case 'canvas_translate':
+            case 'canvas_draw_image':
                 return `${register[token]}(${parseArgs(treeArgs, locals)});`;
             case 'units_pixels':
             case 'units_percent':

@@ -75,7 +75,10 @@ const DomExtension: Extension = {
     get_root: () => {
       return {}
     },
-    event: () => {
+    key_down: () => {
+      return {}
+    },
+    key_up: () => {
       return {}
     },
     css_link: () => {
@@ -103,6 +106,124 @@ const DomExtension: Extension = {
       return {}
     },
     click: () => {
+      return {}
+    },
+    mouse_down: () => {
+      return {}
+    },
+    mouse_up: () => {
+      return {}
+    },
+    canvas: () => {
+      return {}
+    },
+  },
+}
+const CanvasExtension: Extension = {
+  canvas_: {
+    get_context: () => {
+      return {}
+    },
+    fill_style: () => {
+      return {}
+    },
+    stroke_style: () => {
+      return {}
+    },
+    stroke: () => {
+      return {}
+    },
+    fill_rect: () => {
+      return {}
+    },
+    clear_rect: () => {
+      return {}
+    },
+    begin_path: () => {
+      return {}
+    },
+    close_path: () => {
+      return {}
+    },
+    move_to: () => {
+      return {}
+    },
+    line_to: () => {
+      return {}
+    },
+    line_width: () => {
+      return {}
+    },
+    bezier_curve_to: () => {
+      return {}
+    },
+    quadratic_curve_to: () => {
+      return {}
+    },
+    rect: () => {
+      return {}
+    },
+    round_rect: () => {
+      return {}
+    },
+    reset: () => {
+      return {}
+    },
+    reset_trasform: () => {
+      return {}
+    },
+    rotate: () => {
+      return {}
+    },
+    scale: () => {
+      return {}
+    },
+    transform: () => {
+      return {}
+    },
+    translate: () => {
+      return {}
+    },
+    save: () => {
+      return {}
+    },
+    restore: () => {
+      return {}
+    },
+    arc: () => {
+      return {}
+    },
+    arc_to: () => {
+      return {}
+    },
+    clip: () => {
+      return {}
+    },
+    ellipse: () => {
+      return {}
+    },
+    fill: () => {
+      return {}
+    },
+    get_image_data: () => {
+      return {}
+    },
+    draw_image: () => {
+      return {}
+    },
+    get_transform: () => {
+      return {}
+    },
+    set_transform: () => {
+      return {}
+    },
+    reset_transform: () => {
+      return {}
+    },
+    is_point_in_path: () => {
+      return {}
+    },
+    is_point_in_stroke: () => {
       return {}
     },
   },
@@ -243,6 +364,7 @@ const Extensions = {
   ...TimeExtension,
   ...DomExtension,
   ...UnitsExtension,
+  ...CanvasExtension,
 }
 const extensions = {}
 for (const ext in Extensions)

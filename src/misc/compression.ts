@@ -84,13 +84,14 @@ export const shortRunes = Object.keys(tokens)
   .concat(['][', ']];', '];'])
   .reduce(
     (acc, full, i) => {
-      const short = String.fromCharCode(i + 161)
+      const short = String.fromCharCode(i + 161 + 31)
       acc.compressed.set(short, full)
       acc.decompressed.set(full, short)
       return acc
     },
     { compressed: new Map(), decompressed: new Map() }
   )
+
 const shortDefinitionsCounter = (index = 0, count = 0) => {
   return () => {
     const short = `${ABC[index]}${count}`

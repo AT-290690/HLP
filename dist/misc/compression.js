@@ -77,7 +77,7 @@ export const shortRunes = Object.keys(tokens)
     .sort((a, b) => (a.length > b.length ? -1 : 1))
     .concat(['][', ']];', '];'])
     .reduce((acc, full, i) => {
-    const short = String.fromCharCode(i + 161);
+    const short = String.fromCharCode(i + 161 + 31);
     acc.compressed.set(short, full);
     acc.decompressed.set(full, short);
     return acc;
