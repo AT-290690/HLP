@@ -6,6 +6,7 @@ describe('compression should work as expected', () => {
     [
       `:= [x; 10]; := [y; 3]; := [temp; x]; = [x; y]; = [y; temp]; :: ["x"; x; "y"; y]`,
       `:= [x; 10; y; 23]; .: [x; y]`,
+      `:=[mult;->[x;y;z;*[x;y;z]]];:=[cap;->[B;ay;sdz;+[B;ay;sdz]]];:=[mult2;->[x2;y3;z3;*[x2;y3;z3]]];:=[cap2;->[B2;ay2;sdz2;+[B2;ay2;sdz2]]];:=[mult4;->[x4;y4;z4;*[x4;y4;z4]]];:=[cap4;->[B4;ay4;sdz4;+[B4;ay4;sdz4]]];:=[mult24;->[x24;y34;z34;*[x24;y34;z34]]];:=[cap24;->[B24;ay24;sdz24;+[B24;ay24;sdz24]]];:=[mult44;->[x44;y44;z44;*[x44;y44;z44]]];:=[cap44;->[B44;ay44;sdz44;+[B44;ay44;sdz44]]];:=[mult24;->[x2444;y3444;z3444;*[x2444;y3444;z3444]]];:=[cap24;->[B24444;ay24444;sdz24444;+[B24444;ay24444;sdz24444]]];:=[xmult;->[xx;xy;xz;*[xx;xy;xz]]];:=[xcap;->[xB;xay;xsdz;+[xB;xay;xsdz]]];:=[xmult2;->[xx2;xy3;xz3;*[xx2;xy3;xz3]]];:=[xcap2;->[xB2;xay2;xsdz2;+[xB2;xay2;xsdz2]]];:=[xmult4;->[xx4;xy4;xz4;*[xx4;xy4;xz4]]];:=[xcap4;->[xB4;xay4;xsdz4;+[xB4;xay4;xsdz4]]];:=[xmult24;->[xx24;xy34;xz34;*[xx24;xy34;xz34]]];:=[xcap24;->[xB24;xay24;xsdz24;+[xB24;xay24;xsdz24]]];:=[xmult44;->[xx44;xy44;xz44;*[xx44;xy44;xz44]]];:=[xcap44;->[xB44;xay44;xsdz44;+[xB44;xay44;xsdz44]]];:=[xmult24;->[xx2444;xy3444;xz3444;*[xx2444;xy3444;xz3444]]];:=[xcap242;->[xB24444;xay24444;xsdz24444;+[xB24444;xay24444;xsdz24444]]];mult[cap[2;4;xmult24[xmult44[3;2;11];cap24[3;4;5];xcap242[1;2;3]]];5;6]`,
     ]
       .map((source) => {
         const comp = compress(source)
@@ -610,28 +611,6 @@ describe('compression should work as expected', () => {
           runFromCompiled(source).items
         )
       ))
-  it('<-:: and <-.: should work', () =>
-    [
-      `:= [obj; :: ["x"; 10; "y"; 12; "z"; 10]];
-    <-:: [x; y; z; obj]; .:[x; y; z]`,
-      `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]];
-    <-.: [a; b; c; rest; arr]; .: [a; b; c; rest]`,
-      `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]];
-    <-.: [a; b; c; rest; arr];
-    |> [rest; .:>= [a]; .:>= [b]; .:>= [c]];`,
-    ]
-      .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
-      })
-      .forEach((source) =>
-        deepStrictEqual(
-          runFromInterpreted(source).items,
-          runFromCompiled(source).items
-        )
-      ))
   it('+= -= *= should work', () =>
     [
       `:=[x; 0]; += [x]`,
@@ -851,10 +830,7 @@ describe('compression should work as expected', () => {
         deepEqual(runFromInterpreted(source), runFromCompiled(source))
       ))
   it('logic operations should work', () =>
-    [
-      `
-== [&& [|| [0; 0; 1]; 10]; 10]`,
-    ]
+    [`== [&& [|| [0; 0; 1]; 10]; 10]`]
       .map((source) => {
         const comp = compress(source)
         const decomp = decompress(comp)
@@ -896,16 +872,16 @@ describe('compression should work as expected', () => {
       .forEach((source) =>
         deepEqual(runFromInterpreted(source), runFromCompiled(source))
       ))
-  it('compressoin should be idemptent', () => {
-    ;[
+  it('compressoin should be idemptent', () =>
+    [
       `'[view;next;alive;x;y];|>[dom_get_body[];dom_set_style[::["bg";0]]];:=[px;->[u;~[\`[u];"px"]];N;17;factor;1;r;*[N;factor];h;*[r;factor;-1];cols;N;rows;N;bound;*[rows;cols];cells;.:[];get_cell;->[x;y;.:.[cells;%[+[x;*[rows;y]];bound]]];cells_container;|>[dom_get_root[];dom_set_style[::["w";px[380]]]];make_button;->[|>[dom_create_element["bt"];dom_set_text_content["*"];dom_append_to[cells_container]]];fill;->[cell;is_alive;dom_set_style[cell;::["c";"tr";"b";"s2t";"bg";?[is_alive;"#fff";0]]]];make_grid;->[cells;:[*loop[bound;->[count;:[?[![%[count;cols]];+=[h;r]];'[x;y];:=[is_alive;math_random_int[0;1];next_is_alive;math_random_int[0;1];rect;|>[make_button[r];fill[1]];cell;::[alive;is_alive;next;next_is_alive;view;rect]];.:>=[cells;cell]]]]]];iterate_cells;->[cells;callback;:[:=[y;-1];>>[cells;->[cell;i;:[=[y;?[%[i;rows];y;+=[y]]];:=[x;%[i;cols];cell;get_cell[x;y]];callback[cell;x;y]]]]]];directions;.:[::[x;0;y;1];::[x;1;y;0];::[x;-1;y;0];::[x;0;y;-1];::[x;1;y;-1];::[x;-1;y;-1];::[x;1;y;1];::[x;-1;y;1]];adjacent;->[X;Y;:[:=[sum;0];>>[directions;->[dir;:[:=[cell;get_cell[+[X;::.[dir;x]];+[Y;::.[dir;y]]]];=[sum;+[sum;?[cell;::.[cell;alive];0]]]]]];sum]];update_state;->[iterate_cells[cells;->[cell;x;y;:[:=[is_alive;::.[cell;alive];neighbors;adjacent[x;y]];?[&&[is_alive;<[neighbors;2]];::.=[cell;next;0];?[&&[is_alive;>[neighbors;3]];::.=[cell;next;0];?[&&[![is_alive];==[neighbors;3]];::.=[cell;next;1]]]]]]]];render;->[iterate_cells[cells;->[cell;:[:=[is_alive;::.[cell;alive]];|>[::.[cell;view];fill[is_alive]];::.=[cell;alive;::.[cell;next]]]]]]];make_grid[cells];time_set_interval[->[:[update_state[];render[]]];100];`,
       `'[value;left;right];:=[make_node;->[v;l;r;:[::[value;v;left;l;right;r]]]];:=[invert_binary_tree;->[node;:[?[::size[node];:[:=[temp_l;::.[node;left]];:=[temp_r;::.[node;right]];::.=[node;left;temp_r];::.=[node;right;temp_l];invert_binary_tree[::.[node;left]];invert_binary_tree[::.[node;right]]];node]]]];:=[tree;make_node[3;make_node[4;::[];::[]];make_node[5;::[];::[]]]];invert_binary_tree[tree];tree`,
       `'[element;text;append];aliases=[<-;::.];:=[dom;::[element;dom_create_element;text;dom_set_text_content;append;dom_append_to]];|>[<-[dom;element]["bt"];<-[dom;text]["hello"];<-[dom;append][dom_get_root[]]]`,
+      `:=[mult;->[x;y;z;*[x;y;z]]];:=[cap;->[B;ay;sdz;+[B;ay;sdz]]];:=[mult2;->[x2;y3;z3;*[x2;y3;z3]]];:=[cap2;->[B2;ay2;sdz2;+[B2;ay2;sdz2]]];:=[mult4;->[x4;y4;z4;*[x4;y4;z4]]];:=[cap4;->[B4;ay4;sdz4;+[B4;ay4;sdz4]]];:=[mult24;->[x24;y34;z34;*[x24;y34;z34]]];:=[cap24;->[B24;ay24;sdz24;+[B24;ay24;sdz24]]];:=[mult44;->[x44;y44;z44;*[x44;y44;z44]]];:=[cap44;->[B44;ay44;sdz44;+[B44;ay44;sdz44]]];:=[mult24;->[x2444;y3444;z3444;*[x2444;y3444;z3444]]];:=[cap24;->[B24444;ay24444;sdz24444;+[B24444;ay24444;sdz24444]]];:=[xmult;->[xx;xy;xz;*[xx;xy;xz]]];:=[xcap;->[xB;xay;xsdz;+[xB;xay;xsdz]]];:=[xmult2;->[xx2;xy3;xz3;*[xx2;xy3;xz3]]];:=[xcap2;->[xB2;xay2;xsdz2;+[xB2;xay2;xsdz2]]];:=[xmult4;->[xx4;xy4;xz4;*[xx4;xy4;xz4]]];:=[xcap4;->[xB4;xay4;xsdz4;+[xB4;xay4;xsdz4]]];:=[xmult24;->[xx24;xy34;xz34;*[xx24;xy34;xz34]]];:=[xcap24;->[xB24;xay24;xsdz24;+[xB24;xay24;xsdz24]]];:=[xmult44;->[xx44;xy44;xz44;*[xx44;xy44;xz44]]];:=[xcap44;->[xB44;xay44;xsdz44;+[xB44;xay44;xsdz44]]];:=[xmult24;->[xx2444;xy3444;xz3444;*[xx2444;xy3444;xz3444]]];:=[xcap242;->[xB24444;xay24444;xsdz24444;+[xB24444;xay24444;xsdz24444]]];mult[cap[2;4;xmult24[xmult44[3;2;11];cap24[3;4;5];xcap242[1;2;3]]];5;6]`,
     ].forEach((source) =>
       strictEqual(
         decompress(compress(decompress(compress(source)))),
         decompress(compress(source))
       )
-    )
-  })
+    ))
 })

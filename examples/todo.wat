@@ -61,9 +61,3 @@ aliases = [
              := [todo_root; |> [element ["ul"]; 
                                 class ["panel"]]]]]]]]]; 
     attach [root]];
-
-
-
-
-
-

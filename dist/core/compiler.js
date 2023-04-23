@@ -197,37 +197,6 @@ const compile = (tree, locals) => {
                 out += `), ${name});`;
                 return out;
             }
-            case '<-::': {
-                let out = '((';
-                const obj = compile(treeArgs.pop(), locals);
-                for (let i = 0, len = treeArgs.length; i < len; ++i) {
-                    const arg = treeArgs[i];
-                    if (arg.type === 'word') {
-                        let name = arg.name;
-                        locals.add(name);
-                        out += `${name}=${obj}.get(${`"${name}"`})${i !== len - 1 ? ',' : ''}`;
-                    }
-                }
-                out += `));`;
-                return out;
-            }
-            case '<-.:': {
-                let out = '((';
-                const obj = compile(treeArgs.pop(), locals);
-                for (let i = 0, len = treeArgs.length; i < len; ++i) {
-                    const arg = treeArgs[i];
-                    if (arg.type === 'word') {
-                        let name = arg.name;
-                        locals.add(name);
-                        if (i !== len - 1)
-                            out += `${name}=${obj}.at(${i}),`;
-                        else
-                            out += `${name}=${obj}.slice(${i});`;
-                    }
-                }
-                out += `));`;
-                return out;
-            }
             case '=': {
                 const res = compile(treeArgs[1], locals);
                 const arg = treeArgs[0];

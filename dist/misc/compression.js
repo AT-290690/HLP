@@ -82,27 +82,25 @@ export const shortRunes = Object.keys(tokens)
     acc.decompressed.set(full, short);
     return acc;
 }, { compressed: new Map(), decompressed: new Map() });
-const shortDefinitionsCounter = (index = 0, count = 0) => {
+const shortDefinitionsCounter = (index = 0, count = -1) => {
     return () => {
-        const short = `${ABC[index]}${count}`;
+        const short = ABC[index];
         ++index;
         if (index === ABC.length) {
             index = 0;
             ++count;
         }
-        return short;
+        return `${count}${short}`;
     };
 };
-const compressCase = (node) => node.name && node.name.length > 1 && node.name[0] !== '_';
 const traverseAndDefineVariables = (tree, definitions = new Map(), shortDefinitions) => {
     for (const node of tree) {
         if (node.type === 'apply') {
             if (node.operator.type === 'word') {
                 if (node.operator.name === ':=') {
-                    // node.operator.name === "'"
                     node.args.forEach((variable, index) => {
                         if (variable.type === 'word') {
-                            if (index % 2 === 0 && compressCase(variable)) {
+                            if (index % 2 === 0) {
                                 if (!definitions.has(variable.name)) {
                                     const newName = shortDefinitions();
                                     definitions.set(variable.name, newName);
@@ -117,15 +115,24 @@ const traverseAndDefineVariables = (tree, definitions = new Map(), shortDefiniti
                 else if (node.operator.name === "'") {
                     node.args.forEach((variable) => {
                         if (variable.type === 'word') {
-                            if (compressCase(variable)) {
-                                if (!definitions.has(variable.name)) {
-                                    const newName = shortDefinitions();
-                                    definitions.set(variable.name, newName);
-                                    variable.name = newName;
-                                }
+                            if (!definitions.has(variable.name)) {
+                                const newName = shortDefinitions();
+                                definitions.set(variable.name, newName);
+                                variable.name = newName;
                             }
                             else if (shortRunes.decompressed.has(variable.name))
                                 variable.name = shortRunes.decompressed.get(variable.name);
+                        }
+                    });
+                }
+                else if (node.operator.name === '->') {
+                    node.args.forEach((variable) => {
+                        if (variable.type === 'word') {
+                            if (!definitions.has(variable.name)) {
+                                const newName = shortDefinitions();
+                                definitions.set(variable.name, newName);
+                                variable.name = newName;
+                            }
                         }
                     });
                 }
@@ -140,7 +147,7 @@ const traverseAndDefineVariables = (tree, definitions = new Map(), shortDefiniti
 };
 const traverseAndAssigneVariables = (tree, definitions = new Map()) => {
     for (const node of tree) {
-        if (node.type === 'word' && compressCase(node)) {
+        if (node.type === 'word') {
             if (shortRunes.decompressed.has(node.name))
                 node.name = shortRunes.decompressed.get(node.name);
             else if (definitions.has(node.name))
@@ -152,6 +159,25 @@ const traverseAndAssigneVariables = (tree, definitions = new Map()) => {
         }
         if (node.type !== 'value')
             traverseAndAssigneVariables(node.args, definitions);
+    }
+    return tree;
+};
+const traverseAndMangleVariables = (tree, definitions = new Map()) => {
+    for (const node of tree) {
+        if (node.type === 'word') {
+            if (node.name[0] === '-' && node.name[1] === '1') {
+                node.name = node.name.substring(2);
+            }
+            else if (!isNaN(+node.name[0])) {
+                node.name = `${node.name.substring(1)}${node.name[0]}`;
+            }
+        }
+        else if (node.type === 'apply') {
+            traverseAndMangleVariables([node.operator], definitions);
+            traverseAndMangleVariables(node.operator.args, definitions);
+        }
+        if (node.type !== 'value')
+            traverseAndMangleVariables(node.args, definitions);
     }
     return tree;
 };
@@ -195,7 +221,7 @@ export const pruneTree = (tree, memo = new Map()) => {
 };
 export const compress = (source) => {
     const variablesMap = new Map();
-    const tree = traverseAndAssigneVariables(traverseAndDefineVariables(pruneTree(removeBody(parse(wrapInBody(removeNoCode(source)))), new Map()), variablesMap, shortDefinitionsCounter(0, 0)), variablesMap);
+    const tree = traverseAndMangleVariables(traverseAndAssigneVariables(traverseAndDefineVariables(pruneTree(removeBody(parse(wrapInBody(removeNoCode(source)))), new Map()), variablesMap, shortDefinitionsCounter()), variablesMap), variablesMap);
     let { result, occurance } = stringify(tree)
         .split('')
         .reduce((acc, item) => {
