@@ -15,20 +15,20 @@ import Inventory from '../extensions/Inventory.js'
  * extractComments(';;Hello\n := [hello; "Hello World"]; ;; World\nhello;')
  * // ["Hello", " World"]
  */
-export const extractComments = (source: string) =>
-  source.match(/(?<=;;).+/g) ?? []
-export const extractTests = (source: string) =>
-  (source.match(new RegExp(/(?<=;; @test).*?(?=\n)/gm)) ?? [])
-    .map((x) => x.trim())
-    .filter(Boolean)
-export const extractMocks = (source: string) =>
-  (source.match(new RegExp(/(?<=;; @mock).*?(?=\n)/gm)) ?? [])
-    .filter(Boolean)
-    .map((x) => x.trim())
-export const extractChecks = (source: string) =>
-  (source.match(new RegExp(/(?<=;; @check).*?(?=\n)/gm)) ?? [])
-    .filter(Boolean)
-    .map((x) => x.trim())
+// export const extractComments = (source: string) =>
+//   source.match(/(?<=;;).+/g) ?? []
+// export const extractTests = (source: string) =>
+//   (source.match(new RegExp(/(?<=;; @test).*?(?=\n)/gm)) ?? [])
+//     .map((x) => x.trim())
+//     .filter(Boolean)
+// export const extractMocks = (source: string) =>
+//   (source.match(new RegExp(/(?<=;; @mock).*?(?=\n)/gm)) ?? [])
+//     .filter(Boolean)
+//     .map((x) => x.trim())
+// export const extractChecks = (source: string) =>
+//   (source.match(new RegExp(/(?<=;; @check).*?(?=\n)/gm)) ?? [])
+//     .filter(Boolean)
+//     .map((x) => x.trim())
 export const handleHangingSemi = (source: string) =>
   source[source.length - 1] === ';'
     ? source.substring(0, source.length - 1)

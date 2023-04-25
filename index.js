@@ -3,9 +3,9 @@ import {
   exe,
   runFromCompiled,
   runFromInterpreted,
-  extractChecks,
-  extractMocks,
-  extractTests,
+  // extractChecks,
+  // extractMocks,
+  // extractTests,
   handleHangingSemi,
   removeNoCode,
   wrapInBody,
@@ -31,31 +31,31 @@ const logResultInterpreted = (file, type = 'raw') =>
   logBoldMessage(
     type == 'items' ? runFromInterpreted(file).items : runFromInterpreted(file)
   )
-const test = (file) => {
-  const mocks = extractMocks(file)
-    .map((x) => handleHangingSemi(x) + ';')
-    .join('\n')
-  extractTests(file).forEach((x) => {
-    const t = runFromInterpreted(
-      `${handleHangingSemi(removeNoCode(file))};${mocks}${x}`
-    )
-    t ? logSuccessMessage(`${t} ${x}`) : logErrorMessage(`${t} ${x}`)
-  })
-}
-const check = (file) => {
-  extractChecks(file).forEach((x) => {
-    const def = handleHangingSemi(x)
-    file = file
-      .replaceAll(x, `!throw[${def}; "${def}"];`)
-      .replaceAll(';; @check', '')
-  })
-  try {
-    runFromInterpreted(file)
-    logSuccessMessage('All checks passed!')
-  } catch (err) {
-    logErrorMessage(err.message)
-  }
-}
+// const test = (file) => {
+//   const mocks = extractMocks(file)
+//     .map((x) => handleHangingSemi(x) + ';')
+//     .join('\n')
+//   extractTests(file).forEach((x) => {
+//     const t = runFromInterpreted(
+//       `${handleHangingSemi(removeNoCode(file))};${mocks}${x}`
+//     )
+//     t ? logSuccessMessage(`${t} ${x}`) : logErrorMessage(`${t} ${x}`)
+//   })
+// }
+// const check = (file) => {
+//   extractChecks(file).forEach((x) => {
+//     const def = handleHangingSemi(x)
+//     file = file
+//       .replaceAll(x, `!throw[${def}; "${def}"];`)
+//       .replaceAll(';; @check', '')
+//   })
+//   try {
+//     runFromInterpreted(file)
+//     logSuccessMessage('All checks passed!')
+//   } catch (err) {
+//     logErrorMessage(err.message)
+//   }
+// }
 const logResultCompiled = (file, type = 'raw') =>
   logBoldMessage(
     type == 'items' ? runFromCompiled(file).items : runFromCompiled(file)
@@ -188,7 +188,8 @@ while (argv.length) {
       break
     case '-t':
     case '-test':
-      test(file)
+      // test(file)
+      logErrorMessage('Currently disabled')
       break
     case '-run':
     case '-r':
@@ -197,7 +198,8 @@ while (argv.length) {
       break
     case '-check':
     case '-y':
-      check(file)
+      // check(file)
+      logErrorMessage('Currently disabled')
       break
     case '-basic':
       {

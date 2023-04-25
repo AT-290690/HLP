@@ -1,12 +1,5 @@
 import { CodeMirror } from './hlp.editor.bundle.js'
-import {
-  runFromInterpreted,
-  extractChecks,
-  extractMocks,
-  extractTests,
-  handleHangingSemi,
-  removeNoCode,
-} from '../dist/misc/utils.js'
+import { runFromInterpreted } from '../dist/misc/utils.js'
 import { encodeBase64 } from '../dist/misc/compression.js'
 
 const consoleElement = document.getElementById('console')
@@ -89,8 +82,6 @@ droneButton.addEventListener('click', () => {
 })
 
 const cmds = {
-  validate: ';; validate',
-  assert: ';; assert',
   open: ';; open',
   share: ';; share',
   window: ';; window',
@@ -103,46 +94,6 @@ const cmds = {
 const withCommand = (command = editor.getLine(0)) => {
   const value = editor.getValue()
   switch (command.trim()) {
-    case cmds.validate:
-      {
-        let result = value
-        extractChecks(result).forEach((x) => {
-          const def = handleHangingSemi(x)
-          result = result
-            .replaceAll(x, `!throw[${def}; "${def}"];`)
-            .replaceAll(';; @check', '')
-        })
-        try {
-          runFromInterpreted(result)
-          consoleEditor.setValue(
-            `${consoleEditor.getValue()} All checks passed!`
-          )
-        } catch (err) {
-          consoleEditor.setValue(err.message.trim())
-        }
-      }
-      break
-    case cmds.assert:
-      {
-        const mocks = extractMocks(value)
-          .map((x) => handleHangingSemi(x) + ';')
-          .join('\n')
-
-        const res = extractTests(value).map((x) =>
-          runFromInterpreted(
-            `${handleHangingSemi(removeNoCode(value))};${mocks}${x}`
-          )
-        )
-        if (res.every((x) => !!x))
-          consoleEditor.setValue(
-            `${consoleEditor.getValue()} All tests passed!`
-          )
-        else
-          consoleEditor.setValue(
-            `Tests: ${res.map((x) => (x ? '+' : '-')).join(' ')}`
-          )
-      }
-      break
     case cmds.open:
       {
         const encoded = encodeURIComponent(encodeBase64(value))
