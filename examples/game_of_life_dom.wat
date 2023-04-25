@@ -15,7 +15,7 @@
     make_button; -> [|> [dom_create_element["bt"];
                            dom_set_text_content["*"];
                     dom_append_to[cells_container]]];
-    fill; -> [cell; is_alive; dom_set_style [cell; :: ["c"; "tr"; "b"; "s2t"; "bg"; ? [is_alive; "#fff"; 0]]]];
+    fill; -> [cell; is_alive; dom_set_style [cell; :: ["mn-w"; "10px"; "mn-h"; "10px"; "c"; "tr"; "b"; "s2t"; "bg"; ? [is_alive; "#fff"; 0]]]];
 
   make_grid; -> [cells; : [
 

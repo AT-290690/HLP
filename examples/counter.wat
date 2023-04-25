@@ -4,5 +4,5 @@
   dom_create_element ["bt"];
   dom_set_text_content [counter];
   dom_append_to[dom_get_root[]];
-  dom_event["click"; -> [e; key; dom_set_text_content[::.[e; "el"]; += [counter]]]]
+  dom_click [-> [e; key; dom_set_text_content[::.[e; "el"]; += [counter]]]]
 ];

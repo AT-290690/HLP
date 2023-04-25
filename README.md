@@ -5,7 +5,7 @@
 <p align="center">
 <img width="100" src="./editor/assets/images/icon-512.png"/>
 </p>
-a programming language for writting ultra compressed code that fits in a link
+a toy programming language for writting compressed code that fits in a link
 
 here is an example program:
 
@@ -128,3 +128,8 @@ click to run it:
 
 try the [editor](https://at-290690.github.io/hlp/editor)
 (type **spec** for language manual)
+
+Local use:
+npm install --save-dev
+npm run hlp -help
+npm run hlp -file ./examples/hello.wat -run

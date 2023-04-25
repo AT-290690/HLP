@@ -3,32 +3,6 @@ import { parse } from '../core/parser.js';
 import { RUNES_NAMESPACE, runFromAST } from '../core/interpreter.js';
 import { tokens } from '../core/tokeniser.js';
 import Inventory from '../extensions/Inventory.js';
-/**
- * Extract the comment from the source code
- * @param source
- * @returns
- * @example
- * extractComments(';; Hello World string\n := [hello; "Hello World"]')
- * // [" Hello World string"]
- * extractComments(':= [hello; "Hello World"]')
- * // []
- * extractComments(';;Hello\n := [hello; "Hello World"]; ;; World\nhello;')
- * // ["Hello", " World"]
- */
-// export const extractComments = (source: string) =>
-//   source.match(/(?<=;;).+/g) ?? []
-// export const extractTests = (source: string) =>
-//   (source.match(new RegExp(/(?<=;; @test).*?(?=\n)/gm)) ?? [])
-//     .map((x) => x.trim())
-//     .filter(Boolean)
-// export const extractMocks = (source: string) =>
-//   (source.match(new RegExp(/(?<=;; @mock).*?(?=\n)/gm)) ?? [])
-//     .filter(Boolean)
-//     .map((x) => x.trim())
-// export const extractChecks = (source: string) =>
-//   (source.match(new RegExp(/(?<=;; @check).*?(?=\n)/gm)) ?? [])
-//     .filter(Boolean)
-//     .map((x) => x.trim())
 export const handleHangingSemi = (source) => source[source.length - 1] === ';'
     ? source.substring(0, source.length - 1)
     : source;
