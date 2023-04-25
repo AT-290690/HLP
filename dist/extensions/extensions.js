@@ -340,7 +340,17 @@ const BitExtension = {
         un_right_shift: (args, env) => evaluate(args[0], env) >>> evaluate(args[1], env),
     },
 };
+const Console = {
+    console_: {
+        log: (args, env) => {
+            const out = evaluate(args[0], env);
+            console.log(out);
+            return out;
+        },
+    },
+};
 const Extensions = {
+    ...Console,
     ...BitExtension,
     ...MathExtension,
     ...StringExtension,

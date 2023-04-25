@@ -356,8 +356,17 @@ const BitExtension: Extension = {
       evaluate(args[0], env) >>> evaluate(args[1], env),
   },
 }
-
+const Console: Extension = {
+  console_: {
+    log: (args, env) => {
+      const out = evaluate(args[0], env)
+      console.log(out)
+      return out
+    },
+  },
+}
 const Extensions = {
+  ...Console,
   ...BitExtension,
   ...MathExtension,
   ...StringExtension,

@@ -851,6 +851,10 @@ const compile: Compiler = (tree, locals) => {
           locals
         )});`
       }
+      case 'console_log': {
+        const arg = compile(treeArgs[0], locals)
+        return `(console.log(${arg}), ${arg})`
+      }
       // dead code
       case 'aliases=':
       case 'void:':

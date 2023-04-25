@@ -21,7 +21,6 @@
 
 *loop [bound; -> [count; : [
   ? [! [% [count; cols]]; += [h; r]];
-  ' [x; y];
   := [is_alive; math_random_int [0; 1];
       next_is_alive;math_random_int [0; 1];
       rect;|> [make_button [r]; fill [1]];

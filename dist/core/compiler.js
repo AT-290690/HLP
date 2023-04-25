@@ -638,6 +638,10 @@ const compile = (tree, locals) => {
                 const [container, ...rest] = treeArgs;
                 return `${register[token]}(${compile(container, locals)}, ${parseArgs(rest, locals)});`;
             }
+            case 'console_log': {
+                const arg = compile(treeArgs[0], locals);
+                return `(console.log(${arg}), ${arg})`;
+            }
             // dead code
             case 'aliases=':
             case 'void:':
