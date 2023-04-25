@@ -3,9 +3,6 @@ import {
   exe,
   runFromCompiled,
   runFromInterpreted,
-  // extractChecks,
-  // extractMocks,
-  // extractTests,
   handleHangingSemi,
   removeNoCode,
   wrapInBody,
@@ -136,18 +133,49 @@ while (argv.length) {
       file = readFileSync(value, 'utf-8')
       break
     case '-types':
-      writeFileSync(
-        `./src/core/tokens.d.ts`,
-        `export type Token = ${Object.keys(tokens)
-          .map((x) => `"${x}"`)
-          .join('\n|')}`,
-        'utf-8'
-      )
-      writeFileSync(
-        `./dist/extensions/Inventory.js`,
-        readFileSync('./src/extensions/Inventory.js'),
-        'utf-8'
-      )
+      {
+        const runes = Object.keys(tokens)
+          .filter((x) => x.length > 1 && x !== 'aliases=' && x !== 'void:')
+          .sort((a, b) => (a.length > b.length ? -1 : 1))
+          .concat(['][', ']];', '];'])
+          .reduce(
+            (acc, full, i) => {
+              const short = String.fromCharCode(i + 161 + 31)
+              acc.compressed.set(short, full)
+              acc.decompressed.set(full, short)
+              return acc
+            },
+            { compressed: new Map(), decompressed: new Map() }
+          )
+
+        writeFileSync(
+          `./src/misc/shortRunes.ts`,
+          `const runes: {  compressed: Iterable<readonly [string, string]>
+            decompressed: Iterable<readonly [string, string]> } = ${JSON.stringify(
+              {
+                compressed: [...runes.compressed.entries()],
+                decompressed: [...runes.decompressed.entries()],
+              }
+            )};
+
+          export const shortRunes: {compressed:  Map<string, string>, decompressed: Map<string, string> } = {compressed: new Map(runes.compressed), decompressed:  new Map(runes.decompressed)}
+          `,
+          'utf-8'
+        )
+        writeFileSync(
+          `./src/core/tokens.d.ts`,
+          `export type Token = ${Object.keys(tokens)
+            .map((x) => `"${x}"`)
+            .join('\n|')}`,
+          'utf-8'
+        )
+        writeFileSync(
+          `./dist/extensions/Inventory.js`,
+          readFileSync('./src/extensions/Inventory.js'),
+          'utf-8'
+        )
+      }
+
       break
     case '-build':
       buildProject(value, type)
