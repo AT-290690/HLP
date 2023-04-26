@@ -129,7 +129,29 @@ click to run it:
 try the [editor](https://at-290690.github.io/hlp/editor)
 (type **spec** for language manual)
 
-Local use:
+
+##How it works
+
+The above code is minified removing white space and turning user variables to a single character
+```
+dom_set_style[dom_get_body[];::["bg";"#111"]];'[a;b];:=[c;24;d;360;e;0;f;"⏵";g;"⏸";h;"#f12";i;"#222";j;*[d;/[c]];k;c;l;*[c;-1];m;*[c;c];n;->[c;|>[.:map>>[.:...[c];->[0]]]];o;n[m];p;n[m];q;.:[::[a;0;b;1];::[a;1;b;0];::[a;-1;b;0];::[a;0;b;-1];::[a;1;b;-1];::[a;-1;b;-1];::[a;1;b;1];::[a;-1;b;1]];r;->[o;x;:[:=[y;-1];>>[o;->[z;A;:[=[y;?[%[A;c];y;+=[y]]];:=[B;%[A;c];z;s[o;B;y]];x[z;B;y]]]]]];s;->[C;B;y;.:.[C;%[+[B;*[c;y]];m]]];t;->[C;B;y;D;.:.=[C;%[+[B;*[c;y]];m];D]];u;->[B;y;:[:=[E;0];>>[q;->[F;:[+=[E;s[o;+[B;::.[F;a]];+[y;::.[F;b]]]]]]];E]];v;->[C;r[C;->[G;B;y;:[|>[canvas_fill_rect[canvas_fill_style[J;?[G;h;i]];*[j;B];*[j;y];j;j]]]]]];w;->[r[o;->[G;B;y;:[:=[H;u[B;y]];?[&&[G;<[H;2]];t[p;B;y;0];?[&&[G;>[H;3]];t[p;B;y;0];?[&&[![G];==[H;3]];t[p;B;y;1];t[p;B;y;G]]]]]]]]];:=[I;dom_get_root[]];|>[dom_append_to[dom_set_style[dom_set_text_content[dom_create_element["p"];"Click on the canvas to draw cells"];::["c";"#fff"]];I]];:=[J;|>[canvas_get_context[dom_click[dom_set_attributes[dom_append_to[dom_canvas[];I];::["w";d;"h";d]];->[K;:[:=[B;math_floor[*[::.[K;"ox"];/[j]]]];:=[y;math_floor[*[::.[K;"oy"];/[j]]]];=[e;0];dom_set_text_content[N;f];:=[G;s[o;B;y]];t[o;B;y;?[G;0;1]];v[o]]]];"2d"]]];|>[canvas_fill_rect[canvas_fill_style[J;i];0;0;d;d]];:=[L;->[:[w[];v[p];=[o;p];=[p;n[m]]]]];:=[M;->[time_set_timeout[->[:[?[e;:[L[];M[]]]]];150]]];|>[dom_append_to[dom_click[dom_set_text_content[:=[N;dom_create_element["bt"]];f];->[:[dom_set_text_content[N;?[=[e;![e]];g;f]];M[]]]];|>[dom_append_to[dom_create_element["div"];I]]]]; 
+```
+Then mangled - remplacing build-ins with a single character and grouping closing parens ( ]]]] = ·4 )
+```
+ Ă[đ[];Ƣ["bg";"#111"]];'[a;b];Ɲ[c;24;d;360;e;0;f;"⏵";g;"⏸";h;"#f12";i;"#222";j;*[d;/[c]];k;c;l;*[c;-1];m;*[c;c];n;ƞ[c;ƣ[Š[ƀ[c];ƞ[0·4;o;n[m];p;n[m];q;ơ[Ƣ[a;0;b;1];Ƣ[a;1;b;0];Ƣ[a;-1;b;0];Ƣ[a;0;b;-1];Ƣ[a;1;b;-1];Ƣ[a;-1;b;-1];Ƣ[a;1;b;1];Ƣ[a;-1;b;1]];r;ƞ[o;x;:[Ɲ[y;-1];Ɵ[o;ƞ[z;A;:[=[y;?[%[A;c];y;Ɣ[y·3;Ɲ[B;%[A;c];z;s[o;B;y]];x[z;B;y·6;s;ƞ[C;B;y;Ə[C;%[+[B;*[c;y]];m·3;t;ƞ[C;B;y;D;Ɔ[C;%[+[B;*[c;y]];m];D]];u;ƞ[B;y;:[Ɲ[E;0];Ɵ[q;ƞ[F;:[Ɣ[E;s[o;+[B;Ǝ[F;a]];+[y;Ǝ[F;b·7;E]];v;ƞ[C;r[C;ƞ[G;B;y;:[ƣ[æ[Ý[J;?[G;h;i]];*[j;B];*[j;y];j;j·6;w;ƞ[r[o;ƞ[G;B;y;:[Ɲ[H;u[B;y]];?[ƛ[G;<[H;2]];t[p;B;y;0];?[ƛ[G;>[H;3]];t[p;B;y;0];?[ƛ[![G];Ɨ[H;3]];t[p;B;y;1];t[p;B;y;G·9;Ɲ[I;Ē[]];ƣ[ÿ[Ă[Ê[Ô["p"];"Click on the canvas to draw cells"];Ƣ["c";"#fff"]];I]];Ɲ[J;ƣ[Ö[Ŋ[Ó[ÿ[Ĺ[];I];Ƣ["w";d;"h";d]];ƞ[K;:[Ɲ[B;ī[*[Ǝ[K;"ox"];/[j·4;Ɲ[y;ī[*[Ǝ[K;"oy"];/[j·4;=[e;0];Ê[N;f];Ɲ[G;s[o;B;y]];t[o;B;y;?[G;0;1]];v[o·4;"2d"·3;ƣ[æ[Ý[J;i];0;0;d;d]];Ɲ[L;ƞ[:[w[];v[p];=[o;p];=[p;n[m·5;Ɲ[M;ƞ[å[ƞ[:[?[e;:[L[];M[·5;150·3;ƣ[ÿ[Ŋ[Ê[Ɲ[N;Ô["bt"]];f];ƞ[:[Ê[N;?[=[e;![e]];g;f]];M[·4;ƣ[ÿ[Ô["div"];I·4; 
+```
+Then the mangled version gets base64 encoded with further LZW compression applied (see the link above)
+
+##Local use:
+
 npm install --save-dev
 npm run hlp -help
 npm run hlp -file ./examples/hello.wat -run
+
+Develop:
+Generate types used in compilation and compression
+npm run -types
+
+
+
+
