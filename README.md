@@ -143,15 +143,16 @@ Then mangled - remplacing build-ins with a single character and grouping closing
 Then the mangled version gets base64 encoded with further LZW compression applied (see the link above)
 
 ## Local use:
-
-npm install --save-dev 
+```
+npm install --save-dev
 npm run hlp -help 
 npm run hlp -file ./examples/hello.wat -run 
-
+```
 Develop:
 Generate types used in compilation and compression
+```
 npm run -types 
-
+```
 
 
 
