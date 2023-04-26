@@ -130,7 +130,7 @@ try the [editor](https://at-290690.github.io/hlp/editor)
 (type **spec** for language manual)
 
 
-##How it works
+## How it works
 
 The above code is minified removing white space and turning user variables to a single character
 ```
@@ -142,7 +142,7 @@ Then mangled - remplacing build-ins with a single character and grouping closing
 ```
 Then the mangled version gets base64 encoded with further LZW compression applied (see the link above)
 
-##Local use:
+## Local use:
 
 npm install --save-dev 
 npm run hlp -help 
