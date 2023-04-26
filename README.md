@@ -144,14 +144,17 @@ Then the mangled version gets base64 encoded with further LZW compression applie
 
 ## Local use:
 ```
-npm install --save-dev
 npm run hlp -help 
 npm run hlp -file ./examples/hello.wat -run 
 ```
 Develop:
+```
+npm install --save-dev
+npm run watch
+```
 Generate types used in compilation and compression
 ```
-npm run -types 
+npm run hlp -types 
 ```
 
 
