@@ -28,31 +28,7 @@ const logResultInterpreted = (file, type = 'raw') =>
   logBoldMessage(
     type == 'items' ? runFromInterpreted(file).items : runFromInterpreted(file)
   )
-// const test = (file) => {
-//   const mocks = extractMocks(file)
-//     .map((x) => handleHangingSemi(x) + ';')
-//     .join('\n')
-//   extractTests(file).forEach((x) => {
-//     const t = runFromInterpreted(
-//       `${handleHangingSemi(removeNoCode(file))};${mocks}${x}`
-//     )
-//     t ? logSuccessMessage(`${t} ${x}`) : logErrorMessage(`${t} ${x}`)
-//   })
-// }
-// const check = (file) => {
-//   extractChecks(file).forEach((x) => {
-//     const def = handleHangingSemi(x)
-//     file = file
-//       .replaceAll(x, `!throw[${def}; "${def}"];`)
-//       .replaceAll(';; @check', '')
-//   })
-//   try {
-//     runFromInterpreted(file)
-//     logSuccessMessage('All checks passed!')
-//   } catch (err) {
-//     logErrorMessage(err.message)
-//   }
-// }
+
 const logResultCompiled = (file, type = 'raw') =>
   logBoldMessage(
     type == 'items' ? runFromCompiled(file).items : runFromCompiled(file)
@@ -134,34 +110,6 @@ while (argv.length) {
       break
     case '-types':
       {
-        const runes = Object.keys(tokens)
-          .filter((x) => x.length > 1 && x !== 'aliases=' && x !== 'void:')
-          .sort((a, b) => (a.length > b.length ? -1 : 1))
-          .concat(['][', ']];', '];'])
-          .reduce(
-            (acc, full, i) => {
-              const short = String.fromCharCode(i + 161 + 31)
-              acc.compressed.set(short, full)
-              acc.decompressed.set(full, short)
-              return acc
-            },
-            { compressed: new Map(), decompressed: new Map() }
-          )
-
-        writeFileSync(
-          `./src/misc/shortRunes.ts`,
-          `const runes: {  compressed: Iterable<readonly [string, string]>
-            decompressed: Iterable<readonly [string, string]> } = ${JSON.stringify(
-              {
-                compressed: [...runes.compressed.entries()],
-                decompressed: [...runes.decompressed.entries()],
-              }
-            )};
-
-          export const shortRunes: {compressed:  Map<string, string>, decompressed: Map<string, string> } = {compressed: new Map(runes.compressed), decompressed:  new Map(runes.decompressed)}
-          `,
-          'utf-8'
-        )
         writeFileSync(
           `./src/core/tokens.d.ts`,
           `export type Token = ${Object.keys(tokens)
@@ -214,20 +162,10 @@ while (argv.length) {
     case '-cr':
       logResultCompiled(file, type)
       break
-    case '-t':
-    case '-test':
-      // test(file)
-      logErrorMessage('Currently disabled')
-      break
     case '-run':
     case '-r':
     case '-log':
       logResultInterpreted(file, type)
-      break
-    case '-check':
-    case '-y':
-      // check(file)
-      logErrorMessage('Currently disabled')
       break
     case '-basic':
       {

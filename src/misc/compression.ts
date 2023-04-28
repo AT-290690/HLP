@@ -4,9 +4,9 @@ import { tokens } from '../core/tokeniser.js'
 import { evaluate } from '../core/interpreter.js'
 import Inventory from '../extensions/Inventory.js'
 import { runFromInterpreted, removeNoCode, wrapInBody } from '../misc/utils.js'
-import { Expression, Word } from '../core'
+import { Expression } from '../core'
 import { stringify } from '../core/stringify.js'
-import { shortRunes } from './shortRunes.js'
+import { shortRunes } from './encoder.js'
 const ABC = [
   'a',
   'b',
@@ -79,19 +79,7 @@ tokens['~*'] = (args, env) => {
   })
   return 0
 }
-// export const shortRunes = Object.keys(tokens)
-//   .filter((x) => x.length > 1 && x !== 'aliases=' && x !== 'void:')
-//   .sort((a, b) => (a.length > b.length ? -1 : 1))
-//   .concat(['][', ']];', '];'])
-//   .reduce(
-//     (acc, full, i) => {
-//       const short = String.fromCharCode(i + 161 + 31)
-//       acc.compressed.set(short, full)
-//       acc.decompressed.set(full, short)
-//       return acc
-//     },
-//     { compressed: new Map(), decompressed: new Map() }
-//   )
+
 const shortDefinitionsCounter = (index = 0, count = -1) => {
   return () => {
     const short = ABC[index]
