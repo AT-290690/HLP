@@ -261,6 +261,6 @@ body {
   display: grid;
   position: absolute;
   bottom: 20px;
-  right: 10px;
+  right: 20px;
   gap: 10px;
 }

@@ -11,6 +11,7 @@ const execIcon = document.getElementById('exec-drone-icon')
 const toggleAppMode = document.getElementById('toggle-app-mode')
 const toggleLogMode = document.getElementById('toggle-log-mode')
 const togglePrettyMode = document.getElementById('toggle-pretty-mode')
+const toggleShareMode = document.getElementById('toggle-share-mode')
 
 const consoleEditor = CodeMirror(consoleElement)
 let RATIO_Y = 1
@@ -89,6 +90,7 @@ droneButton.addEventListener('click', () => {
 const cmds = {
   open: ';; open',
   share: ';; share',
+  link: ';; link',
   window: ';; window',
   log: ';; log',
   exe: ';; exe',
@@ -123,6 +125,15 @@ const withCommand = (command) => {
         consoleEditor.setSelection(0, link.length)
       }
 
+      break
+    case cmds.link:
+      {
+        navigator.clipboard.writeText(
+          `https://at-290690.github.io/hlp/?l=${encodeURIComponent(
+            encodeBase64(value)
+          )}`
+        )
+      }
       break
     case cmds.window:
       {
@@ -210,21 +221,25 @@ toggleAppMode.addEventListener('click', (e) => {
   lastCmds[0] = state ? ';; focus' : ';; app'
   e.target.style.opacity = state ? 0.25 : 1
 })
+
 toggleLogMode.addEventListener('click', (e) => {
   const state = +e.target.getAttribute('toggled')
   e.target.setAttribute('toggled', state ^ 1)
-  if (!state) lastCmds[1] = ';; log'
-  else lastCmds.length = 1
+  lastCmds[1] = !state ? ';; log' : ''
   e.target.style.opacity = state ? 0.25 : 1
 })
 togglePrettyMode.addEventListener('click', (e) => {
   const state = +e.target.getAttribute('toggled')
   e.target.setAttribute('toggled', state ^ 1)
-  if (!state) lastCmds[1] = ';; pretty'
-  else lastCmds.length = 1
+  lastCmds[2] = !state ? ';; pretty' : ''
   e.target.style.opacity = state ? 0.25 : 1
 })
-
+toggleShareMode.addEventListener('click', (e) => {
+  const state = +e.target.getAttribute('toggled')
+  e.target.setAttribute('toggled', state ^ 1)
+  lastCmds[3] = !state ? ';; link' : ''
+  e.target.style.opacity = state ? 0.25 : 1
+})
 editor.focus()
 window.addEventListener('resize', () => {
   const bouds = document.body.getBoundingClientRect()

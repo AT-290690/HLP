@@ -16,7 +16,7 @@ const pipeArgs = (expr) => {
     else
         throw new TypeError(`Following arguments of|> [] must be -> []`);
 };
-export const parseApply = (expr, cursor) => {
+export const parseApply = (expr, cursor, transform = (expression) => expression) => {
     if (cursor[0] !== '[')
         return { expr, rest: cursor };
     cursor = cursor.slice(1);
@@ -26,7 +26,7 @@ export const parseApply = (expr, cursor) => {
         args: [],
     };
     while (cursor[0] !== ']') {
-        const arg = parseExpression(cursor);
+        const arg = parseExpression(cursor, transform);
         expression.args.push(arg.expr);
         cursor = arg.rest;
         if (cursor[0] === ';')
@@ -34,12 +34,10 @@ export const parseApply = (expr, cursor) => {
         else if (cursor[0] !== ']')
             throw new SyntaxError(`Unexpected token - Expected ';' or ']'" but got "${cursor[0]}"`);
     }
-    if (expression.type === 'apply' && expression.operator.type === 'word')
-        if (expression.operator.name === '|>')
-            pipeArgs(expression);
-    return parseApply(expression, cursor.slice(1));
+    transform(expression);
+    return parseApply(expression, cursor.slice(1), transform);
 };
-export const parseExpression = (cursor) => {
+export const parseExpression = (cursor, transform = (expression) => expression) => {
     let match, expr;
     if ((match = /^"([^"]*)"/.exec(cursor)))
         expr = {
@@ -59,7 +57,7 @@ export const parseExpression = (cursor) => {
         const snapshot = ' ' + cursor.split('];')[0].split(']')[0].trim();
         throw new SyntaxError(`Unexpect syntax: "${snapshot}"`);
     }
-    return parseApply(expr, cursor.slice(match[0].length));
+    return parseApply(expr, cursor.slice(match[0].length), transform);
 };
 /**
  *
@@ -72,7 +70,11 @@ export const parseExpression = (cursor) => {
  * // { type: 'apply', operator: { type: 'word', name: '->', args: [] }, args: [] }
  */
 export const parse = (program) => {
-    const result = parseExpression(program);
+    const result = parseExpression(program, (expression) => {
+        if (expression.type === 'apply' && expression.operator.type === 'word')
+            if (expression.operator.name === '|>')
+                pipeArgs(expression);
+    });
     if (result.rest.length > 0)
         throw new SyntaxError('Unexpected text after program');
     return result.expr;
