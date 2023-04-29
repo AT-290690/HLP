@@ -1632,4 +1632,31 @@ export default class Inventory {
     ctx.translate(x, y)
     return ctx
   }
+  static _call = (e, t) => t(e)
+  static _math_factorial = (num) => {
+    let rval = 1
+    for (let i = 2; i <= num; i++) rval = rval * i
+    return rval
+  }
+  static _math_permutations = (n, k) => {
+    const fact = Inventory._math_factorial
+    const p = fact(n)
+    const v = fact(n - k)
+    return p / v
+  }
+  static _math_permutations_array = (inputArr) => {
+    let result = new Inventory()
+    const permute = (arr, m = new Inventory()) => {
+      if (arr.length === 0) result.push(m)
+      else {
+        for (let i = 0; i < arr.length; i++) {
+          let curr = arr.slice()
+          let next = curr.splice(i, 1)
+          permute(curr.slice(), m.concat(next))
+        }
+      }
+    }
+    permute(inputArr)
+    return result.balance()
+  }
 }

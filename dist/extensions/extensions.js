@@ -238,22 +238,44 @@ const StringExtension = {
 };
 const MathExtension = {
     math_: {
-        factorial: (args, env) => Inventory._math_factorial(evaluate(args[0], env)),
-        permutations: (args, env) => Inventory._math_factorial(evaluate(args[0], env), evaluate(args[1], env)),
-        permutations_array: (args, env) => Inventory._math_permutations_array(evaluate(args[0], env)),
+        factorial: (args, env) => {
+            if (args.length !== 1)
+                throw new RangeError('Invalid number of arguments to math_factorial');
+            return Inventory._math_factorial(evaluate(args[0], env));
+        },
+        permutations: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to math_permutations');
+            return Inventory._math_factorial(evaluate(args[0], env), evaluate(args[1], env));
+        },
+        permutations_array: (args, env) => {
+            if (args.length !== 1)
+                throw new RangeError('Invalid number of arguments to math_permutations_array');
+            return Inventory._math_permutations_array(evaluate(args[0], env));
+        },
         lerp: (args, env) => {
+            if (args.length !== 3)
+                throw new RangeError('Invalid number of arguments to math_lerp');
             const start = evaluate(args[0], env);
             const end = evaluate(args[1], env);
             const amt = evaluate(args[2], env);
             return (1 - amt) * start + amt * end;
         },
-        abs: (args, env) => Math.abs(evaluate(args[0], env)),
+        abs: (args, env) => {
+            if (args.length !== 1)
+                throw new RangeError('Invalid number of arguments to math_abs');
+            return Math.abs(evaluate(args[0], env));
+        },
         mod: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to math_mod');
             const left = evaluate(args[0], env);
             const right = evaluate(args[1], env);
             return ((left % right) + right) % right;
         },
         clamp: (args, env) => {
+            if (args.length !== 3)
+                throw new RangeError('Invalid number of arguments to math_clamp');
             const num = evaluate(args[0], env);
             const min = evaluate(args[1], env);
             const max = evaluate(args[2], env);
@@ -330,14 +352,46 @@ const MathExtension = {
 };
 const BitExtension = {
     bit_: {
-        make_bit: (args, env) => (evaluate(args[0], env) >>> 0).toString(2),
-        and: (args, env) => evaluate(args[0], env) & evaluate(args[1], env),
-        not: (args, env) => ~evaluate(args[0], env),
-        or: (args, env) => evaluate(args[0], env) | evaluate(args[1], env),
-        xor: (args, env) => evaluate(args[0], env) ^ evaluate(args[1], env),
-        left_shift: (args, env) => evaluate(args[0], env) << evaluate(args[1], env),
-        right_shift: (args, env) => evaluate(args[0], env) >> evaluate(args[1], env),
-        un_right_shift: (args, env) => evaluate(args[0], env) >>> evaluate(args[1], env),
+        make_bit: (args, env) => {
+            if (args.length !== 1)
+                throw new RangeError('Invalid number of arguments to bit_make_bit');
+            return (evaluate(args[0], env) >>> 0).toString(2);
+        },
+        and: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to bit_and');
+            return evaluate(args[0], env) & evaluate(args[1], env);
+        },
+        not: (args, env) => {
+            if (args.length !== 1)
+                throw new RangeError('Invalid number of arguments to bit_not');
+            return ~evaluate(args[0], env);
+        },
+        or: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to bit_or');
+            return evaluate(args[0], env) | evaluate(args[1], env);
+        },
+        xor: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to bit_xor');
+            return evaluate(args[0], env) ^ evaluate(args[1], env);
+        },
+        left_shift: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to bit_left_shift');
+            return evaluate(args[0], env) << evaluate(args[1], env);
+        },
+        right_shift: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to bit_right_shift');
+            return evaluate(args[0], env) >> evaluate(args[1], env);
+        },
+        un_right_shift: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to bit_un_right_shift');
+            return evaluate(args[0], env) >>> evaluate(args[1], env);
+        },
     },
 };
 const Console = {

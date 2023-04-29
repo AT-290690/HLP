@@ -59,7 +59,7 @@ export const pretty = (raw: string) => {
       .reduce((acc, x, i) => {
         acc += x.trim()
           ? x + (comments[i] ?? '') + '\n'
-          : '\n' + comments[i] ?? ''
+          : '\n' + (comments[i] ?? '')
         return acc
       }, '')
       .trim()
