@@ -256,3 +256,11 @@ body {
   width: 99.9%;
   height: 60vh;
 }
+
+#toolbar {
+  display: grid;
+  position: absolute;
+  bottom: 20px;
+  right: 10px;
+  gap: 10px;
+}

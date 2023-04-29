@@ -1,12 +1,17 @@
 import { CodeMirror } from './hlp.editor.bundle.js'
 import { runFromInterpreted } from '../dist/misc/utils.js'
 import { encodeBase64 } from '../dist/misc/compression.js'
+import { pretty } from '../dist/misc/prettier.js'
 
 const consoleElement = document.getElementById('console')
 const editorContainer = document.getElementById('editor-container')
 const droneButton = document.getElementById('drone')
 const errorIcon = document.getElementById('error-drone-icon')
 const execIcon = document.getElementById('exec-drone-icon')
+const toggleAppMode = document.getElementById('toggle-app-mode')
+const toggleLogMode = document.getElementById('toggle-log-mode')
+const togglePrettyMode = document.getElementById('toggle-pretty-mode')
+
 const consoleEditor = CodeMirror(consoleElement)
 let RATIO_Y = 1
 const droneIntel = (icon) => {
@@ -89,11 +94,15 @@ const cmds = {
   exe: ';; exe',
   app: ';; app',
   focus: ';; focus',
+  pretty: ';; pretty',
 }
-
-const withCommand = (command = editor.getLine(0)) => {
+let lastCmds = []
+const withCommand = (command) => {
   const value = editor.getValue()
   switch (command.trim()) {
+    case cmds.pretty:
+      editor.setValue(pretty(value))
+      break
     case cmds.open:
       {
         const encoded = encodeURIComponent(encodeBase64(value))
@@ -186,7 +195,8 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault()
     e.stopPropagation()
     consoleEditor.setValue('')
-    const cmds = editor.getLine(0).split(';; ').filter(knownCmds)
+    // const cmds = editor.getLine(0).split(';; ').filter(knownCmds)
+    const cmds = lastCmds.join(' ').split(';; ').filter(knownCmds)
     if (!cmds.length) cmds.push(';; exe')
     cmds.map((x) => `;; ${x.trim()}`).forEach((cmd) => withCommand(cmd))
   } else if (e.key === 'Escape') {
@@ -194,6 +204,27 @@ document.addEventListener('keydown', (e) => {
     e.stopPropagation()
   }
 })
+toggleAppMode.addEventListener('click', (e) => {
+  const state = +e.target.getAttribute('toggled')
+  e.target.setAttribute('toggled', state ^ 1)
+  lastCmds[0] = state ? ';; focus' : ';; app'
+  e.target.style.opacity = state ? 0.25 : 1
+})
+toggleLogMode.addEventListener('click', (e) => {
+  const state = +e.target.getAttribute('toggled')
+  e.target.setAttribute('toggled', state ^ 1)
+  if (!state) lastCmds[1] = ';; log'
+  else lastCmds.length = 1
+  e.target.style.opacity = state ? 0.25 : 1
+})
+togglePrettyMode.addEventListener('click', (e) => {
+  const state = +e.target.getAttribute('toggled')
+  e.target.setAttribute('toggled', state ^ 1)
+  if (!state) lastCmds[1] = ';; pretty'
+  else lastCmds.length = 1
+  e.target.style.opacity = state ? 0.25 : 1
+})
+
 editor.focus()
 window.addEventListener('resize', () => {
   const bouds = document.body.getBoundingClientRect()

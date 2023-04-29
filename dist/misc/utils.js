@@ -16,6 +16,10 @@ export const handleHangingSemi = (source) => source[source.length - 1] === ';'
  * // ":=[hello;\"Hello World\"];hello;"
  */
 export const removeNoCode = (source) => source.replace(/[ ]+(?=[^"]*(?:"[^"]*"[^"]*)*$)+|\n|\t|;;.+/g, '');
+export const extractComments = (source) => ({
+    source: source.replaceAll(/;;.+/g, `void:["#comment"];`),
+    match: source.match(/;;.*/g),
+});
 export const wrapInBody = (source) => `:[${source}]`;
 export const protolessModule = (methods) => {
     const env = Object.create(null);
