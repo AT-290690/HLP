@@ -1306,7 +1306,6 @@ export default class Inventory {
     {
       const link = document.createElement('link')
       link.rel = 'stylesheet'
-      // 1.4.1
       link.href = `https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic`
       link.crossorigin = 'anonymous'
       document.head.appendChild(link)
@@ -1314,7 +1313,6 @@ export default class Inventory {
     {
       const link = document.createElement('link')
       link.rel = 'stylesheet'
-      // 1.4.1
       link.href = `https://cdnjs.cloudflare.com/ajax/libs/normalize/${0}.${0}.${1}/normalize.css`
       link.crossorigin = 'anonymous'
       document.head.appendChild(link)
@@ -1327,6 +1325,11 @@ export default class Inventory {
     document.head.appendChild(link)
     return link
   }
+  static _dom_class_map = new Map([
+    ['bt', 'button'],
+    ['ip', 'input'],
+    ['pr', 'is-primary'],
+  ])
   static _dom_add_class = (element, ...classlist) => {
     classlist.forEach((cls) => element.classList.add(cls))
     return element

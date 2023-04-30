@@ -54,47 +54,64 @@ const DomExtension: Extension = {
         throw new RangeError(
           'Invalid number of arguments to dom_create_element'
         )
-      // const type = evaluate(args[0], env)
-      return {
-        getAttribute: () => 1,
-        setAttribute: () => {},
-        value: '',
-        style: {},
-        addEventListener: () => {},
-      }
+      const type = evaluate(args[0], env)
+      if (typeof type !== 'string')
+        throw new TypeError(
+          'First argument of dom_create_element must be a string'
+        )
+      return document.createElement(
+        Inventory._dom_elements_map.get(type) ?? type
+      )
     },
-    remove: () => {
-      return {}
+    remove: (args, env) => {
+      args.slice(1).forEach((x) => evaluate(x, env))
+      return evaluate(args[0], env)
     },
-    detach: () => {
-      return {}
+    detach: (args, env) => {
+      evaluate(args[1], env)
+      return evaluate(args[0], env)
     },
-    insert: () => {
-      return {}
+    insert: (args, env) => {
+      args.slice(1).forEach((x) => evaluate(x, env))
+      return evaluate(args[0], env)
     },
     append_to: (args, env) => {
       if (args.length !== 2)
         throw new RangeError('Invalid number of arguments to dom_append_to')
+      evaluate(args[1], env)
       return evaluate(args[0], env)
     },
     get_body: () => {
-      return {}
+      return document.createElement('body')
     },
-    set_value: () => {
-      return {}
+    set_value: (args, env) => {
+      evaluate(args[1], env)
+      return evaluate(args[0], env)
     },
-    get_value: () => 1,
-    get_element_by_id: () => {
-      return {}
+    get_value: (args, env) => {
+      return evaluate(args[0], env).value
     },
-    set_text_content: () => {
-      return {}
+    get_element_by_id: (args, env) => {
+      evaluate(args[0], env)
+      return document.createElement('div')
     },
-    set_style: () => {
-      return {}
+    set_text_content: (args, env) => {
+      const element = evaluate(args[0], env)
+      element.textContent = evaluate(args[1], env)
+      return element
+    },
+    set_style: (args, env) => {
+      const el = evaluate(args[0], env)
+      const styles = evaluate(args[1], env)
+      styles.forEach((value, key) => {
+        el.style[`${Inventory._dom_style_map.get(key) ?? key}`] = `${
+          Inventory._dom_style_map.get(value) ?? value
+        }`
+      })
+      return el
     },
     get_root: () => {
-      return {}
+      return document.createElement('div')
     },
     key_down: () => {
       return {}
@@ -130,6 +147,7 @@ const DomExtension: Extension = {
       if (args.length !== 2)
         throw new RangeError('Invalid number of arguments to dom_click')
 
+      evaluate(args[1], env)
       return evaluate(args[0], env)
     },
     mouse_down: () => {
@@ -139,13 +157,8 @@ const DomExtension: Extension = {
       return {}
     },
     canvas: () => {
-      return {
-        getContext: (
-          context: '2d' | 'webgl' | 'webgl2' | 'webgpu' | 'bitmaprenderer'
-        ) => {
-          return { fillRect: () => {}, clearRect: () => {}, fillStyle: '' }
-        },
-      }
+      const canvas = document.createElement('canvas')
+      return canvas
     },
   },
 }

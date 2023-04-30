@@ -889,6 +889,8 @@ export const compileToJs = (AST: Expression) => {
     const next = raw[i + 1]
     if (!semiColumnEdgeCases.has(current + next)) program += current
   }
-  const top = vars.size ? `var ${[...vars].join(',')};` : ''
+  const top = `var log = (msg) => { console.log(msg); return msg }; ${
+    vars.size ? `var ${[...vars].join(',')};` : ''
+  }`
   return { top, program }
 }

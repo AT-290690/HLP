@@ -20,45 +20,42 @@ const droneIntel = (icon) => {
   setTimeout(() => (icon.style.visibility = 'hidden'), 500)
 }
 const extensions = {
-  log: (disable = 0) => {
-    if (disable) return () => {}
-    return (msg) => {
-      const current = consoleEditor.getValue()
-      consoleEditor.setValue(
-        `${current ? `${current}; ` : ''}${
-          msg !== undefined
-            ? typeof msg === 'string'
-              ? `"${msg}"`
-              : typeof msg === 'function'
-              ? '-> []'
-              : (msg.constructor.name === 'Set'
-                  ? JSON.stringify([...msg]).replaceAll('[', ':. [')
-                  : JSON.stringify(
-                      msg.constructor.name === 'Inventory'
-                        ? msg.items
-                        : msg.constructor.name === 'Map'
-                        ? Object.fromEntries(msg)
-                        : msg,
-                      null
-                    )
-                      .replaceAll('[', '.: [')
-                      .replaceAll('{', ':: [')
-                )
+  log: (msg) => {
+    const current = consoleEditor.getValue()
+    consoleEditor.setValue(
+      `${current ? `${current}; ` : ''}${
+        msg !== undefined
+          ? typeof msg === 'string'
+            ? `"${msg}"`
+            : typeof msg === 'function'
+            ? '-> []'
+            : (msg.constructor.name === 'Set'
+                ? JSON.stringify([...msg]).replaceAll('[', ':. [')
+                : JSON.stringify(
+                    msg.constructor.name === 'Inventory'
+                      ? msg.items
+                      : msg.constructor.name === 'Map'
+                      ? Object.fromEntries(msg)
+                      : msg,
+                    null
+                  )
+                    .replaceAll('[', '.: [')
+                    .replaceAll('{', ':: [')
+              )
 
-                  .replaceAll('}', ']')
-                  .replaceAll(',', '; ')
-                  .replaceAll('":', '"; ')
-                  .replaceAll('null', 'void')
-                  .replaceAll('undefined', 'void')
-            : 'void'
-        }`
-      )
-      // popup.setCursor(
-      //   popup.posToOffset({ ch: 0, line: popup.lineCount() - 1 }),
-      //   true
-      // )
-      return msg
-    }
+                .replaceAll('}', ']')
+                .replaceAll(',', '; ')
+                .replaceAll('":', '"; ')
+                .replaceAll('null', 'void')
+                .replaceAll('undefined', 'void')
+          : 'void'
+      }`
+    )
+    // popup.setCursor(
+    //   popup.posToOffset({ ch: 0, line: popup.lineCount() - 1 }),
+    //   true
+    // )
+    return msg
   },
 }
 const execute = async (source) => {
@@ -181,16 +178,16 @@ const withCommand = (command) => {
         const selection = editor.getSelection().trim()
         if (selection) {
           const isEndingWithSemi = selection[selection.length - 1] === ';'
-          const out = `__debug_log[${
+          const out = `log[${
             isEndingWithSemi
               ? selection.substring(0, selection.length - 1)
               : selection
-          }; ""]${isEndingWithSemi ? ';' : ''}`
+          }]${isEndingWithSemi ? ';' : ''}`
           editor.replaceSelection(out)
 
-          execute(`:=[__debug_log; log[]]; ${editor.getValue().trim()}`)
+          execute(`${editor.getValue().trim()}`)
           editor.setValue(value)
-        } else execute(`:=[__debug_log; log[]]; __debug_log[:[${value}]]`)
+        } else execute(`log[:[${value}]]`)
       }
       break
     case cmds.exe:

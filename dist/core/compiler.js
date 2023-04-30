@@ -676,6 +676,6 @@ export const compileToJs = (AST) => {
         if (!semiColumnEdgeCases.has(current + next))
             program += current;
     }
-    const top = vars.size ? `var ${[...vars].join(',')};` : '';
+    const top = `var log = (msg) => { console.log(msg); return msg }; ${vars.size ? `var ${[...vars].join(',')};` : ''}`;
     return { top, program };
 };
