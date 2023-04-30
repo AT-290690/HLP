@@ -131,11 +131,15 @@ const DomExtension: Extension = {
     container: () => {
       return {}
     },
-    add_class: () => {
-      return {}
+    add_class: (args, env) => {
+      if (args.length !== 2)
+        throw new RangeError('Invalid number of arguments to dom_add_class')
+      return evaluate(args[0], env)
     },
-    clear: () => {
-      return {}
+    clear: (args, env) => {
+      if (args.length !== 1)
+        throw new RangeError('Invalid number of arguments to dom_add_class')
+      return evaluate(args[0], env)
     },
     add_to_box: () => {
       return {}
@@ -171,107 +175,107 @@ const CanvasExtension: Extension = {
         )
       return evaluate(args[0], env).getContext(evaluate(args[1], env))
     },
-    fill_style: () => {
-      return {}
+    fill_style: (args, env) => {
+      return evaluate(args[0], env)
     },
-    stroke_style: () => {
-      return {}
+    stroke_style: (args, env) => {
+      return evaluate(args[0], env)
     },
-    stroke: () => {
-      return {}
+    stroke: (args, env) => {
+      return evaluate(args[0], env)
     },
-    fill_rect: () => {
-      return {}
+    fill_rect: (args, env) => {
+      return evaluate(args[0], env)
     },
-    clear_rect: () => {
-      return {}
+    clear_rect: (args, env) => {
+      return evaluate(args[0], env)
     },
-    begin_path: () => {
-      return {}
+    begin_path: (args, env) => {
+      return evaluate(args[0], env)
     },
-    close_path: () => {
-      return {}
+    close_path: (args, env) => {
+      return evaluate(args[0], env)
     },
-    move_to: () => {
-      return {}
+    move_to: (args, env) => {
+      return evaluate(args[0], env)
     },
-    line_to: () => {
-      return {}
+    line_to: (args, env) => {
+      return evaluate(args[0], env)
     },
-    line_width: () => {
-      return {}
+    line_width: (args, env) => {
+      return evaluate(args[0], env)
     },
-    bezier_curve_to: () => {
-      return {}
+    bezier_curve_to: (args, env) => {
+      return evaluate(args[0], env)
     },
-    quadratic_curve_to: () => {
-      return {}
+    quadratic_curve_to: (args, env) => {
+      return evaluate(args[0], env)
     },
-    rect: () => {
-      return {}
+    rect: (args, env) => {
+      return evaluate(args[0], env)
     },
-    round_rect: () => {
-      return {}
+    round_rect: (args, env) => {
+      return evaluate(args[0], env)
     },
-    reset: () => {
-      return {}
+    reset: (args, env) => {
+      return evaluate(args[0], env)
     },
-    reset_trasform: () => {
-      return {}
+    reset_trasform: (args, env) => {
+      return evaluate(args[0], env)
     },
-    rotate: () => {
-      return {}
+    rotate: (args, env) => {
+      return evaluate(args[0], env)
     },
-    scale: () => {
-      return {}
+    scale: (args, env) => {
+      return evaluate(args[0], env)
     },
-    transform: () => {
-      return {}
+    transform: (args, env) => {
+      return evaluate(args[0], env)
     },
-    translate: () => {
-      return {}
+    translate: (args, env) => {
+      return evaluate(args[0], env)
     },
-    save: () => {
-      return {}
+    save: (args, env) => {
+      return evaluate(args[0], env)
     },
-    restore: () => {
-      return {}
+    restore: (args, env) => {
+      return evaluate(args[0], env)
     },
-    arc: () => {
-      return {}
+    arc: (args, env) => {
+      return evaluate(args[0], env)
     },
-    arc_to: () => {
-      return {}
+    arc_to: (args, env) => {
+      return evaluate(args[0], env)
     },
-    clip: () => {
-      return {}
+    clip: (args, env) => {
+      return evaluate(args[0], env)
     },
-    ellipse: () => {
-      return {}
+    ellipse: (args, env) => {
+      return evaluate(args[0], env)
     },
-    fill: () => {
-      return {}
+    fill: (args, env) => {
+      return evaluate(args[0], env)
     },
-    get_image_data: () => {
-      return {}
+    get_image_data: (args, env) => {
+      return evaluate(args[0], env)
     },
-    draw_image: () => {
-      return {}
+    draw_image: (args, env) => {
+      return evaluate(args[0], env)
     },
-    get_transform: () => {
-      return {}
+    get_transform: (args, env) => {
+      return evaluate(args[0], env)
     },
-    set_transform: () => {
-      return {}
+    set_transform: (args, env) => {
+      return evaluate(args[0], env)
     },
-    reset_transform: () => {
-      return {}
+    reset_transform: (args, env) => {
+      return evaluate(args[0], env)
     },
-    is_point_in_path: () => {
-      return {}
+    is_point_in_path: (args, env) => {
+      return evaluate(args[0], env)
     },
-    is_point_in_stroke: () => {
-      return {}
+    is_point_in_stroke: (args, env) => {
+      return evaluate(args[0], env)
     },
   },
 }

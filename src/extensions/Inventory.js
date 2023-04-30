@@ -1251,6 +1251,7 @@ export default class Inventory {
     ['m', 'margin'],
     ['p', 'padding'],
     ['b', 'border'],
+    ['bc', 'borderColor'],
     ['s1b', 'solid 1px black'],
     ['s2b', 'solid 2px black'],
     ['s1w', 'solid 1px white'],
@@ -1286,7 +1287,7 @@ export default class Inventory {
     return el
   }
 
-  static _dom_css_link = (href) => {
+  static _dom_css_link = (href = 'lib/hlp.css') => {
     const link = document.createElement('link')
     link.rel = 'stylesheet'
     link.href = href

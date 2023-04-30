@@ -1,6 +1,4 @@
 aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_set_text_content; attach; dom_append_to; style; dom_set_style; click; dom_click; get_root; dom_get_root; canvas; dom_canvas; get_context; canvas_get_context; fill_style; canvas_fill_style; fill_rect; canvas_fill_rect]; 
-dom_set_style [dom_get_body []; 
-	:: ["bg"; "#111"]]; 
 ' [x; y]; 
 := [N; 24; SIZE; 360; rec; 0; PLAY_ICON; "⏵"; PAUSE_ICON; "⏸"; ALIVE_COLOR; "#f12"; DEAD_COLOR; "#222"; CELL_SIZE; 
 	* [SIZE; 
@@ -84,7 +82,6 @@ dom_set_style [dom_get_body [];
 	get_root []]; 
 |> [element ["p"]; 
 	text ["Click on the canvas to draw cells"]; 
-	style [:: ["c"; "#fff"]]; 
 	attach [root]]; 
 ;; Drawing UI
 := [ctx; 

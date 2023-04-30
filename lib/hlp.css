@@ -1,0 +1,31 @@
+body {
+  color: #fff;
+  background-color: #000;
+}
+p,
+span,
+i {
+  color: #fff;
+}
+canvas,
+button,
+input,
+textarea {
+  background-color: #000;
+  color: #fff;
+  border: 1px solid white;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  color: black;
+  background: white;
+}
+button {
+  border-color: white;
+  background: black;
+  color: white;
+}
