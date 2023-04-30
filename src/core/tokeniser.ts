@@ -268,6 +268,9 @@ const tokens: Record<string, Interpration> = {
     const argNames = args.slice(0, args.length - 1).map((expr) => {
       if (expr.type !== 'word')
         throw new TypeError('Argument names of -> [] must be words')
+      if (expr.name in tokens)
+        throw new SyntaxError(`${expr.name} is a reserved word`)
+
       return expr.name
     })
     const body = args[args.length - 1]

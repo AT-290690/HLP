@@ -1,0 +1,42 @@
+;; dom_load_milligram [1; 4; 1]; 
+dom_load_bulma [0; 9; 4]; 
+aliases= [element; dom_create_element; value; dom_get_value; set; dom_set_attribute; get; dom_get_attribute; class; dom_add_class; attribute; dom_set_attributes; style; dom_set_style; text; dom_set_text_content; attach; dom_append_to; detach; dom_detach; insert; dom_insert; clear; dom_clear; add; dom_add_to_box; box; dom_box; click; dom_click; mouse_down; dom_mouse_down; mouse_up; dom_mouse_up; key_down; dom_key_down; key_up; dom_key_up; get_root; dom_get_root]; 
+|> [get_root []; 
+	insert [|> [element ["div"]; 
+			class ["section"]; 
+			class ["media"]; 
+			insert [|> [:= [inp; 
+						|> [element ["ip"]; 
+							class ["input"]]]]; 
+				|> [element ["bt"]; 
+					text ["+"]; 
+					class ["button"]; 
+					class ["is-primary"]; 
+					click [-> [text [ans; 
+								max_sub_array_sum [|> [value [inp]; 
+										.:from_string [" "]; 
+										.:map>> [-> [x; 
+												` [x]]]]]]]]]]]; 
+		|> [element ["div"]; 
+			class ["media"]; 
+			insert [:= [ans; 
+					|> [element ["p"]; 
+						class ["m-2"]]]]]]]; 
+:= [max_sub_array_sum; 
+	-> [arr; 
+:= [loop; 
+			-> [i; nums; maxGlobal; maxSoFar; 
+				? [< [i; 
+						.:length [nums]]; 
+					: [= [maxGlobal; 
+							math_max [maxGlobal; 
+								= [maxSoFar; 
+									math_max [0; 
+										+ [maxSoFar; 
+											.:. [nums; i]]]]]]; 
+						loop [+= [i]; nums; maxGlobal; maxSoFar]]; maxGlobal]]] [0; arr; 
+			* [math_INFINITY; -1]; 
+			* [math_INFINITY; -1]]]]; 
+;; 1 -2 10 -5 12 3 -2 3 -199 10
+
+;; max_sub_array_sum [.: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]]
