@@ -493,7 +493,7 @@ const compile: Compiler = (tree, locals) => {
         const [first, second, ...rest] = treeArgs.map((item) =>
           compile(item, locals)
         )
-        return `${first}.addAt(${second}, ...${rest});`
+        return `${first}.addAt(${second}, ${rest});`
       }
       case '.:remove_from':
         return `${compile(treeArgs[0], locals)}.removeFrom(${compile(

@@ -900,8 +900,14 @@ const tokens: Record<string, Interpration> = {
       throw new TypeError('First argument of .: add_at must be an .: []')
     const index = evaluate(second, env)
     if (!Number.isInteger(index))
-      throw new TypeError('Second argument of .: add_at [] must be a number')
-    else if (!array.isInBounds(index))
+      throw new TypeError(
+        'Second argument of .: add_at [] must be integer number'
+      )
+    if (index < 0)
+      throw new RangeError(
+        'Second argument of .: add_at [] must be a positive integer'
+      )
+    if (index > array.length)
       throw new RangeError(
         'Second argument of .: add_at [] must be withing the bounds of .: []'
       )
@@ -918,9 +924,13 @@ const tokens: Record<string, Interpration> = {
     const index = evaluate(args[1], env)
     if (!Number.isInteger(index))
       throw new TypeError(
-        'Second argument of .: remove_from [] must be a number'
+        'Second argument of .: remove_from [] must be integer number'
       )
-    else if (!array.isInBounds(index))
+    if (index < 0)
+      throw new RangeError(
+        'Second argument of .: remove_from [] must be a positive integer'
+      )
+    if (index > array.length)
       throw new RangeError(
         'Second argument of .: remove_from [] must be withing the bounds of .: []'
       )

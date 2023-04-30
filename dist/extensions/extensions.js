@@ -26,17 +26,32 @@ const DomExtension = {
         div: () => {
             return {};
         },
-        set_attribute: () => {
-            return {};
+        set_attributes: (args, env) => {
+            if (args.length < 2)
+                throw new RangeError('Invalid number of arguments to dom_set_attributes');
+            return evaluate(args[0], env);
         },
-        set_attributes: () => {
-            return {};
+        set_attribute: (args, env) => {
+            if (args.length !== 3)
+                throw new RangeError('Invalid number of arguments to dom_set_attribute');
+            return evaluate(args[0], env);
         },
-        get_attribute: () => {
-            return {};
+        get_attribute: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to dom_get_attribute');
+            return evaluate(args[0], env).getAttribute(evaluate(args[1], env));
         },
-        create_element: () => {
-            return {};
+        create_element: (args, env) => {
+            if (args.length !== 1)
+                throw new RangeError('Invalid number of arguments to dom_create_element');
+            // const type = evaluate(args[0], env)
+            return {
+                getAttribute: () => 1,
+                setAttribute: () => { },
+                value: '',
+                style: {},
+                addEventListener: () => { },
+            };
         },
         remove: () => {
             return {};
@@ -47,8 +62,10 @@ const DomExtension = {
         insert: () => {
             return {};
         },
-        append_to: () => {
-            return {};
+        append_to: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to dom_append_to');
+            return evaluate(args[0], env);
         },
         get_body: () => {
             return {};
@@ -99,8 +116,10 @@ const DomExtension = {
         box: () => {
             return {};
         },
-        click: () => {
-            return {};
+        click: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to dom_click');
+            return evaluate(args[0], env);
         },
         mouse_down: () => {
             return {};
@@ -109,14 +128,20 @@ const DomExtension = {
             return {};
         },
         canvas: () => {
-            return {};
+            return {
+                getContext: (context) => {
+                    return { fillRect: () => { }, clearRect: () => { }, fillStyle: '' };
+                },
+            };
         },
     },
 };
 const CanvasExtension = {
     canvas_: {
-        get_context: () => {
-            return {};
+        get_context: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to canvas_get_context');
+            return evaluate(args[0], env).getContext(evaluate(args[1], env));
         },
         fill_style: () => {
             return {};

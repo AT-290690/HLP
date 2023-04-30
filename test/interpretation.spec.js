@@ -364,6 +364,15 @@ describe('interpretation should work as expected', () => {
       ['x', 'y', 'z']
     )
     deepStrictEqual(
+      runFromInterpreted(`
+    |> [:= [arr; .: [1; 2; 3]]; 
+    .: add_at [.: length [arr]; 6; 6; 6; 6];
+    .: add_at [.: length [arr]; 7; 7];
+    .: add_at [.: length [arr]; 8]]
+    `).items,
+      [1, 2, 3, 6, 6, 6, 6, 7, 7, 8]
+    )
+    deepStrictEqual(
       runFromInterpreted(`|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
       .:add_at [2; "x"; "y"; "z"];

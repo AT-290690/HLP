@@ -312,6 +312,11 @@ describe('compilation should work as expected', () => {
       .:remove_from [0; 4];
       .:remove_from [3; 4]
     ]`,
+      `|> [:= [arr; .: [1; 2; 3]]; 
+    .: add_at [.: length [arr]; 6; 6; 6; 6];
+    .: add_at [.: length [arr]; 7; 7];
+    .: add_at [.: length [arr]; 8]]
+    `,
       `|> [
       .: [1; 2; 3; 4; 5; 6; 7; 8];
       .:add_at [2; "x"; "y"; "z"];

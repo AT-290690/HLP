@@ -821,8 +821,10 @@ const tokens = {
             throw new TypeError('First argument of .: add_at must be an .: []');
         const index = evaluate(second, env);
         if (!Number.isInteger(index))
-            throw new TypeError('Second argument of .: add_at [] must be a number');
-        else if (!array.isInBounds(index))
+            throw new TypeError('Second argument of .: add_at [] must be integer number');
+        if (index < 0)
+            throw new RangeError('Second argument of .: add_at [] must be a positive integer');
+        if (index > array.length)
             throw new RangeError('Second argument of .: add_at [] must be withing the bounds of .: []');
         return array.addAt(index, ...rest.map((item) => evaluate(item, env)));
     },
@@ -834,8 +836,10 @@ const tokens = {
             throw new TypeError('First argument of .: remove_from [] must be an .: []');
         const index = evaluate(args[1], env);
         if (!Number.isInteger(index))
-            throw new TypeError('Second argument of .: remove_from [] must be a number');
-        else if (!array.isInBounds(index))
+            throw new TypeError('Second argument of .: remove_from [] must be integer number');
+        if (index < 0)
+            throw new RangeError('Second argument of .: remove_from [] must be a positive integer');
+        if (index > array.length)
             throw new RangeError('Second argument of .: remove_from [] must be withing the bounds of .: []');
         const amount = evaluate(args[2], env);
         if (!Number.isInteger(amount) || amount < 0)
