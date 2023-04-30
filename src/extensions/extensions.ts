@@ -30,7 +30,7 @@ const UnitsExtension: Extension = {
 const DomExtension: Extension = {
   dom_: {
     div: () => {
-      return {}
+      return document.createElement('div')
     },
     set_attributes: (args, env) => {
       if (args.length < 2)
@@ -128,7 +128,7 @@ const DomExtension: Extension = {
     load_milligram: () => {
       return {}
     },
-    container: () => {
+    on_change: () => {
       return {}
     },
     add_class: (args, env) => {

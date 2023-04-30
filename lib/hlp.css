@@ -10,6 +10,8 @@ i {
 canvas,
 button,
 input,
+select,
+option,
 textarea {
   background-color: #000;
   color: #fff;
@@ -28,4 +30,39 @@ button {
   border-color: white;
   background: black;
   color: white;
+}
+
+.is-primary {
+  border-color: rgb(250, 74, 124);
+  background: black;
+  color: rgb(250, 74, 124);
+}
+
+.is-primary:hover {
+  border-color: rgb(250, 74, 124);
+  background: rgb(250, 74, 124);
+  color: black;
+}
+
+.is-secondary {
+  border-color: rgb(56, 200, 240);
+  background: black;
+  color: rgb(56, 200, 240);
+}
+
+.is-secondary:hover {
+  border-color: rgb(56, 200, 240);
+  background: rgb(56, 200, 240);
+  color: black;
+}
+.is-thirdly {
+  border-color: rgb(130, 130, 130);
+  background: black;
+  color: rgb(130, 130, 130);
+}
+
+.is-thirdly:hover {
+  border-color: rgb(130, 130, 130);
+  background: rgb(130, 130, 130);
+  color: black;
 }

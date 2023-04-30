@@ -1130,7 +1130,7 @@ export default class Inventory {
     }
   }
   static _cast = (e) =>
-    'string' == typeof e || void 0 == e ? Number(e) : e.toString()
+    'string' == typeof e || void 0 == e ? Number(e) : Number(e).toString()
   static _fill = (e) =>
     Inventory.from(
       Array.from({ length: e })
@@ -1186,11 +1186,7 @@ export default class Inventory {
   static _call = (e, t) => t(e)
   static _dom_get_element_by_id = (id) => document.getElementById(id)
   static _dom_div = () => document.createElement('div')
-  static _dom_container = (...elements) => {
-    const container = document.createElement('div')
-    for (const el of elements) container.appendChild(el)
-    return container
-  }
+
   static _dom_remove_from_container = (container, ...elements) => {
     for (const el of elements) container.removeChild(el)
     return container
@@ -1250,6 +1246,14 @@ export default class Inventory {
     ['ft-c', 'fit-content'],
     ['m', 'margin'],
     ['p', 'padding'],
+    ['m-t', 'margin-top'],
+    ['p-t', 'padding-top'],
+    ['m-b', 'margin-bottom'],
+    ['p-b', 'padding-bottom'],
+    ['m-l', 'margin-left'],
+    ['p-l', 'padding-left'],
+    ['m-r', 'margin-right'],
+    ['p-r', 'padding-right'],
     ['b', 'border'],
     ['bc', 'borderColor'],
     ['s1b', 'solid 1px black'],
@@ -1264,9 +1268,14 @@ export default class Inventory {
     ['l', 'left'],
     ['r', 'right'],
     ['x', 'center'],
+    ['ds', 'display'],
+    ['fx', 'flex'],
+    ['gr', 'grid'],
   ])
   static _dom_elements_map = new Map([
     ['d', 'div'],
+    ['sel', 'select'],
+    ['opt', 'option'],
     ['bt', 'button'],
     ['ar', 'article'],
     ['sc', 'section'],
@@ -1329,10 +1338,15 @@ export default class Inventory {
   static _dom_class_map = new Map([
     ['bt', 'button'],
     ['ip', 'input'],
+    ['cm', 'is-common'],
     ['pr', 'is-primary'],
+    ['se', 'is-secondary'],
+    ['ti', 'is-thirdly'],
   ])
   static _dom_add_class = (element, ...classlist) => {
-    classlist.forEach((cls) => element.classList.add(cls))
+    classlist.forEach((cls) =>
+      element.classList.add(Inventory._dom_class_map.get(cls) ?? cls)
+    )
     return element
   }
   static _dom_get_body = () => {
@@ -1353,6 +1367,28 @@ export default class Inventory {
   }
   static _dom_click = (el, callback) => {
     el.addEventListener('click', (e) =>
+      callback(
+        new Map([
+          ['el', e.target],
+          ['key', e.key],
+          ['code', e.code],
+          ['value', e.value],
+          ['text', e.textContent],
+          ['x', e.x],
+          ['y', e.y],
+          ['ox', e.offsetX],
+          ['oy', e.offsetY],
+          ['cx', e.clientX],
+          ['cy', e.clientY],
+          ['px', e.pageX],
+          ['py', e.pageY],
+        ])
+      )
+    )
+    return el
+  }
+  static _dom_on_change = (el, callback) => {
+    el.addEventListener('change', (e) =>
       callback(
         new Map([
           ['el', e.target],

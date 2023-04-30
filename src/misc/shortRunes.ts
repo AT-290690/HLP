@@ -71,7 +71,7 @@ export const runes = [
   [symbol(), 'dom_set_value'],
   [symbol(), 'dom_get_value'],
   [symbol(), 'dom_set_style'],
-  [symbol(), 'dom_container'],
+  [symbol(), 'dom_on_change'],
   [symbol(), 'dom_add_class'],
   [symbol(), 'units_percent'],
   [symbol(), 'canvas_stroke'],

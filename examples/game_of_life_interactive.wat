@@ -1,15 +1,22 @@
 aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_set_text_content; attach; dom_append_to; style; dom_set_style; click; dom_click; get_root; dom_get_root; canvas; dom_canvas; get_context; canvas_get_context; fill_style; canvas_fill_style; fill_rect; canvas_fill_rect]; 
 ' [x; y]; 
-:= [N; 24; SIZE; 360; rec; 0; PLAY_ICON; "⏵"; PAUSE_ICON; "⏸"; ALIVE_COLOR; "#f12"; DEAD_COLOR; "#222"; CELL_SIZE; 
-	* [SIZE; 
-		/ [N]]; r; N; h; 
-	* [N; -1]; bounds; 
-	* [N; N]; init; 
-	-> [N; 
+:= [N; 24; 
+	SIZE; 360; 
+	rec; 0; 
+	PLAY_ICON; "⏵"; 
+	PAUSE_ICON; "⏸"; 
+	ALIVE_COLOR; "#f12"; 
+	DEAD_COLOR; "#222"; 
+	CELL_SIZE; * [SIZE; 
+		/ [N]]; 
+	r; N; 
+	h; * [N; -1]; 
+	bounds; * [N; N]; 
+	init; -> [N; 
 		|> [.:... [N]; 
-			.:map>> [-> [0]]]]; cells; 
-	init [bounds]; next; 
-	init [bounds]; 
+			.:map>> [-> [0]]]]; 
+	cells; init [bounds]; 
+	next; init [bounds]; 
 	;; Moore neighborhood map
  directions; 
 	.: [:: [x; 0; y; 1]; 
@@ -19,19 +26,17 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 		:: [x; 1; y; -1]; 
 		:: [x; -1; y; -1]; 
 		:: [x; 1; y; 1]; 
-		:: [x; -1; y; 1]]; 
-	;; Single dimension iteration
- iterate_cells; 
-	-> [cells; callback; 
+		:: [x; -1; y; 1]]; ;; Single dimension iteration
+ 
+	iterate_cells; -> [cells; callback; 
 		: [:= [Y; -1]; 
 			>> [cells; 
 				-> [cell; i; 
 					: [= [Y; 
 							? [% [i; N]; Y; 
 								+= [Y]]]; 
-						:= [X; 
-							% [i; N]; cell; 
-							get_cell [cells; X; Y]]; 
+						:= [X; % [i; N]; 
+	cell; get_cell [cells; X; Y]]; 
 						callback [cell; X; Y]]]]]]; 
 	;; getters and setters
  get_cell; 
@@ -42,10 +47,9 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 	-> [board; X; Y; val; 
 		.:.= [board; 
 			% [+ [X; 
-					* [N; Y]]; bounds]; val]]; 
-	;; Sum neighborhood
- adjacent; 
-	-> [X; Y; 
+					* [N; Y]]; bounds]; val]]; ;; Sum neighborhood
+ 
+	adjacent; -> [X; Y; 
 		: [:= [sum; 0]; 
 			>> [directions; 
 				-> [dir; 
@@ -54,8 +58,8 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 								+ [X; 
 									::. [dir; x]]; 
 								+ [Y; 
-									::. [dir; y]]]]]]]; sum]]; render; 
-	-> [board; 
+									::. [dir; y]]]]]]]; sum]]; 
+	render; -> [board; 
 		iterate_cells [board; 
 			-> [is_alive; X; Y; 
 				: [|> [ctx; 
@@ -66,8 +70,7 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
  update_state; 
 	-> [iterate_cells [cells; 
 			-> [is_alive; X; Y; 
-				: [:= [neighbors; 
-						adjacent [X; Y]]; 
+				: [:= [neighbors; adjacent [X; Y]]; 
 					? [&& [is_alive; 
 							< [neighbors; 2]]; 
 						set_cell [next; X; Y; 0]; 
@@ -78,49 +81,45 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 									== [neighbors; 3]]; 
 								set_cell [next; X; Y; 1]; 
 								set_cell [next; X; Y; is_alive]]]]]]]]]; 
-:= [root; 
-	get_root []]; 
+:= [root; get_root []]; 
 |> [element ["p"]; 
 	text ["Click on the canvas to draw cells"]; 
 	attach [root]]; 
 ;; Drawing UI
-:= [ctx; 
-	|> [canvas []; 
+ 
+:= [ctx; |> [canvas []; 
 		attach [root]; 
 		attribute [:: ["w"; SIZE; "h"; SIZE]]; 
 		click [-> [e; 
-				: [:= [X; 
-						math_floor [* [::. [e; "ox"]; 
+				: [:= [X; math_floor [* [::. [e; "ox"]; 
 								/ [CELL_SIZE]]]]; 
-					:= [Y; 
-						math_floor [* [::. [e; "oy"]; 
+					:= [Y; math_floor [* [::. [e; "oy"]; 
 								/ [CELL_SIZE]]]]; 
 					= [rec; 0]; 
 					text [control; PLAY_ICON]; 
-					:= [is_alive; 
-						get_cell [cells; X; Y]]; 
+					:= [is_alive; get_cell [cells; X; Y]]; 
 					set_cell [cells; X; Y; 
 						? [is_alive; 0; 1]]; 
 					render [cells]]]]; 
 		get_context ["2d"]]]; 
 ;; Canvas
+ 
 |> [ctx; 
 	fill_style [DEAD_COLOR]; 
 	fill_rect [0; 0; SIZE; SIZE]]; 
 ;; Animation function
-:= [step; 
-	-> [: [update_state []; 
+ 
+:= [step; -> [: [update_state []; 
 			render [next]; 
 			= [cells; next]; 
 			= [next; 
 				init [bounds]]]]]; 
-:= [play; 
-	-> [time_set_timeout [-> [: [? [rec; 
+:= [play; -> [time_set_timeout [-> [: [? [rec; 
 						: [step []; 
 							play []]]]]; 150]]]; 
 ;; Play / Pause UI
-|> [:= [control; 
-		element ["bt"]]; 
+ 
+|> [:= [control; element ["bt"]]; 
 	text [PLAY_ICON]; 
 	click [-> [: [text [control; 
 					? [= [rec; 

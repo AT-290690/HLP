@@ -1,6 +1,6 @@
 import { CodeMirror } from './hlp.editor.bundle.js'
 import { runFromInterpreted } from '../dist/misc/utils.js'
-import { encodeBase64 } from '../dist/misc/compression.js'
+import { decodeBase64, encodeBase64 } from '../dist/misc/compression.js'
 import { pretty } from '../dist/misc/prettier.js'
 
 const consoleElement = document.getElementById('console')
@@ -259,3 +259,10 @@ const registerSW = async () => {
 }
 
 window.addEventListener('load', registerSW)
+editor.setValue(
+  pretty(
+    decodeBase64(
+      decodeURIComponent(new URLSearchParams(location.search).get('l') ?? '')
+    )
+  ) || ''
+)

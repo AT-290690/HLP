@@ -99,7 +99,7 @@ const register = {
     dom_css_link: 'Inventory._dom_css_link',
     dom_load_bulma: 'Inventory._dom_load_bulma',
     dom_load_milligram: 'Inventory._dom_load_milligram',
-    dom_container: 'Inventory._dom_container',
+    dom_on_change: 'Inventory._dom_on_change',
     dom_add_class: 'Inventory._dom_add_class',
     dom_clear: 'Inventory._dom_clear',
     dom_add_to_box: 'Inventory._dom_add_to_box',
@@ -586,7 +586,7 @@ const compile = (tree, locals) => {
             case 'dom_load_bulma':
             case 'dom_load_milligram':
             case 'dom_append_to':
-            case 'dom_container':
+            case 'dom_on_change':
             case 'dom_canvas':
             case 'canvas_arc':
             case 'canvas_arc_to':

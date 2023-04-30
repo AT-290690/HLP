@@ -1,9 +1,24 @@
-:= [is_odd; -> [x; == [% [x; 2]; 0]]];
-:= [is_even; -> [x; % [x; 2]]];
-
-:= [arr; .: [1; 2; 3; 4; 5]];
-
-.: [
-    |> [arr; .:filter [is_odd]]; 
-    |> [arr; .:filter [is_even]];
-  ];
+:= [is_even; 
+	-> [x; 
+		== [% [x; 2]; 0]]]; 
+:= [is_odd; 
+	-> [x; 
+		% [x; 2]]]; 
+void: [:= [count; 0]; 
+	:= [test; 
+		-> [a; b; 
+			: [+= [count]; 
+				!throw [=== [a; b]; 
+					~ ["Case "; 
+						` [count]]]]]]; 
+	:= [arr; 
+		.: [1; 2; 3; 4; 5]]; 
+	test [|> [arr; 
+			.:filter [is_even]]; 
+		.: [2; 4]]; 
+	test [|> [arr; 
+			.:filter [is_odd]]; 
+		.: [1; 3; 5]]; 
+	test [is_even [2]; 1]; 
+	test [is_odd [2]; 0]; 
+	test [is_odd [3]; 1]];

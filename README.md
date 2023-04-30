@@ -21,16 +21,23 @@ here is a more complex example
 ```rs
 aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_set_text_content; attach; dom_append_to; style; dom_set_style; click; dom_click; get_root; dom_get_root; canvas; dom_canvas; get_context; canvas_get_context; fill_style; canvas_fill_style; fill_rect; canvas_fill_rect];
 ' [x; y];
-:= [N; 24; SIZE; 360; rec; 0; PLAY_ICON; "⏵"; PAUSE_ICON; "⏸"; ALIVE_COLOR; "#f12"; DEAD_COLOR; "#222"; CELL_SIZE;
-	* [SIZE;
-		/ [N]]; r; N; h;
-	* [N; -1]; bounds;
-	* [N; N]; init;
-	-> [N;
+:= [N; 24;
+	SIZE; 360;
+	rec; 0;
+	PLAY_ICON; "⏵";
+	PAUSE_ICON; "⏸";
+	ALIVE_COLOR; "#f12";
+	DEAD_COLOR; "#222";
+	CELL_SIZE; * [SIZE;
+		/ [N]];
+	r; N;
+	h; * [N; -1];
+	bounds; * [N; N];
+	init; -> [N;
 		|> [.:... [N];
-			.:map>> [-> [0]]]]; cells;
-	init [bounds]; next;
-	init [bounds];
+			.:map>> [-> [0]]]];
+	cells; init [bounds];
+	next; init [bounds];
 	;; Moore neighborhood map
  directions;
 	.: [:: [x; 0; y; 1];
@@ -40,19 +47,17 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 		:: [x; 1; y; -1];
 		:: [x; -1; y; -1];
 		:: [x; 1; y; 1];
-		:: [x; -1; y; 1]];
-	;; Single dimension iteration
- iterate_cells;
-	-> [cells; callback;
+		:: [x; -1; y; 1]]; ;; Single dimension iteration
+
+	iterate_cells; -> [cells; callback;
 		: [:= [Y; -1];
 			>> [cells;
 				-> [cell; i;
 					: [= [Y;
 							? [% [i; N]; Y;
 								+= [Y]]];
-						:= [X;
-							% [i; N]; cell;
-							get_cell [cells; X; Y]];
+						:= [X; % [i; N];
+	cell; get_cell [cells; X; Y]];
 						callback [cell; X; Y]]]]]];
 	;; getters and setters
  get_cell;
@@ -63,10 +68,9 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 	-> [board; X; Y; val;
 		.:.= [board;
 			% [+ [X;
-					* [N; Y]]; bounds]; val]];
-	;; Sum neighborhood
- adjacent;
-	-> [X; Y;
+					* [N; Y]]; bounds]; val]]; ;; Sum neighborhood
+
+	adjacent; -> [X; Y;
 		: [:= [sum; 0];
 			>> [directions;
 				-> [dir;
@@ -75,8 +79,8 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 								+ [X;
 									::. [dir; x]];
 								+ [Y;
-									::. [dir; y]]]]]]]; sum]]; render;
-	-> [board;
+									::. [dir; y]]]]]]]; sum]];
+	render; -> [board;
 		iterate_cells [board;
 			-> [is_alive; X; Y;
 				: [|> [ctx;
@@ -87,8 +91,7 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
  update_state;
 	-> [iterate_cells [cells;
 			-> [is_alive; X; Y;
-				: [:= [neighbors;
-						adjacent [X; Y]];
+				: [:= [neighbors; adjacent [X; Y]];
 					? [&& [is_alive;
 							< [neighbors; 2]];
 						set_cell [next; X; Y; 0];
@@ -99,49 +102,45 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 									== [neighbors; 3]];
 								set_cell [next; X; Y; 1];
 								set_cell [next; X; Y; is_alive]]]]]]]]];
-:= [root;
-	get_root []];
+:= [root; get_root []];
 |> [element ["p"];
 	text ["Click on the canvas to draw cells"];
 	attach [root]];
 ;; Drawing UI
-:= [ctx;
-	|> [canvas [];
+
+:= [ctx; |> [canvas [];
 		attach [root];
 		attribute [:: ["w"; SIZE; "h"; SIZE]];
 		click [-> [e;
-				: [:= [X;
-						math_floor [* [::. [e; "ox"];
+				: [:= [X; math_floor [* [::. [e; "ox"];
 								/ [CELL_SIZE]]]];
-					:= [Y;
-						math_floor [* [::. [e; "oy"];
+					:= [Y; math_floor [* [::. [e; "oy"];
 								/ [CELL_SIZE]]]];
 					= [rec; 0];
 					text [control; PLAY_ICON];
-					:= [is_alive;
-						get_cell [cells; X; Y]];
+					:= [is_alive; get_cell [cells; X; Y]];
 					set_cell [cells; X; Y;
 						? [is_alive; 0; 1]];
 					render [cells]]]];
 		get_context ["2d"]]];
 ;; Canvas
+
 |> [ctx;
 	fill_style [DEAD_COLOR];
 	fill_rect [0; 0; SIZE; SIZE]];
 ;; Animation function
-:= [step;
-	-> [: [update_state [];
+
+:= [step; -> [: [update_state [];
 			render [next];
 			= [cells; next];
 			= [next;
 				init [bounds]]]]];
-:= [play;
-	-> [time_set_timeout [-> [: [? [rec;
+:= [play; -> [time_set_timeout [-> [: [? [rec;
 						: [step [];
 							play []]]]]; 150]]];
 ;; Play / Pause UI
-|> [:= [control;
-		element ["bt"]];
+
+|> [:= [control; element ["bt"]];
 	text [PLAY_ICON];
 	click [-> [: [text [control;
 					? [= [rec;
@@ -153,7 +152,7 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 
 click to run it:
 
-[game_of_life.hlp](https://at-290690.github.io/hlp/?l=xIJbxJFbXTvGolsiYmciOyIjMTExIl1dOydbYTtiXTvGnVtjOzI0O2Q7MzYwO2U7MDtmOyLij7UiO2fECLgiO2g7IiNmMTIiO2k7IiMyMjIiO2o7KltkOy9bY11dO2vLDGw7YzttOypbYzstMV07bsUKY107bzvGnltjO8ajW8WgW8aAW2NdxBEwwrc0O3A7b1tuXTtxxgdyO8ahW8aiW2E7MDtiOzHlALVhOzE7YjswxwwtzA3EJcRpySbJDcUnzRvNGjFdXTtz5ACEcDt5Ozpbxp1besYun1twxBdBO0I7Ols9W3o7P1slW0LkAMR6O8aUW3rCtzPkATFDO8cWQTt0W3A7Qzt6XV07eVtBxArCtzY7dMRFRMQOO8aPW0Q7JVsrW0PlAQ7EKW7ERnXKI0U7xobSJV07RV1dO3bEJ8Ql5QCmRuUA%2B59bcsQWR8QUlFtG5QCDxDvGjltHO2FdXTsrW3rGDWLCtzc7Rl1dO3fGbnNbRMQJSMV3OlvGo1vDplvDnVtLOz9bSDtoO2ldXTsqW2o7Q8QHazt6XTtqO2vkANF4xDdz5gEdyT6dW0k7duQAnV1dOz9bxptbSDs8W0k7Ml1dO3VbccUmMMkaPltJOzPTGiFbSF07xpfPHjHKC0jCtznkAXRKO8SSW13lArBL5AJLw5ZbxYpbw5Nbw79bxLlbXTtK5gLkdyI7ZDsiaCI7ZMQtnltM5gCrQzvEq1sqW8aOW0w7Im94Il07L1tq5AKC5QH9zBx5xRxrxBw9W2XkAKnDiltPO2bFe0jrAfF1xgrlATww5QJUd1twxDciMmQi5QIq6gFgaV07MDswO2TmAJaj5AC1w5RbInAi5AC4xVpN5ACtOlt4W8RHcV07PVtwO8UH5QMcwrc1xCVOxCXDpVvFKz9bZTs6W01bXTtOW8QgMTUwyHa%2F5QEciuQA%2BU87xGlidOQD8%2BQAxMQ65QDRP1vkAN8hW2VdXTtnO2Zdxkc05QCQ)
+[game_of_life.hlp](https://at-290690.github.io/hlp?l=J1thO2JdO8adW2M7MjQ7ZDszNjA7ZTswO2Y7IuKPtSI7Z8QIuCI7aDsiI2YxMiI7aTsiIzIyMiI7ajsqW2Q7L1tjXV07aztjO2w7KltjOy0xXTttxQpjXTtuO8aeW2M7xqNbxaBbxoBbY13EETDCtzQ7bztuW21dO3DGB3E7xqFbxqJbYTswO2I7MV07xQwxO2I7MMcMLcwNxCXEackmyQ3FJ80bzRoxXV07cuQAhG87eDs6W8adW3nGLp9bb8QXejtBOzpbPVt5Oz9bJVtB5ADEeTvGlFt5wrcz5AElQjvHFno7c1tvO0I7eV1dO3hbesQKwrc2O3PERUPEDjvGj1tDOyVbK1tC5QEOxCltxEZ0yiNEO8aG0iVdO0RdXTt1xCfEJeUApkXlAPufW3HEFkbEFJRbReUAg8Q7xo5bRjthXV07K1t5xg1iwrc3O0VdXTt2xm5yW0PECUfFdzpbxqNbw6Zbw51bSjs%2FW0c7aDtpXV07KltqO0LGB3ldO2o7auQA0XfEN3LmAR3JPp1bSDt15ACdXV07P1vGm1tHOzxbSDsyXV07dFtwxSYwyRo%2BW0g7M9MaIVtHXTvGl88eMcoLR8K3OeQBdEk7xJJbXV3kAkbDv1vDilvDlFsicCJdOyJDbGljayBvbiB0aGUgY2FudmFzIHRvIGRyYXcgY2VsbHMiXTtJxDrkAOnEP5ZbxYpbw5PESMS5W8Qd5AIcInciO2Q7ImgiO2TELZ5bS%2BYA5UI7xKtbKlvGjltLOyJveCJdOy9bauQCvOUCN8wcecocPVtl5ADjw4pbTjtmxXtH6wIrdMYK5QF2MOUCjnZbb8Q3IjJkIuUCZOoBmmldOzA7MDtk5gCWnVtM5ACbOlt3W8Q1cF07PVtvO8UH5QNEwrc1xCVNxCXDpVvFKz9bZTs6W0xbXTtNW8QgMTUwyGS%2F5QEKiuQA50475AFRYnQiXV3lALLEOuUAvz9b5ADNIVtlXV07ZztmXcZHNMdAxDVkaXbkAWPEFQ%3D%3D)
 
 try the [editor](https://at-290690.github.io/hlp/editor)
 (type **spec** for language manual)

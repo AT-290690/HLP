@@ -18,7 +18,17 @@ const format = (tree: Expression[], level = 0, out = '') => {
           out += node.operator.args[0].name + ' ['
         else {
           level++
-          out += node.operator.name + ' [' + format(node.args, level) + ']; '
+          if (node.operator.name === ':=') {
+            out += node.operator.name + ' [' + format([node.args[0]], level)
+            node.args.slice(1).forEach((item, index) => {
+              out +=
+                ' ' +
+                (index % 2 === 0
+                  ? format([item], level)
+                  : '\n\t' + format([item], level))
+            })
+            out += ']; '
+          } else out += node.operator.name + ` [${format(node.args, level)}]; `
           level--
         }
       } else if (node.operator.type === 'apply') {

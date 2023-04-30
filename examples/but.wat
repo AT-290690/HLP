@@ -1,0 +1,76 @@
+dom_css_link []; 
+aliases= [element; dom_create_element; value; dom_get_value; set; dom_set_attribute; get; dom_get_attribute; class; dom_add_class; attribute; dom_set_attributes; style; dom_set_style; text; dom_set_text_content; attach; dom_append_to; detach; dom_detach; insert; dom_insert; clear; dom_clear; add; dom_add_to_box; box; dom_box; click; dom_click; mouse_down; dom_mouse_down; mouse_up; dom_mouse_up; key_down; dom_key_down; key_up; dom_key_up; get_root; dom_get_root; px; units_pixels; perc; units_percent; div; dom_div];
+aliases = [
+  canvas; dom_canvas;
+  get_context; canvas_get_context;
+  fill_style; canvas_fill_style;
+  stroke_style; canvas_stroke_style;
+  stroke; canvas_stroke;
+  fill_rect; canvas_fill_rect;
+  clear_rect; canvas_clear_rect;
+  begin_path; canvas_begin_path;
+  close_path; canvas_close_path;
+  move_to; canvas_move_to;
+  line_to; canvas_line_to;
+  line_width; canvas_line_width;
+  bezier_curve_to; canvas_bezier_curve_to;
+  quadratic_curve_to; canvas_quadratic_curve_to;
+  rect; canvas_rect;
+  round_rect; canvas_round_rect;
+  reset; canvas_reset;
+  reset_trasform; canvas_reset_trasform;
+  rotate; canvas_rotate;
+  scale; canvas_scale;
+  transform; canvas_transform;
+  translate; canvas_translate;
+  save; canvas_save;
+  restore; canvas_restore;
+  arc; canvas_arc;
+  arc_to; canvas_arc_to;
+  clip; canvas_clip;
+  ellipse; canvas_ellipse;
+  fill; canvas_fill;
+  get_image_data; canvas_get_image_data;
+  draw_image; canvas_draw_image;
+  get_transform; canvas_get_transform;
+  set_transform; canvas_set_transform;
+  reset_transform; canvas_reset_transform;
+  is_point_in_path; canvas_is_point_in_path;
+  is_point_in_stroke; canvas_is_point_in_stroke;
+];
+:= [padding; :: ["p"; 
+		px [5]]]; 
+|> [get_root []; 
+	style [:: ["m-t"; 
+			px [50]; "m-l"; 
+			perc [25]; "mx-w"; 
+			px [250]]]; 
+	insert [|> [div []; 
+			style [:: ["ds"; "gr"; "gap"; 
+					px [5]]]; 
+			insert [
+              |> [:= [can; canvas []]; class ["se"]];
+              |> [element ["bt"]; 
+					text ["common"]; 
+					style [padding]]; 
+				|> [element ["bt"]; 
+					text ["primary"]; 
+					class ["pr"]; 
+					style [padding]]; 
+				|> [element ["bt"]; 
+					text ["secondary"]; 
+					class ["se"]; 
+					style [padding]]; 
+				|> [element ["bt"]; 
+					text ["thirdly"]; 
+					class ["ti"]; 
+					style [padding]]]]]];
+
+
+:= [ctx; get_context [can; "2d"]];
+|> [ctx; 
+    fill_style ["#000"];
+fill_rect [0; 0; 500; 150];
+   ];
+
+   dom_on_change [dom_create_element ["select"]; -> []]
