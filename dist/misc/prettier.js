@@ -52,7 +52,7 @@ const format = (tree, level = 0, out = '') => {
             }
         }
     }
-    return out.replaceAll(';]', ']').trim();
+    return out.replace(/\;\]/g, ']').trim();
 };
 export const pretty = (raw) => {
     const { source, match } = extractComments(raw);
@@ -69,7 +69,7 @@ export const pretty = (raw) => {
                 acc.push(comments[i]);
             return acc;
         }, []);
-        return result.join('\n').replaceAll(/\n\s*\n/g, '\n');
+        return result.join('\n').replace(/\n\s*\n/g, '\n');
     }
     else
         return source;

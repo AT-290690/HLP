@@ -51,7 +51,7 @@ const format = (tree: Expression[], level = 0, out = '') => {
       }
     }
   }
-  return out.replaceAll(';]', ']').trim()
+  return out.replace(/\;\]/g, ']').trim()
 }
 
 export const pretty = (raw: string) => {
@@ -72,6 +72,6 @@ export const pretty = (raw: string) => {
         return acc
       }, [])
 
-    return result.join('\n').replaceAll(/\n\s*\n/g, '\n')
+    return result.join('\n').replace(/\n\s*\n/g, '\n')
   } else return source
 }

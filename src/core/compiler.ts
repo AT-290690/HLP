@@ -441,7 +441,7 @@ const compile: Compiler = (tree, locals) => {
             if (index % 2 === 0) {
               const key = item.replace(';', '')
               acc +=
-                key[0] === '"' ? `["${key.replaceAll('"', '')}",` : `[${key},`
+                key[0] === '"' ? `["${key.replace(/\"/g, '')}",` : `[${key},`
             } else acc += `${item}],`
             return acc
           }, '') +

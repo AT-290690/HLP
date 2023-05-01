@@ -279,6 +279,14 @@ describe('interpretation should work as expected', () => {
       14
     )
     strictEqual(
+      runFromInterpreted(`|> [.: [1; 2; 3; 4; 5];
+    .: filter [-> [x; == [% [x; 2]; 1]]];
+	.:map>> [-> [x; 
+			* [x; 10]]];
+   .: reduce >> [-> [acc; x; + [acc; x]]; 0]];`),
+      90
+    )
+    strictEqual(
       runFromInterpreted(`.:find>> [.: [1; 2; 3; 4]; -> [x;  == [x; 2]]]`),
       2
     )

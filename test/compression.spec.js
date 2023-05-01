@@ -351,6 +351,11 @@ describe('compression should work as expected', () => {
       .:filter [-> [x; i; a; % [x; 2]]]
     ]
     `,
+      `|> [.: [1; 2; 3; 4; 5];
+    .: filter [-> [x; == [% [x; 2]; 1]]];
+	.:map>> [-> [x; 
+			* [x; 10]]];
+   .: reduce >> [-> [acc; x; + [acc; x]]; 0]];`,
     ]
       .map((source) => {
         const COMP = compress(source)

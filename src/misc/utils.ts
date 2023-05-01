@@ -20,7 +20,7 @@ export const handleHangingSemi = (source: string) =>
 export const removeNoCode = (source: string) =>
   source.replace(/[ ]+(?=[^"]*(?:"[^"]*"[^"]*)*$)+|\n|\t|;;.+/g, '')
 export const extractComments = (source) => ({
-  source: source.replaceAll(/;;.+/g, `void:["#comment"];`),
+  source: source.replace(/;;.+/g, `void:["#comment"];`),
   match: source.match(/;;.*/g),
 })
 export const wrapInBody = (source: string) => `:[${source}]`

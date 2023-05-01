@@ -28,5 +28,5 @@ export const stringify = (tree, out = '') => {
                 out += stringify(node.args) + '];';
         }
     }
-    return out.replaceAll(';]', ']');
+    return out.replace(/\;\]/g, ']');
 };
