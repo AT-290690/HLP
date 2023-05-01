@@ -38,7 +38,8 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 			.:map>> [-> [0]]]];
 	cells; init [bounds];
 	next; init [bounds];
-	;; Moore neighborhood map
+
+;; Moore neighborhood map
  directions;
 	.: [:: [x; 0; y; 1];
 		:: [x; 1; y; 0];
@@ -47,7 +48,8 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 		:: [x; 1; y; -1];
 		:: [x; -1; y; -1];
 		:: [x; 1; y; 1];
-		:: [x; -1; y; 1]]; ;; Single dimension iteration
+		:: [x; -1; y; 1]];
+;; Single dimension iteration
 
 	iterate_cells; -> [cells; callback;
 		: [:= [Y; -1];
@@ -59,7 +61,8 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 						:= [X; % [i; N];
 	cell; get_cell [cells; X; Y]];
 						callback [cell; X; Y]]]]]];
-	;; getters and setters
+
+;; getters and setters
  get_cell;
 	-> [board; X; Y;
 		.:. [board;
@@ -68,7 +71,8 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 	-> [board; X; Y; val;
 		.:.= [board;
 			% [+ [X;
-					* [N; Y]]; bounds]; val]]; ;; Sum neighborhood
+					* [N; Y]]; bounds]; val]];
+;; Sum neighborhood
 
 	adjacent; -> [X; Y;
 		: [:= [sum; 0];
@@ -87,7 +91,8 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 						fill_style [? [is_alive; ALIVE_COLOR; DEAD_COLOR]];
 						fill_rect [* [CELL_SIZE; X];
 							* [CELL_SIZE; Y]; CELL_SIZE; CELL_SIZE]]]]]];
-	;; Game of Life logic
+
+;; Game of Life logic
  update_state;
 	-> [iterate_cells [cells;
 			-> [is_alive; X; Y;
@@ -106,6 +111,7 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 |> [element ["p"];
 	text ["Click on the canvas to draw cells"];
 	attach [root]];
+
 ;; Drawing UI
 
 := [ctx; |> [canvas [];
@@ -123,11 +129,13 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 						? [is_alive; 0; 1]];
 					render [cells]]]];
 		get_context ["2d"]]];
+
 ;; Canvas
 
 |> [ctx;
 	fill_style [DEAD_COLOR];
 	fill_rect [0; 0; SIZE; SIZE]];
+
 ;; Animation function
 
 := [step; -> [: [update_state [];
@@ -138,6 +146,7 @@ aliases= [element; dom_create_element; attribute; dom_set_attributes; text; dom_
 := [play; -> [time_set_timeout [-> [: [? [rec;
 						: [step [];
 							play []]]]]; 150]]];
+
 ;; Play / Pause UI
 
 |> [:= [control; element ["bt"]];

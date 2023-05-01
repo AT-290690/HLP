@@ -1,0 +1,15 @@
+:= [host; "https://gist.githubusercontent.com/AT-290690/"]; 
+:= [append_host; -> [gist; 
+		~ [host; gist]]]; 
+~* [append_host ["367e49666608f228f016d8c5733c919c/raw/6b169a2cfcc71ee4bd6ed89b3c9ad75f2a71ea60/closest.bit"]; 
+	append_host ["03ad0744926763cb565da54b94d49970/raw/dbf4743b6a832572f787a9cddbd4fbb090856c81/gol.wat"]; 
+	-> [crates; 
+		: [:= [closest; .:. [crates; 0]]; 
+			:= [gol; .:. [crates; 1]]; 
+			|> [.: [.: [1; 1]; 
+					.: [2; 2]; 
+					.: [3; 1]; 
+					.: [4; 5]]; 
+				closest [.: [3; 4]]; 
+				log []]; 
+			gol []]]];

@@ -64,14 +64,14 @@ export const pretty = (raw: string) => {
   )
   if (expr.type === 'apply') {
     const formatted = format(expr.args)
-    return formatted
+    const result = formatted
       .split('void: ["#comment"];')
       .reduce((acc, x, i) => {
-        acc += x.trim()
-          ? x + (comments[i] ?? '') + '\n'
-          : '\n' + (comments[i] ?? '')
+        if (x) acc.push(x)
+        if (comments[i]) acc.push(comments[i])
         return acc
-      }, '')
-      .trim()
+      }, [])
+
+    return result.join('\n').replaceAll(/\n\s*\n/g, '\n')
   } else return source
 }

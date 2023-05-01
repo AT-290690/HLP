@@ -1,0 +1,10 @@
+:= [host; "https://gist.githubusercontent.com/AT-290690/"]; 
+~* [~ [host; "367e49666608f228f016d8c5733c919c/raw/6b169a2cfcc71ee4bd6ed89b3c9ad75f2a71ea60/closest.bit"]; 
+	-> [crates; 
+		: [:= [closest; .:< [crates]]; 
+			|> [.: [.: [1; 1]; 
+					.: [2; 2]; 
+					.: [3; 1]; 
+					.: [4; 5]]; 
+				closest [.: [3; 4]]; 
+				log []]]]];

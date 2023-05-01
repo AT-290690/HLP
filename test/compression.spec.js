@@ -2,6 +2,7 @@ import { equal, strictEqual, deepEqual, deepStrictEqual } from 'assert'
 import { compress, decompress } from '../dist/misc/compression.js'
 import { runFromInterpreted, runFromCompiled } from '../dist/misc/utils.js'
 import { decodeBase64 } from '../dist/misc/compression.js'
+import { pretty } from '../dist/misc/prettier.js'
 describe('compression should work as expected', () => {
   it('definitions', () =>
     [
@@ -10,10 +11,10 @@ describe('compression should work as expected', () => {
       `:=[mult;->[x;y;z;*[x;y;z]]];:=[cap;->[B;ay;sdz;+[B;ay;sdz]]];:=[mult2;->[x2;y3;z3;*[x2;y3;z3]]];:=[cap2;->[B2;ay2;sdz2;+[B2;ay2;sdz2]]];:=[mult4;->[x4;y4;z4;*[x4;y4;z4]]];:=[cap4;->[B4;ay4;sdz4;+[B4;ay4;sdz4]]];:=[mult24;->[x24;y34;z34;*[x24;y34;z34]]];:=[cap24;->[B24;ay24;sdz24;+[B24;ay24;sdz24]]];:=[mult44;->[x44;y44;z44;*[x44;y44;z44]]];:=[cap44;->[B44;ay44;sdz44;+[B44;ay44;sdz44]]];:=[mult24;->[x2444;y3444;z3444;*[x2444;y3444;z3444]]];:=[cap24;->[B24444;ay24444;sdz24444;+[B24444;ay24444;sdz24444]]];:=[xmult;->[xx;xy;xz;*[xx;xy;xz]]];:=[xcap;->[xB;xay;xsdz;+[xB;xay;xsdz]]];:=[xmult2;->[xx2;xy3;xz3;*[xx2;xy3;xz3]]];:=[xcap2;->[xB2;xay2;xsdz2;+[xB2;xay2;xsdz2]]];:=[xmult4;->[xx4;xy4;xz4;*[xx4;xy4;xz4]]];:=[xcap4;->[xB4;xay4;xsdz4;+[xB4;xay4;xsdz4]]];:=[xmult24;->[xx24;xy34;xz34;*[xx24;xy34;xz34]]];:=[xcap24;->[xB24;xay24;xsdz24;+[xB24;xay24;xsdz24]]];:=[xmult44;->[xx44;xy44;xz44;*[xx44;xy44;xz44]]];:=[xcap44;->[xB44;xay44;xsdz44;+[xB44;xay44;xsdz44]]];:=[xmult24;->[xx2444;xy3444;xz3444;*[xx2444;xy3444;xz3444]]];:=[xcap242;->[xB24444;xay24444;xsdz24444;+[xB24444;xay24444;xsdz24444]]];mult[cap[2;4;xmult24[xmult44[3;2;11];cap24[3;4;5];xcap242[1;2;3]]];5;6]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -58,12 +59,44 @@ describe('compression should work as expected', () => {
         .: [3; 1]; 
         .: [4; 5]]; 
       closest [.: [3; 4]]];`,
+      `:= [distance; -> [x1; y1; x2; y2; 
+        math_sqrt [+ [math_pow2 [- [x2; x1]]; 
+            math_pow2 [- [y2; y1]]]]]; 
+        ;; to distance function
+      to_distance; -> [a; b; 
+        distance [.:< [a]; 
+          .:> [a]; 
+          .:< [b]; 
+          .:> [b]]]; 
+        ;; to distances function
+      to_distances; -> [points; target; 
+        .:map>> [points; 
+          -> [x; i; 
+            to_distance [x; target]]]];
+        ;; get the min distance function
+      get_min_dist; -> [distances; 
+        .:reduce>> [distances; 
+          -> [acc; x; 
+            math_min [acc; x]]; math_INFINITY]];
+        ;; sil
+      closest; -> [points; target; 
+        : [:= [min_dist; |> [points; 
+              to_distances [target]; 
+              get_min_dist []]]; 
+          .:find>> [points; 
+            -> [x; 
+              == [to_distance [x; target]; min_dist]]]]]]; 
+    |> [.: [.: [1; 1]; 
+        .: [2; 2]; 
+        .: [3; 1]; 
+        .: [4; 5]]; 
+      closest [.: [3; 4]]];`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -82,10 +115,10 @@ describe('compression should work as expected', () => {
      `,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -96,10 +129,10 @@ describe('compression should work as expected', () => {
   it('not throw but compile throw', () => {
     ;[`:= [x; 1]; !throw[> [x; 0]; "Smaller"]; x`]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -117,10 +150,10 @@ describe('compression should work as expected', () => {
               `,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -150,10 +183,10 @@ describe('compression should work as expected', () => {
      max_sub_array_sum [.: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]];`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -170,10 +203,10 @@ describe('compression should work as expected', () => {
           `,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         equal(runFromInterpreted(source), runFromCompiled(source))
@@ -203,10 +236,10 @@ describe('compression should work as expected', () => {
       `,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -214,10 +247,10 @@ describe('compression should work as expected', () => {
   it('length of string', () =>
     [`.:length [.:from_string ["01010"; ""]];`]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -246,10 +279,10 @@ describe('compression should work as expected', () => {
     ]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -265,10 +298,10 @@ describe('compression should work as expected', () => {
       .:map>> [.: [1.123; 3.14; 4.9; pi]; -> [x; floor[x]]];`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -285,10 +318,10 @@ describe('compression should work as expected', () => {
       ]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -320,10 +353,10 @@ describe('compression should work as expected', () => {
     `,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -344,10 +377,10 @@ describe('compression should work as expected', () => {
       .: find >> [-> [x; > [x; 10]]]];`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -358,10 +391,10 @@ describe('compression should work as expected', () => {
       `|> [.: [1; 2; 3; 4]; .:map>> [-> [x; i; a; + [i; * [x; 2]]]]; .:map>> [-> [x; i; a; + [i; * [x; 2]]]]]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -376,10 +409,10 @@ describe('compression should work as expected', () => {
       `:= [arr; .:[]]; *loop [3; -> [i; .:>=[arr; +[i; 1]]]]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -395,10 +428,10 @@ describe('compression should work as expected', () => {
      + [100]]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -411,10 +444,10 @@ describe('compression should work as expected', () => {
      + [100]]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -426,10 +459,10 @@ describe('compression should work as expected', () => {
       ]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -451,10 +484,10 @@ describe('compression should work as expected', () => {
     `,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -469,10 +502,10 @@ describe('compression should work as expected', () => {
       `.: [::->.: [:: ["x"; 10; "y"; 23; "z"; 4]]]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -489,10 +522,10 @@ describe('compression should work as expected', () => {
       `.:chunks [.: [3; 4; 2; 1; 2; 3]; 2];`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -524,10 +557,10 @@ describe('compression should work as expected', () => {
       `:= [obj; :: ["x"; 3; "y"; 4]]; .: [::.? [obj; "z"]; ::.? [obj; "x"]; ::size [obj]]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepEqual(
@@ -552,10 +585,10 @@ describe('compression should work as expected', () => {
     arr;`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -569,10 +602,10 @@ describe('compression should work as expected', () => {
     :: ["y"; 5; "m"; :: ["x"; :: ["x"; 10; "y"; d]; "y"; 23];]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -596,10 +629,10 @@ describe('compression should work as expected', () => {
       => [-> [x; * [x; x]]]];`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -642,10 +675,10 @@ describe('compression should work as expected', () => {
     `,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -666,10 +699,10 @@ describe('compression should work as expected', () => {
       `:=[x; 2]; *=[x; 3]; x`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -679,10 +712,10 @@ describe('compression should work as expected', () => {
       `:= [arr; .: [1; 2; 3; 4; 5; 6; 7; 8]]; .: [.:length [arr]; .: . [arr; -2]; .: . [arr; 3]; ? [.:is_in_bounds [arr; 4]; 1; 0]; ? [.:is_in_bounds [arr; 9]; 1; 0]]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepStrictEqual(
@@ -697,10 +730,10 @@ describe('compression should work as expected', () => {
         |> [db; :: . ["connect"]][];`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(
@@ -717,10 +750,10 @@ describe('compression should work as expected', () => {
       '` [` [> [1; 2]]]',
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -755,10 +788,10 @@ describe('compression should work as expected', () => {
       `,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -781,10 +814,10 @@ describe('compression should work as expected', () => {
         .: [is_even[.:<[out]]; is_odd[.:>[out]]]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepEqual(
@@ -804,10 +837,10 @@ describe('compression should work as expected', () => {
       `:= [x; : [1; 2; 3]]; x`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -849,10 +882,10 @@ describe('compression should work as expected', () => {
       `+ [.: length [.: [1;2;3;4]]; :: size [:: ["x";1; "y"; 2]]]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         strictEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -864,10 +897,10 @@ describe('compression should work as expected', () => {
       `.: quick_sort [.: [10; 23; 1; 4; 0; 1; 3]; -1]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -875,10 +908,10 @@ describe('compression should work as expected', () => {
   it('logic operations should work', () =>
     [`== [&& [|| [0; 0; 1]; 10]; 10]`]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -887,10 +920,10 @@ describe('compression should work as expected', () => {
   it(`/ should work`, () =>
     ['* [4; / [2]]', '* [12; / [6]]', '* [8; / [2]]', '* [4; / [4; 2]]']
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -907,10 +940,10 @@ describe('compression should work as expected', () => {
       `|> [:. [1; 2; 3; 4]; :. -> .: []]`,
     ]
       .map((source) => {
-        const comp = compress(source)
-        const decomp = decompress(comp)
-        strictEqual(decomp, decompress(compress(decomp)))
-        return decomp
+        const COMP = compress(source)
+        const DECOMP = decompress(COMP)
+        strictEqual(DECOMP, decompress(compress(pretty(DECOMP))))
+        return DECOMP
       })
       .forEach((source) =>
         deepEqual(runFromInterpreted(source), runFromCompiled(source))
@@ -927,21 +960,20 @@ describe('compression should work as expected', () => {
         decompress(compress(source))
       )
     ))
-
   it('compression should not change anymore', () => {
     ;[
       {
         raw: `aliases=[element;dom_create_element;attribute;dom_set_attributes;text;dom_set_text_content;attach;dom_append_to;style;dom_set_style;click;dom_click;get_root;dom_get_root;canvas;dom_canvas;get_context;canvas_get_context;fill_style;canvas_fill_style;fill_rect;canvas_fill_rect;];dom_set_style[dom_get_body[];::["bg";"#111"]];'[x;y];:=[N;24;SIZE;360;rec;0;PLAY_ICON;"⏵";PAUSE_ICON;"⏸";ALIVE_COLOR;"#f12";DEAD_COLOR;"#222";CELL_SIZE;*[SIZE;/[N]];r;N;h;*[N;-1];bounds;*[N;N];init;->[N;|>[.:...[N];.:map>>[->[0]]]];cells;init[bounds];next;init[bounds];directions;.:[::[x;0;y;1];::[x;1;y;0];::[x;-1;y;0];::[x;0;y;-1];::[x;1;y;-1];::[x;-1;y;-1];::[x;1;y;1];::[x;-1;y;1]];iterate_cells;->[cells;callback;:[:=[Y;-1];>>[cells;->[cell;i;:[=[Y;?[%[i;N];Y;+=[Y]]];:=[X;%[i;N];cell;get_cell[cells;X;Y]];callback[cell;X;Y]]]]]];get_cell;->[board;X;Y;.:.[board;%[+[X;*[N;Y]];bounds]]];set_cell;->[board;X;Y;val;.:.=[board;%[+[X;*[N;Y]];bounds];val]];adjacent;->[X;Y;:[:=[sum;0];>>[directions;->[dir;:[+=[sum;get_cell[cells;+[X;::.[dir;x]];+[Y;::.[dir;y]]]]]]];sum]];render;->[board;iterate_cells[board;->[is_alive;X;Y;:[|>[ctx;fill_style[?[is_alive;ALIVE_COLOR;DEAD_COLOR]];fill_rect[*[CELL_SIZE;X];*[CELL_SIZE;Y];CELL_SIZE;CELL_SIZE]]]]]];update_state;->[iterate_cells[cells;->[is_alive;X;Y;:[:=[neighbors;adjacent[X;Y]];?[&&[is_alive;<[neighbors;2]];set_cell[next;X;Y;0];?[&&[is_alive;>[neighbors;3]];set_cell[next;X;Y;0];?[&&[![is_alive];==[neighbors;3]];set_cell[next;X;Y;1];set_cell[next;X;Y;is_alive]]]]]]]]];:=[root;get_root[]];|>[element["p"];text["Click on the canvas to draw cells"];style[::["c";"#fff"]];attach[root]];:=[ctx;|>[canvas[];attach[root];attribute[::["w";SIZE;"h";SIZE]];click[->[e;:[:=[X;math_floor[*[::.[e;"ox"];/[CELL_SIZE]]]];:=[Y;math_floor[*[::.[e;"oy"];/[CELL_SIZE]]]];=[rec;0];text[control;PLAY_ICON];:=[is_alive;get_cell[cells;X;Y]];set_cell[cells;X;Y;?[is_alive;0;1]];render[cells]]]];get_context["2d"]]];|>[ctx;fill_style[DEAD_COLOR];fill_rect[0;0;SIZE;SIZE]];:=[step;->[:[update_state[];render[next];=[cells;next];=[next;init[bounds]]]]];:=[play;->[time_set_timeout[->[:[?[rec;:[step[];play[]]]]];150]]];|>[:=[control;element["bt"]];text[PLAY_ICON];click[->[:[text[control;?[=[rec;![rec]];PAUSE_ICON;PLAY_ICON]];play[]]]];attach[|>[element["div"];attach[root]]]];`,
-        comp: `dom_set_style[dom_get_body[];::["bg";"#111"]];'[a;b];:=[c;24;d;360;e;0;f;"⏵";g;"⏸";h;"#f12";i;"#222";j;*[d;/[c]];k;c;l;*[c;-1];m;*[c;c];n;->[c;|>[.:map>>[.:...[c];->[0]]]];o;n[m];p;n[m];q;.:[::[a;0;b;1];::[a;1;b;0];::[a;-1;b;0];::[a;0;b;-1];::[a;1;b;-1];::[a;-1;b;-1];::[a;1;b;1];::[a;-1;b;1]];r;->[o;x;:[:=[y;-1];>>[o;->[z;A;:[=[y;?[%[A;c];y;+=[y]]];:=[B;%[A;c];z;s[o;B;y]];x[z;B;y]]]]]];s;->[C;B;y;.:.[C;%[+[B;*[c;y]];m]]];t;->[C;B;y;D;.:.=[C;%[+[B;*[c;y]];m];D]];u;->[B;y;:[:=[E;0];>>[q;->[F;:[+=[E;s[o;+[B;::.[F;a]];+[y;::.[F;b]]]]]]];E]];v;->[C;r[C;->[G;B;y;:[|>[canvas_fill_rect[canvas_fill_style[J;?[G;h;i]];*[j;B];*[j;y];j;j]]]]]];w;->[r[o;->[G;B;y;:[:=[H;u[B;y]];?[&&[G;<[H;2]];t[p;B;y;0];?[&&[G;>[H;3]];t[p;B;y;0];?[&&[![G];==[H;3]];t[p;B;y;1];t[p;B;y;G]]]]]]]]];:=[I;dom_get_root[]];|>[dom_append_to[dom_set_style[dom_set_text_content[dom_create_element["p"];"Click on the canvas to draw cells"];::["c";"#fff"]];I]];:=[J;|>[canvas_get_context[dom_click[dom_set_attributes[dom_append_to[dom_canvas[];I];::["w";d;"h";d]];->[K;:[:=[B;math_floor[*[::.[K;"ox"];/[j]]]];:=[y;math_floor[*[::.[K;"oy"];/[j]]]];=[e;0];dom_set_text_content[N;f];:=[G;s[o;B;y]];t[o;B;y;?[G;0;1]];v[o]]]];"2d"]]];|>[canvas_fill_rect[canvas_fill_style[J;i];0;0;d;d]];:=[L;->[:[w[];v[p];=[o;p];=[p;n[m]]]]];:=[M;->[time_set_timeout[->[:[?[e;:[L[];M[]]]]];150]]];|>[dom_append_to[dom_click[dom_set_text_content[:=[N;dom_create_element["bt"]];f];->[:[dom_set_text_content[N;?[=[e;![e]];g;f]];M[]]]];|>[dom_append_to[dom_create_element["div"];I]]]];`,
+        COMP: `dom_set_style[dom_get_body[];::["bg";"#111"]];'[a;b];:=[c;24;d;360;e;0;f;"⏵";g;"⏸";h;"#f12";i;"#222";j;*[d;/[c]];k;c;l;*[c;-1];m;*[c;c];n;->[c;|>[.:map>>[.:...[c];->[0]]]];o;n[m];p;n[m];q;.:[::[a;0;b;1];::[a;1;b;0];::[a;-1;b;0];::[a;0;b;-1];::[a;1;b;-1];::[a;-1;b;-1];::[a;1;b;1];::[a;-1;b;1]];r;->[o;x;:[:=[y;-1];>>[o;->[z;A;:[=[y;?[%[A;c];y;+=[y]]];:=[B;%[A;c];z;s[o;B;y]];x[z;B;y]]]]]];s;->[C;B;y;.:.[C;%[+[B;*[c;y]];m]]];t;->[C;B;y;D;.:.=[C;%[+[B;*[c;y]];m];D]];u;->[B;y;:[:=[E;0];>>[q;->[F;:[+=[E;s[o;+[B;::.[F;a]];+[y;::.[F;b]]]]]]];E]];v;->[C;r[C;->[G;B;y;:[|>[canvas_fill_rect[canvas_fill_style[J;?[G;h;i]];*[j;B];*[j;y];j;j]]]]]];w;->[r[o;->[G;B;y;:[:=[H;u[B;y]];?[&&[G;<[H;2]];t[p;B;y;0];?[&&[G;>[H;3]];t[p;B;y;0];?[&&[![G];==[H;3]];t[p;B;y;1];t[p;B;y;G]]]]]]]]];:=[I;dom_get_root[]];|>[dom_append_to[dom_set_style[dom_set_text_content[dom_create_element["p"];"Click on the canvas to draw cells"];::["c";"#fff"]];I]];:=[J;|>[canvas_get_context[dom_click[dom_set_attributes[dom_append_to[dom_canvas[];I];::["w";d;"h";d]];->[K;:[:=[B;math_floor[*[::.[K;"ox"];/[j]]]];:=[y;math_floor[*[::.[K;"oy"];/[j]]]];=[e;0];dom_set_text_content[N;f];:=[G;s[o;B;y]];t[o;B;y;?[G;0;1]];v[o]]]];"2d"]]];|>[canvas_fill_rect[canvas_fill_style[J;i];0;0;d;d]];:=[L;->[:[w[];v[p];=[o;p];=[p;n[m]]]]];:=[M;->[time_set_timeout[->[:[?[e;:[L[];M[]]]]];150]]];|>[dom_append_to[dom_click[dom_set_text_content[:=[N;dom_create_element["bt"]];f];->[:[dom_set_text_content[N;?[=[e;![e]];g;f]];M[]]]];|>[dom_append_to[dom_create_element["div"];I]]]];`,
       },
-    ].forEach(({ raw, comp }) => strictEqual(decompress(compress(raw)), comp))
+    ].forEach(({ raw, COMP }) => strictEqual(decompress(compress(raw)), COMP))
     ;[
       {
-        comp: 'xIJbxJFbXTvGolsiYmciOyIjMTExIl1dOydbYTtiXTvGnVtjOzI0O2Q7MzYwO2U7MDtmOyLij7UiO2fECLgiO2g7IiNmMTIiO2k7IiMyMjIiO2o7KltkOy9bY11dO2s7YztsOypbYzstMV07bcUKY107bjvGnltjO8ajW8WgW8aAW2NdxBEwwrc0O287blttXTtwxgdxO8ahW8aiW2E7MDtiOzHlAKlhOzE7YjswxwwtzA3EJcRpySbJDcUnzRvNGjFdXTty5ACEbzt4Ozpbxp1becYun1tvxBd6O0E7Ols9W3k7P1slW0HkAMR5O8aUW3nCtzPkASVCO8cWejtzW287Qjt5XV07eFt6xArCtzY7c8RFQ8QOO8aPW0M7JVsrW0LlAQ7EKW3ERnTKI0Q7xobSJV07RF1dO3XEJ8Ql5QCmReUA%2B59bccQWRsQUlFtF5QCDxDvGjltGO2FdXTsrW3nGDWLCtzc7RV1dO3bGbnJbQ8QJR8V3OlvGo1vDplvDnVtKOz9bRztoO2ldXTsqW2o7QsYHeV07ajtq5ADRd8Q3cuYBHck%2BnVtIO3XkAJ1dXTs%2FW8abW0c7PFtIOzJdXTt0W3DFJjDJGj5bSDsz0xohW0ddO8aXzx4xygtHwrc55AF0STvEkltdXeQCRsO%2FW8SCW8OKW8OUWyJwIl07IkNsaWNrIG9uIHRoZSBjYW52YXMgdG8gZHJhdyBjZWxscyLmAvVj5AL0ZmZm5AL0ScRN5AD8xFKWW8WKW8OTxVu5W8QdxTB3IjtkOyJoIjtkxC2eW0vmAPhCO8SrWypbxo5bSzsib3giXTsvW2rkAs%2FlAkrMHHnKHD1bZeQA9sOKW047ZsV7R%2BsCPnTGCuUBiTDlAqF2W2%2FENyIyZCLlAnfqAa1pXTswOzA7ZOYAlp1bTOQAmzpbd1vENXBdOz1bbzvFB%2BUDV8K3NcQlTcQlw6VbxSs%2FW2U7OltMW107TVvEIDE1MMhkv%2BUBCorkAOdOO%2BQBYWJ05AEu5ACyxDrlAL8%2FW%2BQAzSFbZV1dO2c7Zl3GRzTHQMQ1ZGl2Il07ScQV',
+        COMP: 'xIJbxJFbXTvGolsiYmciOyIjMTExIl1dOydbYTtiXTvGnVtjOzI0O2Q7MzYwO2U7MDtmOyLij7UiO2fECLgiO2g7IiNmMTIiO2k7IiMyMjIiO2o7KltkOy9bY11dO2s7YztsOypbYzstMV07bcUKY107bjvGnltjO8ajW8WgW8aAW2NdxBEwwrc0O287blttXTtwxgdxO8ahW8aiW2E7MDtiOzHlAKlhOzE7YjswxwwtzA3EJcRpySbJDcUnzRvNGjFdXTty5ACEbzt4Ozpbxp1becYun1tvxBd6O0E7Ols9W3k7P1slW0HkAMR5O8aUW3nCtzPkASVCO8cWejtzW287Qjt5XV07eFt6xArCtzY7c8RFQ8QOO8aPW0M7JVsrW0LlAQ7EKW3ERnTKI0Q7xobSJV07RF1dO3XEJ8Ql5QCmReUA%2B59bccQWRsQUlFtF5QCDxDvGjltGO2FdXTsrW3nGDWLCtzc7RV1dO3bGbnJbQ8QJR8V3OlvGo1vDplvDnVtKOz9bRztoO2ldXTsqW2o7QsYHeV07ajtq5ADRd8Q3cuYBHck%2BnVtIO3XkAJ1dXTs%2FW8abW0c7PFtIOzJdXTt0W3DFJjDJGj5bSDsz0xohW0ddO8aXzx4xygtHwrc55AF0STvEkltdXeQCRsO%2FW8SCW8OKW8OUWyJwIl07IkNsaWNrIG9uIHRoZSBjYW52YXMgdG8gZHJhdyBjZWxscyLmAvVj5AL0ZmZm5AL0ScRN5AD8xFKWW8WKW8OTxVu5W8QdxTB3IjtkOyJoIjtkxC2eW0vmAPhCO8SrWypbxo5bSzsib3giXTsvW2rkAs%2FlAkrMHHnKHD1bZeQA9sOKW047ZsV7R%2BsCPnTGCuUBiTDlAqF2W2%2FENyIyZCLlAnfqAa1pXTswOzA7ZOYAlp1bTOQAmzpbd1vENXBdOz1bbzvFB%2BUDV8K3NcQlTcQlw6VbxSs%2FW2U7OltMW107TVvEIDE1MMhkv%2BUBCorkAOdOO%2BQBYWJ05AEu5ACyxDrlAL8%2FW%2BQAzSFbZV1dO2c7Zl3GRzTHQMQ1ZGl2Il07ScQV',
         raw: `dom_set_style[dom_get_body[];::["bg";"#111"]];'[a;b];:=[c;24;d;360;e;0;f;"⏵";g;"⏸";h;"#f12";i;"#222";j;*[d;/[c]];k;c;l;*[c;-1];m;*[c;c];n;->[c;|>[.:map>>[.:...[c];->[0]]]];o;n[m];p;n[m];q;.:[::[a;0;b;1];::[a;1;b;0];::[a;-1;b;0];::[a;0;b;-1];::[a;1;b;-1];::[a;-1;b;-1];::[a;1;b;1];::[a;-1;b;1]];r;->[o;x;:[:=[y;-1];>>[o;->[z;A;:[=[y;?[%[A;c];y;+=[y]]];:=[B;%[A;c];z;s[o;B;y]];x[z;B;y]]]]]];s;->[C;B;y;.:.[C;%[+[B;*[c;y]];m]]];t;->[C;B;y;D;.:.=[C;%[+[B;*[c;y]];m];D]];u;->[B;y;:[:=[E;0];>>[q;->[F;:[+=[E;s[o;+[B;::.[F;a]];+[y;::.[F;b]]]]]]];E]];v;->[C;r[C;->[G;B;y;:[|>[canvas_fill_rect[canvas_fill_style[J;?[G;h;i]];*[j;B];*[j;y];j;j]]]]]];w;->[r[o;->[G;B;y;:[:=[H;u[B;y]];?[&&[G;<[H;2]];t[p;B;y;0];?[&&[G;>[H;3]];t[p;B;y;0];?[&&[![G];==[H;3]];t[p;B;y;1];t[p;B;y;G]]]]]]]]];:=[I;dom_get_root[]];|>[dom_append_to[dom_set_style[dom_set_text_content[dom_create_element["p"];"Click on the canvas to draw cells"];::["c";"#fff"]];I]];:=[J;|>[canvas_get_context[dom_click[dom_set_attributes[dom_append_to[dom_canvas[];I];::["w";d;"h";d]];->[K;:[:=[B;math_floor[*[::.[K;"ox"];/[j]]]];:=[y;math_floor[*[::.[K;"oy"];/[j]]]];=[e;0];dom_set_text_content[N;f];:=[G;s[o;B;y]];t[o;B;y;?[G;0;1]];v[o]]]];"2d"]]];|>[canvas_fill_rect[canvas_fill_style[J;i];0;0;d;d]];:=[L;->[:[w[];v[p];=[o;p];=[p;n[m]]]]];:=[M;->[time_set_timeout[->[:[?[e;:[L[];M[]]]]];150]]];|>[dom_append_to[dom_click[dom_set_text_content[:=[N;dom_create_element["bt"]];f];->[:[dom_set_text_content[N;?[=[e;![e]];g;f]];M[]]]];|>[dom_append_to[dom_create_element["div"];I]]]];`,
       },
-    ].forEach(({ raw, comp }) =>
-      strictEqual(decodeBase64(decodeURIComponent(comp.trim())), raw)
+    ].forEach(({ raw, COMP }) =>
+      strictEqual(decodeBase64(decodeURIComponent(COMP.trim())), raw)
     )
   })
 })
