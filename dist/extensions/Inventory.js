@@ -1657,7 +1657,7 @@ export default class Inventory {
     return ctx
   }
   static _canvas_stroke = (ctx, path) => {
-    ctx.stroke(path)
+    path != undefined ? ctx.stroke (path) : ctx.stroke()
     return ctx
   }
   static _canvas_stroke_style = (ctx, color) => {
@@ -1672,6 +1672,7 @@ export default class Inventory {
     ctx.translate(x, y)
     return ctx
   }
+ 
   static _call = (e, t) => t(e)
   static _math_factorial = (num) => {
     let rval = 1
