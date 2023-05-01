@@ -28,17 +28,17 @@ const DomExtension = {
         },
         set_attributes: (args, env) => {
             if (args.length < 2)
-                throw new RangeError('Invalid number of arguments to dom_set_attributes');
+                throw new RangeError('Invalid number of arguments to dom_set_attributes [at least 2 required]');
             return evaluate(args[0], env);
         },
         set_attribute: (args, env) => {
             if (args.length !== 3)
-                throw new RangeError('Invalid number of arguments to dom_set_attribute');
+                throw new RangeError('Invalid number of arguments to dom_set_attribute [3 required]');
             return evaluate(args[0], env);
         },
         get_attribute: (args, env) => {
             if (args.length !== 2)
-                throw new RangeError('Invalid number of arguments to dom_get_attribute');
+                throw new RangeError('Invalid number of arguments to dom_get_attribute [2 required]');
             return evaluate(args[0], env).getAttribute(evaluate(args[1], env));
         },
         create_element: (args, env) => {
@@ -63,7 +63,7 @@ const DomExtension = {
         },
         append_to: (args, env) => {
             if (args.length !== 2)
-                throw new RangeError('Invalid number of arguments to dom_append_to');
+                throw new RangeError('Invalid number of arguments to dom_append_to [2 required]');
             evaluate(args[1], env);
             return evaluate(args[0], env);
         },
@@ -112,17 +112,20 @@ const DomExtension = {
         load_milligram: () => {
             return {};
         },
-        on_change: () => {
-            return {};
+        on_change: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to dom_on_change [2 required]');
+            evaluate(args[1], env);
+            return evaluate(args[0], env);
         },
         add_class: (args, env) => {
             if (args.length !== 2)
-                throw new RangeError('Invalid number of arguments to dom_add_class');
+                throw new RangeError('Invalid number of arguments to dom_add_class [2 required]');
             return evaluate(args[0], env);
         },
         clear: (args, env) => {
             if (args.length !== 1)
-                throw new RangeError('Invalid number of arguments to dom_add_class');
+                throw new RangeError('Invalid number of arguments to dom_add_class (1 required)');
             return evaluate(args[0], env);
         },
         add_to_box: () => {
@@ -133,15 +136,18 @@ const DomExtension = {
         },
         click: (args, env) => {
             if (args.length !== 2)
-                throw new RangeError('Invalid number of arguments to dom_click');
+                throw new RangeError('Invalid number of arguments to dom_click [2 required]');
             evaluate(args[1], env);
             return evaluate(args[0], env);
         },
-        mouse_down: () => {
-            return {};
+        mouse_down: (args, env) => {
+            return evaluate(args[0], env);
         },
-        mouse_up: () => {
-            return {};
+        mouse_up: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to dom_mouse_up [2 required]');
+            evaluate(args[1], env);
+            return evaluate(args[0], env);
         },
         canvas: () => {
             const canvas = document.createElement('canvas');
@@ -153,7 +159,7 @@ const CanvasExtension = {
     canvas_: {
         get_context: (args, env) => {
             if (args.length !== 2)
-                throw new RangeError('Invalid number of arguments to canvas_get_context');
+                throw new RangeError('Invalid number of arguments to canvas_get_context [2 required]');
             return evaluate(args[0], env).getContext(evaluate(args[1], env));
         },
         fill_style: (args, env) => {
@@ -313,7 +319,7 @@ const MathExtension = {
         },
         clamp: (args, env) => {
             if (args.length !== 3)
-                throw new RangeError('Invalid number of arguments to math_clamp');
+                throw new RangeError('Invalid number of arguments to math_clamp [3 required]');
             const num = evaluate(args[0], env);
             const min = evaluate(args[1], env);
             const max = evaluate(args[2], env);
@@ -392,42 +398,42 @@ const BitExtension = {
     bit_: {
         make_bit: (args, env) => {
             if (args.length !== 1)
-                throw new RangeError('Invalid number of arguments to bit_make_bit');
+                throw new RangeError('Invalid number of arguments to bit_make_bit [1 required]');
             return (evaluate(args[0], env) >>> 0).toString(2);
         },
         and: (args, env) => {
             if (args.length !== 2)
-                throw new RangeError('Invalid number of arguments to bit_and');
+                throw new RangeError('Invalid number of arguments to bit_and [2 required]');
             return evaluate(args[0], env) & evaluate(args[1], env);
         },
         not: (args, env) => {
             if (args.length !== 1)
-                throw new RangeError('Invalid number of arguments to bit_not');
+                throw new RangeError('Invalid number of arguments to bit_not [1 required]');
             return ~evaluate(args[0], env);
         },
         or: (args, env) => {
             if (args.length !== 2)
-                throw new RangeError('Invalid number of arguments to bit_or');
+                throw new RangeError('Invalid number of arguments to bit_or [2 required]');
             return evaluate(args[0], env) | evaluate(args[1], env);
         },
         xor: (args, env) => {
             if (args.length !== 2)
-                throw new RangeError('Invalid number of arguments to bit_xor');
+                throw new RangeError('Invalid number of arguments to bit_xor [2 required]');
             return evaluate(args[0], env) ^ evaluate(args[1], env);
         },
         left_shift: (args, env) => {
             if (args.length !== 2)
-                throw new RangeError('Invalid number of arguments to bit_left_shift');
+                throw new RangeError('Invalid number of arguments to bit_left_shift [2 required]');
             return evaluate(args[0], env) << evaluate(args[1], env);
         },
         right_shift: (args, env) => {
             if (args.length !== 2)
-                throw new RangeError('Invalid number of arguments to bit_right_shift');
+                throw new RangeError('Invalid number of arguments to bit_right_shift [2 required]');
             return evaluate(args[0], env) >> evaluate(args[1], env);
         },
         un_right_shift: (args, env) => {
             if (args.length !== 2)
-                throw new RangeError('Invalid number of arguments to bit_un_right_shift');
+                throw new RangeError('Invalid number of arguments to bit_un_right_shift [2 required]');
             return evaluate(args[0], env) >>> evaluate(args[1], env);
         },
     },

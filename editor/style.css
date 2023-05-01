@@ -258,9 +258,9 @@ body {
 }
 
 #toolbar {
-  display: grid;
+  display: flex;
   position: absolute;
   bottom: 20px;
-  right: 20px;
+  right: 15px;
   gap: 10px;
 }
