@@ -210,7 +210,7 @@ export const pruneTree = (
         node.args
           .reduce((acc, item, i) => {
             if (i % 2 === 0) acc.push([item])
-            else acc.at(-1).push(item)
+            else acc[acc.length - 1].push(item)
             return acc
           }, [] as Array<Array<Expression>>)
           .forEach(([left, right]) => {

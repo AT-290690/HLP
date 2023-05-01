@@ -187,7 +187,7 @@ export const pruneTree = (tree, memo = new Map()) => {
                     if (i % 2 === 0)
                         acc.push([item]);
                     else
-                        acc.at(-1).push(item);
+                        acc[acc.length - 1].push(item);
                     return acc;
                 }, [])
                     .forEach(([left, right]) => {

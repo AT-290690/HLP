@@ -26,6 +26,7 @@ const DomExtension = {
         div: () => {
             return document.createElement('div');
         },
+        act: () => document.activeElement,
         set_attributes: (args, env) => {
             if (args.length < 2)
                 throw new RangeError('Invalid number of arguments to dom_set_attributes [at least 2 required]');
@@ -41,13 +42,24 @@ const DomExtension = {
                 throw new RangeError('Invalid number of arguments to dom_get_attribute [2 required]');
             return evaluate(args[0], env).getAttribute(evaluate(args[1], env));
         },
+        ns_element: (args, env) => {
+            if (args.length !== 2)
+                throw new RangeError('Invalid number of arguments to dom_create_element [2 required]');
+            const ns = evaluate(args[0], env);
+            if (typeof ns !== 'string')
+                throw new TypeError('First argument of dom_create_element must be a string');
+            const type = evaluate(args[1], env);
+            if (typeof type !== 'string')
+                throw new TypeError('Second argument of dom_create_element must be a string');
+            return Inventory._dom_create_element_ns(ns, type);
+        },
         create_element: (args, env) => {
             if (args.length !== 1)
-                throw new RangeError('Invalid number of arguments to dom_create_element');
+                throw new RangeError('Invalid number of arguments to dom_create_element [1 required]');
             const type = evaluate(args[0], env);
             if (typeof type !== 'string')
                 throw new TypeError('First argument of dom_create_element must be a string');
-            return document.createElement(Inventory._dom_elements_map.get(type) ?? type);
+            return Inventory._dom_create_element(type);
         },
         remove: (args, env) => {
             args.slice(1).forEach((x) => evaluate(x, env));
@@ -127,12 +139,6 @@ const DomExtension = {
             if (args.length !== 1)
                 throw new RangeError('Invalid number of arguments to dom_add_class (1 required)');
             return evaluate(args[0], env);
-        },
-        add_to_box: () => {
-            return {};
-        },
-        box: () => {
-            return {};
         },
         click: (args, env) => {
             if (args.length !== 2)

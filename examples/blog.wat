@@ -12,8 +12,6 @@ dom_load_bulma [0; 9; 4];
     attach; dom_append_to;
     detach; dom_detach;
     clear; dom_clear;
-    add; dom_add_to_box;
-    box; dom_box;
     click; dom_click
 ];
 := [root; |> [dom_get_root []]];

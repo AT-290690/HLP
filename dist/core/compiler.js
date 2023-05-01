@@ -102,8 +102,8 @@ const register = {
     dom_on_change: 'Inventory._dom_on_change',
     dom_add_class: 'Inventory._dom_add_class',
     dom_clear: 'Inventory._dom_clear',
-    dom_add_to_box: 'Inventory._dom_add_to_box',
-    dom_box: 'Inventory._dom_box',
+    dom_ns_element: 'Inventory._create_element_ns',
+    dom_act: 'Inventory._dom_active',
     dom_canvas: 'Inventory._dom_canvas',
     canvas_arc: 'Inventory._canvas_arc',
     canvas_get_context: 'Inventory._canvas_get_context',
@@ -565,13 +565,13 @@ const compile = (tree, locals) => {
             case 'dom_detach':
             case 'dom_create_element':
             case 'dom_clear':
-            case 'dom_box':
+            case 'dom_act':
             case 'dom_remove':
             case 'dom_set_text_content':
             case 'dom_set_style':
             case 'dom_set_value':
             case 'dom_add_class':
-            case 'dom_add_to_box':
+            case 'dom_ns_element':
             case 'dom_click':
             case 'dom_mouse_down':
             case 'dom_mouse_up':

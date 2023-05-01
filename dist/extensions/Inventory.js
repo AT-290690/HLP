@@ -1207,6 +1207,9 @@ export default class Inventory {
   static _dom_create_element = (type) => {
     return document.createElement(Inventory._dom_elements_map.get(type) ?? type)
   }
+  static _dom_active = () => document.activeElement
+  static _dom_create_element_ns = (uri, type) =>
+    document.createElementNS(uri, Inventory._dom_elements_map.get(type) ?? type)
   static _dom_set_attribute = (el, key, value) => {
     el.setAttribute(Inventory._dom_attributes_map.get(key) ?? key, value)
     return el
@@ -1657,7 +1660,7 @@ export default class Inventory {
     return ctx
   }
   static _canvas_stroke = (ctx, path) => {
-    path != undefined ? ctx.stroke (path) : ctx.stroke()
+    path != undefined ? ctx.stroke(path) : ctx.stroke()
     return ctx
   }
   static _canvas_stroke_style = (ctx, color) => {
@@ -1672,7 +1675,7 @@ export default class Inventory {
     ctx.translate(x, y)
     return ctx
   }
- 
+
   static _call = (e, t) => t(e)
   static _math_factorial = (num) => {
     let rval = 1
