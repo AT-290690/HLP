@@ -41,8 +41,34 @@
     </style>
   </head>
   <body>
+    <script>
+      function openInEditor() {
+        window.location.pathname = `/editor/`
+      }
+    </script>
+
     <img id="placeholder" src="./editor/assets/images/404.svg" />
     <div id="c"></div>
     <script type="module" src="preview.js"></script>
+    <div
+      style="
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        display: flex;
+        justify-content: left;
+        gap: 25px;
+        align-items: center;
+        width: fit-content;
+      "
+    >
+      <button
+        onclick="openInEditor()"
+        style="background: transparent; border: none"
+      >
+        <img src="./editor/assets/images/icon-144.png" width="40px" />
+      </button>
+      <!-- <span>Hyper Link Program</span> -->
+    </div>
   </body>
 </html>
