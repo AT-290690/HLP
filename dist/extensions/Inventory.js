@@ -1710,8 +1710,12 @@ export default class Inventory {
       if (dir === -1) Array.from(collection).reverse().forEach(callback)
       else collection.forEach(callback)
     else if (collection instanceof Map)
-      if (dir === -1) Array.from(collection.entries()).reverse().forEach(([k, v], index) => callback(k, v, index, collection))
-      else collection.forEach(callback)
+      if (dir === -1)
+        Array.from(collection.entries())
+          .reverse()
+          .forEach(([k, v], index) => callback(k, v, index, collection))
+      else
+        collection.forEach(([k, v], index) => callback(k, v, index, collection))
     return collection
   }
 }
