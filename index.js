@@ -77,7 +77,13 @@ const buildProject = (dir, arg) => {
   )
   writeFileSync(arg, cat.join(`;\n\n`))
 }
-
+const combine = ([head, ...[headTail, ...tailTail]]) => {
+  if (!headTail) return head
+  const combined = headTail.reduce((acc, x) => {
+    return acc.concat(head.map((h) => `${h}; ${x}`))
+  }, [])
+  return combine([combined, ...tailTail])
+}
 const [, , ...argv] = process.argv
 // const file = filename ? readFileSync(filename, 'utf-8') : ''
 let file = '',
@@ -173,6 +179,31 @@ while (argv.length) {
           utils: { log: (msg) => console.log(msg), items: (a) => a.items },
         })
       }
+      break
+    case '-test':
+      const matches = value.match(new RegExp(/^(.*?)(?=(\[))/gm))
+      if (matches == undefined) {
+        console.log('\x1b[31m', 'No generation formula provided!', '\x1b[0m')
+        break
+      }
+
+      const functionName = matches.pop()
+      const argsRaw = value.split(functionName)[1]
+      const argsPristine = argsRaw
+        .substring(1, argsRaw.length - 1)
+        .split("'")
+        .map((x) => x.trim())
+      const args = argsPristine.map((x) => x.split(',').map((x) => x.trim()))
+      console.log('\x1b[30mvoid : [')
+      combine(args).forEach((x, i) => {
+        console.log(
+          `  !throw[
+    ===[\x1b[35m${functionName}[\x1b[33m${x}\x1b[35m]; \x1b[31m"?"\x1b[30m];
+    \x1b[32m${i}\x1b[30m];`
+        )
+      })
+      console.log(']\x1b[0m')
+
       break
     case '-help':
     default:

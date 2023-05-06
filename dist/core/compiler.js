@@ -395,9 +395,9 @@ const compile = (tree, locals) => {
             case '.:flat':
                 return `${compile(treeArgs[0], locals)}.flat(${compile(treeArgs[1], locals)});`;
             case '>>':
-                return `${compile(treeArgs[0], locals)}.scan(${compile(treeArgs[1], locals)}, 1);`;
+                return `Inventory.iterate(${compile(treeArgs[0], locals)}, ${compile(treeArgs[1], locals)}, 1);`;
             case '<<':
-                return `${compile(treeArgs[0], locals)}.scan(${compile(treeArgs[1], locals)}, -1);`;
+                return `Inventory.iterate(${compile(treeArgs[0], locals)}, ${compile(treeArgs[1], locals)}, -1);`;
             case '.:map>>':
                 return `${compile(treeArgs[0], locals)}.map(${compile(treeArgs[1], locals)});`;
             case '.:map<<':

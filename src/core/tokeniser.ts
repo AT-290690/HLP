@@ -284,23 +284,19 @@ const tokens: Record<string, Interpration> = {
     if (args.length !== 2)
       throw new RangeError('Invalid number of arguments to >>')
     const array = evaluate(args[0], env)
-    if (!(array.constructor.name === 'Inventory'))
-      throw new TypeError('First argument of >> must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
       throw new TypeError('Second argument of >> must be an -> []')
-    return array.scan(callback, 1)
+    return Inventory.iterate(array, callback, 1)
   },
   ['<<']: (args, env) => {
     if (args.length !== 2)
       throw new RangeError('Invalid number of arguments to <<')
     const array = evaluate(args[0], env)
-    if (!(array.constructor.name === 'Inventory'))
-      throw new TypeError('First argument of << must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of << must be an -> []')
-    return array.scan(callback, -1)
+      throw new TypeError('Second argument of >> must be an -> []')
+    return Inventory.iterate(array, callback, -1)
   },
   ['.:']: (args, env) => Inventory.from(args.map((item) => extract(item, env))),
   ['::']: (args, env) => {
@@ -590,7 +586,7 @@ const tokens: Record<string, Interpration> = {
   ['!throw']: (args, env) => {
     if (!evaluate(args[0], env))
       throw new Error(
-        `${args[1] ? evaluate(args[1], env) : 'Something'} failed!`
+        `${args[1] ? evaluate(args[1], env) : 'Uknown'} failed! []`
       )
   },
   ['?==']: (args, env) => {

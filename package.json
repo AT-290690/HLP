@@ -12,11 +12,12 @@
     "build": "tsc --build tsconfig.json",
     "watch": "tsc-watch",
     "test": "mocha",
-    "doctest": "node jsdoc.js"
+    "doctest": "node jsdoc.js",
+    "doctest:integration": "node test/jsdoc-integration.js"
   },
   "license": "MIT",
   "devDependencies": {
-    "jsdoc-spec": "^1.1.1",
+    "jsdoc-spec": "^1.1.7",
     "mocha": "^10.2.0",
     "tsc-watch": "^6.0.0",
     "typescript": "^5.0.3"

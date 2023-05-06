@@ -12,7 +12,14 @@ const toggleAppMode = document.getElementById('toggle-app-mode')
 const toggleLogMode = document.getElementById('toggle-log-mode')
 const togglePrettyMode = document.getElementById('toggle-pretty-mode')
 const toggleShareMode = document.getElementById('toggle-share-mode')
-
+const combine = ([head, ...[headTail, ...tailTail]]) => {
+  if (!headTail) return head
+  const combined = headTail.reduce(
+    (acc, x) => acc.concat(head.map((h) => `${h}; ${x}`)),
+    []
+  )
+  return combine([combined, ...tailTail])
+}
 const consoleEditor = CodeMirror(consoleElement)
 let RATIO_Y = 1
 const droneIntel = (icon) => {
@@ -51,10 +58,6 @@ const extensions = {
           : 'void'
       }`
     )
-    // popup.setCursor(
-    //   popup.posToOffset({ ch: 0, line: popup.lineCount() - 1 }),
-    //   true
-    // )
     return msg
   },
 }
@@ -178,6 +181,23 @@ const withCommand = (command) => {
         const selection = editor.getSelection().trim()
         if (selection) {
           const isEndingWithSemi = selection[selection.length - 1] === ';'
+          // if (selection[0] === ';' && selection[1] === ';') {
+          //   const val = selection.split(';;')[1]
+          //   const functionName = val.split('[')[0]
+          //   const argsRaw = val.split(functionName)[1]
+          //   const argsPristine = argsRaw
+          //     .substring(1, argsRaw.length - 1)
+          //     .split("'")
+          //     .map((x) => x.trim())
+          //   const args = argsPristine.map((x) =>
+          //     x.split(',').map((x) => x.trim())
+          //   )
+          //   editor.replaceSelection(
+          //     `void:[${combine(args)
+          //       .map((x, i) => `!throw[===[${functionName}[${x}];0];${i}];`)
+          //       .join('\n')}];\n`
+          //   )
+          // } else {
           const out = `log[${
             isEndingWithSemi
               ? selection.substring(0, selection.length - 1)
@@ -187,6 +207,7 @@ const withCommand = (command) => {
 
           execute(`${editor.getValue().trim()}`)
           editor.setValue(value)
+          // }
         } else execute(`log[:[${value}]]`)
       }
       break
@@ -203,7 +224,6 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault()
     e.stopPropagation()
     consoleEditor.setValue('')
-    // const cmds = editor.getLine(0).split(';; ').filter(knownCmds)
     const cmds = lastCmds.join(' ').split(';; ').filter(knownCmds)
     if (!cmds.length) cmds.push(';; exe')
     cmds.map((x) => `;; ${x.trim()}`).forEach((cmd) => withCommand(cmd))

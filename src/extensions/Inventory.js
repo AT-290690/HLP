@@ -1703,4 +1703,15 @@ export default class Inventory {
     permute(inputArr)
     return result.balance()
   }
+
+  static iterate = (collection, callback, dir) => {
+    if (collection instanceof Inventory) collection.scan(callback, dir)
+    else if (collection instanceof Set)
+      if (dir === -1) Array.from(collection).reverse().forEach(callback)
+      else collection.forEach(callback)
+    else if (collection instanceof Map)
+      if (dir === -1) Array.from(collection.entries()).reverse().forEach(([k, v], index) => callback(k, v, index, collection))
+      else collection.forEach(callback)
+    return collection
+  }
 }

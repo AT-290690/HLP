@@ -517,12 +517,12 @@ const compile: Compiler = (tree, locals) => {
           locals
         )});`
       case '>>':
-        return `${compile(treeArgs[0], locals)}.scan(${compile(
+        return `Inventory.iterate(${compile(treeArgs[0], locals)}, ${compile(
           treeArgs[1],
           locals
         )}, 1);`
       case '<<':
-        return `${compile(treeArgs[0], locals)}.scan(${compile(
+        return `Inventory.iterate(${compile(treeArgs[0], locals)}, ${compile(
           treeArgs[1],
           locals
         )}, -1);`
