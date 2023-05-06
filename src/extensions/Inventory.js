@@ -1715,7 +1715,7 @@ export default class Inventory {
           .reverse()
           .forEach(([k, v], index) => callback(k, v, index, collection))
       else
-        collection.forEach(([k, v], index) => callback(k, v, index, collection))
+        collection.forEach((k, v, index) => callback(v, k, index, collection))
     return collection
   }
 }
