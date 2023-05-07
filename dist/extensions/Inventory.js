@@ -1713,9 +1713,9 @@ export default class Inventory {
       if (dir === -1)
         Array.from(collection.entries())
           .reverse()
-          .forEach(([k, v], index) => callback(k, v, index, collection))
+          .forEach(([k, v], index) => callback(v, k, index, collection))
       else
-        collection.forEach((k, v, index) => callback(v, k, index, collection))
+        collection.forEach((k, v, index) => callback(k, v, index, collection))
     return collection
   }
 }
