@@ -269,6 +269,44 @@ describe('interpretation should work as expected', () => {
       [10, 21, 32, 43]
     )
   })
+  it('*>> and *<< should work', () => {
+    strictEqual(
+      runFromInterpreted(`:= [collection; 
+:: ["x"; 1; "y"; 2; "d"; 3; "g"; 4]]; 
+|> [collection; 
+*>> [-> [a; x; i; c; 
+? [% [x; 2]; 
+:..= [a; x]; a]]; 
+:. []]; 
+*<< [-> [a; x; i; c; 
++ [a; x]]; 0]];`),
+      4
+    )
+    strictEqual(
+      runFromInterpreted(`:= [collection; 
+.: [1; 2; 3; 4]]; 
+|> [collection; 
+*>> [-> [a; x; i; c; 
+? [% [x; 2]; 
+:..= [a; x]; a]]; 
+:. []]; 
+*<< [-> [a; x; i; c; 
++ [a; x]]; 0]];`),
+      4
+    )
+    strictEqual(
+      runFromInterpreted(`:= [collection; 
+:. [1; 2; 3; 4]]; 
+|> [collection; 
+*>> [-> [a; x; i; c; 
+? [% [x; 2]; 
+:..= [a; x]; a]]; 
+:. []]; 
+*<< [-> [a; x; i; c; 
++ [a; x]]; 0]];`),
+      4
+    )
+  })
 
   it('.:find>> should work', () => {
     strictEqual(

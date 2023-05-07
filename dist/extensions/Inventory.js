@@ -831,7 +831,9 @@ export default class Inventory {
         callback(this.get(i), i, this)
     return this
   }
-
+  toBits(callback) {
+    return this.map((x, i, a) => +callback(x, i, a))
+  }
   isEmpty() {
     return this.#left.length + this.#right.length === 1
   }
@@ -1705,17 +1707,72 @@ export default class Inventory {
   }
 
   static iterate = (collection, callback, dir) => {
-    if (collection instanceof Inventory) collection.scan(callback, dir)
+    if (collection instanceof Inventory)
+      collection.scan((x, i) => callback(x, i, collection), dir)
     else if (collection instanceof Set)
-      if (dir === -1) Array.from(collection).reverse().forEach(callback)
-      else Array.from(collection).forEach(callback)
+      if (dir === -1)
+        Array.from(collection)
+          .reverse()
+          .forEach((x, i) => callback(x, i, collection))
+      else Array.from(collection).forEach((x, i) => callback(x, i, collection))
     else if (collection instanceof Map)
       if (dir === -1)
         Array.from(collection.entries())
           .reverse()
           .forEach(([k, v], index) => callback(v, k, index, collection))
       else
-        collection.forEach((k, v, index) => callback(k, v, index, collection))
+        collection.forEach((v, k, index) => callback(v, k, index, collection))
     return collection
+  }
+  static filtrate = (collection, callback) => {
+    if (collection instanceof Inventory)
+      return collection.filter((x, i) => callback(x, i, collection))
+    else if (collection instanceof Set) {
+      collection.forEach((x, i) => {
+        if (callback(x, i, collection)) collection.delete(x)
+      })
+    } else if (collection instanceof Map) {
+      collection.forEach((v, k, i) => {
+        if (callback(v, k, i, collection)) collection.delete(k)
+      })
+    }
+    return collection
+  }
+  static fold = (collection, callback, initial, dir = 1) => {
+    if (dir === 1) {
+      if (collection instanceof Inventory)
+        return collection.reduce(
+          (acc, x, i) => callback(acc, x, i, collection),
+          initial
+        )
+      else if (collection instanceof Set)
+        return Array.from(collection).reduce(
+          (acc, x, i) => callback(acc, x, i, collection),
+          initial
+        )
+      else if (collection instanceof Map) {
+        return Array.from(collection).reduce(
+          (acc, [k, v]) => callback(acc, v, k, collection),
+          initial
+        )
+      }
+    } else if (dir === -1) {
+      if (collection instanceof Inventory)
+        return collection.reduceRight(
+          (acc, x, i) => callback(acc, x, i, collection),
+          initial
+        )
+      else if (collection instanceof Set)
+        return Array.from(collection).reduceRight(
+          (acc, x, i) => callback(acc, x, i, collection),
+          initial
+        )
+      else if (collection instanceof Map) {
+        return Array.from(collection).reduceRight(
+          (acc, [k, v]) => callback(acc, v, k, collection),
+          initial
+        )
+      }
+    }
   }
 }

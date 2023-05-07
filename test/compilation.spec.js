@@ -237,7 +237,39 @@ describe('compilation should work as expected', () => {
         runFromCompiled(source).items
       )
     ))
-
+  it('*>> and *<< should work', () => {
+    ;[
+      `:= [collection; 
+:: ["x"; 1; "y"; 2; "d"; 3; "g"; 4]]; 
+|> [collection; 
+*>> [-> [a; x; i; c; 
+? [% [x; 2]; 
+:..= [a; x]; a]]; 
+:. []]; 
+*<< [-> [a; x; i; c; 
++ [a; x]]; 0]];`,
+      `:= [collection; 
+.: [1; 2; 3; 4]]; 
+|> [collection; 
+*>> [-> [a; x; i; c; 
+? [% [x; 2]; 
+:..= [a; x]; a]]; 
+:. []]; 
+*<< [-> [a; x; i; c; 
++ [a; x]]; 0]];`,
+      `:= [collection; 
+:. [1; 2; 3; 4]]; 
+|> [collection; 
+*>> [-> [a; x; i; c; 
+? [% [x; 2]; 
+:..= [a; x]; a]]; 
+:. []]; 
+*<< [-> [a; x; i; c; 
++ [a; x]]; 0]];`,
+    ].forEach((source) =>
+      deepStrictEqual(runFromInterpreted(source), runFromCompiled(source))
+    )
+  })
   it('.:find>> should work', () =>
     [
       '.:find>> [.: [1; 2; 3; 4]; -> [x; == [x; 2]]]',

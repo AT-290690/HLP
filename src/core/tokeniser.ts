@@ -283,20 +283,49 @@ const tokens: Record<string, Interpration> = {
   ['>>']: (args, env) => {
     if (args.length !== 2)
       throw new RangeError('Invalid number of arguments to >>')
-    const array = evaluate(args[0], env)
+    const collection = evaluate(args[0], env)
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
       throw new TypeError('Second argument of >> must be an -> []')
-    return Inventory.iterate(array, callback, 1)
+    return Inventory.iterate(collection, callback, 1)
   },
   ['<<']: (args, env) => {
     if (args.length !== 2)
       throw new RangeError('Invalid number of arguments to <<')
-    const array = evaluate(args[0], env)
+    const collection = evaluate(args[0], env)
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
-      throw new TypeError('Second argument of >> must be an -> []')
-    return Inventory.iterate(array, callback, -1)
+      throw new TypeError('Second argument of << must be an -> []')
+    return Inventory.iterate(collection, callback, -1)
+  },
+  ['>-']: (args, env) => {
+    if (args.length !== 2)
+      throw new RangeError('Invalid number of arguments to >-')
+    const collection = evaluate(args[0], env)
+    const callback = evaluate(args[1], env)
+    if (typeof callback !== 'function')
+      throw new TypeError('Second argument of >- must be an -> []')
+    return Inventory.filtrate(collection, callback)
+  },
+  ['*>>']: (args, env) => {
+    if (args.length < 2 || args.length > 3)
+      throw new RangeError('Invalid number of arguments to *>>')
+    const collection = evaluate(args[0], env)
+    const callback = evaluate(args[1], env)
+    const initial = args[2] ? evaluate(args[2], env) : collection
+    if (typeof callback !== 'function')
+      throw new TypeError('Second argument of *>> must be an -> []')
+    return Inventory.fold(collection, callback, initial)
+  },
+  ['*<<']: (args, env) => {
+    if (args.length < 2 || args.length > 3)
+      throw new RangeError('Invalid number of arguments to *<<')
+    const collection = evaluate(args[0], env)
+    const callback = evaluate(args[1], env)
+    const initial = args[2] ? evaluate(args[2], env) : collection
+    if (typeof callback !== 'function')
+      throw new TypeError('Second argument of *<< must be an -> []')
+    return Inventory.fold(collection, callback, initial)
   },
   ['.:']: (args, env) => Inventory.from(args.map((item) => extract(item, env))),
   ['::']: (args, env) => {
@@ -1005,6 +1034,17 @@ const tokens: Record<string, Interpration> = {
       throw new TypeError('First argument of :: -> .: [] must be an :: []')
     return Inventory._mapValues(map)
   },
+  ['.:0|1']: (args, env) => {
+    if (args.length !== 2)
+      throw new RangeError('Invalid number of arguments to .: 0|1 []')
+    const array = evaluate(args[0], env)
+    if (!(array.constructor.name === 'Inventory'))
+      throw new TypeError('First argument of .: 0|1 must be an .: []')
+    const callback = evaluate(args[1], env)
+    if (typeof callback !== 'function')
+      throw new TypeError('Second argument of .: 0|1 be an -> []')
+    return array.toBits(callback)
+  },
   ['.:...']: (args, env) => {
     if (args.length !== 1)
       throw new RangeError('Invalid number of arguments to .: ... []')
@@ -1252,11 +1292,6 @@ const tokens: Record<string, Interpration> = {
   // gets re-assigned when
   // the core is initialised
   ['~*']: () => {},
-  ['void']: VOID,
-  ['number']: 0,
-  ['string']: '',
-  ['array']: new Inventory(),
-  ['object']: new Map(),
   ['aliases=']: (args, env) => {
     if (!args.length) return 0
     let name: string
@@ -1287,6 +1322,7 @@ const tokens: Record<string, Interpration> = {
     }
     return env[name]
   },
+  ['void']: VOID,
   ...extensions,
 }
 

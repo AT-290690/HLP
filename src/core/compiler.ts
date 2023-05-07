@@ -1,6 +1,6 @@
 import { Expression, Word } from '.'
 import { unreachable } from './interpreter.js'
-import { tokens } from './tokeniser.js'
+import { VOID, tokens } from './tokeniser.js'
 import { Token } from './tokens'
 
 const semiColumnEdgeCases = new Set([
@@ -171,6 +171,7 @@ const register: Partial<Record<Token, string>> = {
   ':.->.:': 'Inventory._setValues',
   '`': 'Inventory._cast',
   '.:...': 'Inventory._fill',
+  '>-': 'Inventory.filtrate',
 }
 type Compiler = (tree: Expression, locals: Set<string>) => string
 type Parser = (args: Expression[], locals: Set<string>) => string[]
@@ -415,7 +416,6 @@ const compile: Compiler = (tree, locals) => {
       case '|>': {
         return `(${parseArgs(treeArgs, locals)});`
       }
-
       case '.:quick_sort': {
         return `${compile(treeArgs[0], locals)}.quickSort(${compile(
           treeArgs[1],
@@ -526,6 +526,10 @@ const compile: Compiler = (tree, locals) => {
           treeArgs[1],
           locals
         )}, -1);`
+      case '*>>':
+        return `Inventory.fold(${parseArgs(treeArgs, locals)}, 1);`
+      case '*<<':
+        return `Inventory.fold(${parseArgs(treeArgs, locals)}, -1);`
       case '.:map>>':
         return `${compile(treeArgs[0], locals)}.map(${compile(
           treeArgs[1],
@@ -536,6 +540,11 @@ const compile: Compiler = (tree, locals) => {
           treeArgs[1],
           locals
         )});`
+      case '.:0|1':
+        return `${compile(treeArgs[0], locals)}.toBits(${compile(
+          treeArgs[1],
+          locals
+        )})`
       case '.:flatten':
         return `${compile(treeArgs[0], locals)}.flatten(${compile(
           treeArgs[1],
@@ -583,16 +592,6 @@ const compile: Compiler = (tree, locals) => {
         })`
         return out
       }
-      case 'string':
-        return '""'
-      case 'number':
-        return '0'
-      case 'object':
-        return 'new Map()'
-      case 'void':
-        return '0'
-      case 'array':
-        return 'new Inventory()'
       case 'bit_make_bit':
         return `((${compile(treeArgs[0], locals)}>>>0).toString(2));`
       case 'bit_and':
@@ -718,6 +717,7 @@ const compile: Compiler = (tree, locals) => {
       case 'math_floor':
       case 'math_round':
       case 'math_hypot':
+      case '>-':
         return `${register[token]}(${parseArgs(treeArgs, locals)});`
       case 'math_parse_int':
         return `${register[token]}(${compile(
@@ -859,6 +859,8 @@ const compile: Compiler = (tree, locals) => {
       case 'aliases=':
       case 'void:':
         return ''
+      case 'void':
+        return VOID
       default:
         undefined: {
           if (!(token in tokens)) {
