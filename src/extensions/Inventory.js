@@ -1708,7 +1708,7 @@ export default class Inventory {
     if (collection instanceof Inventory) collection.scan(callback, dir)
     else if (collection instanceof Set)
       if (dir === -1) Array.from(collection).reverse().forEach(callback)
-      else collection.forEach(callback)
+      else Array.from(collection).forEach(callback)
     else if (collection instanceof Map)
       if (dir === -1)
         Array.from(collection.entries())
