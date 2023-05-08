@@ -198,6 +198,12 @@ describe('compilation should work as expected', () => {
         => [-> [x; * [x; 3]]];
         => [-> [x; * [x; 10]]]
       ]`,
+      `|> [
+        10;
+        + [|> [2; * [10]]];
+        + [4; * [100; |> [8; + [2]]]];
+        - [10]
+      ]`,
     ].forEach((source) =>
       strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
@@ -671,6 +677,39 @@ describe('compilation should work as expected', () => {
       `|> [:. [1; 2; 3; 4]; :. .=  [5]]`,
       `|> [:. [1; 2; 3; 4]; :. .!=  [2]]`,
       `|> [:. [1; 2; 3; 4]; :. -> .: []]`,
+    ].forEach((source) =>
+      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+    ))
+
+  it('complex examples should work', () =>
+    [
+      `:= [crates; .: [:: ["22"; 
+    .: [.: ["1000_2000_3000__4000__5000_6000__7000_8000_9000__10000"; 24000; 45000]]]]; 
+aoc; .:< [crates]; 
+aoc22; ::. [aoc; "22"]; 
+day1; .:. [aoc22; 0]; 
+sample; .:. [day1; 0]; 
+part1; .:. [day1; 1]; 
+part2; .:. [day1; 2]; 
+input; |> [sample; 
+  .:from_string ["__"]; 
+  .:map>> [-> [x; 
+      |> [x; 
+        .:from_string ["_"]; 
+        .:map>> [-> [x; 
+            \` [x]]]; 
+        .:reduce>> [-> [a; x; 
+            + [a; x]]; 0]]]]]]; 
+.: [|> [input; 
+  .:quick_sort [-1]; 
+  .:< []; 
+  == [part1]]; 
+|> [input; 
+  .:quick_sort [-1]; 
+  .:slice [0; 3]; 
+  .:reduce>> [-> [a; x; 
+      + [a; x]]; 0]; 
+  == [part2]]];`,
     ].forEach((source) =>
       deepEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
