@@ -72,8 +72,14 @@ export const parseExpression = (cursor, transform = (expression) => expression) 
 export const parse = (program) => {
     const result = parseExpression(program, (expression) => {
         if (expression.type === 'apply' && expression.operator.type === 'word')
-            if (expression.operator.name === '|>')
+            if (expression.operator.name === '|>') {
                 pipeArgs(expression);
+                if (expression.args[0].type == 'apply') {
+                    expression.operator = expression.args[0].operator;
+                    expression.args = expression.args[0].args;
+                }
+                // expression = expression.args[0]
+            }
     });
     if (result.rest.length > 0)
         throw new SyntaxError('Unexpected text after program');

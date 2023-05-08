@@ -413,9 +413,9 @@ const compile: Compiler = (tree, locals) => {
         return `Inventory._spreadArr([${treeArgs
           .map((x) => compile(x, locals))
           .join(',')}]);`
-      case '|>': {
-        return `(${parseArgs(treeArgs, locals)});`
-      }
+      // case '|>': {
+      //   return `(${parseArgs(treeArgs, locals)});`
+      // }
       case '.:quick_sort': {
         return `${compile(treeArgs[0], locals)}.quickSort(${compile(
           treeArgs[1],
@@ -858,6 +858,7 @@ const compile: Compiler = (tree, locals) => {
       // dead code
       case 'aliases=':
       case 'void:':
+      case '|>':
         return ''
       case 'void':
         return VOID
