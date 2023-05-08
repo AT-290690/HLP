@@ -61,19 +61,30 @@ const extensions = {
     return msg
   },
 }
+
+console.error = (error) => {
+  consoleElement.classList.add('error_line')
+  consoleEditor.setValue(error + ' ')
+  droneButton.classList.remove('shake')
+  droneButton.classList.add('shake')
+  execIcon.style.visibility = 'hidden'
+  droneIntel(errorIcon)
+}
+
+const originalFetch = fetch
+window.fetch = async (...[resource, config]) =>
+  await originalFetch(resource, config).catch((err) => console.error(err))
+
 const execute = async (source) => {
   try {
     consoleElement.classList.remove('error_line')
     const result = runFromInterpreted(source, extensions)
     droneButton.classList.remove('shake')
+    errorIcon.style.visibility = 'hidden'
     droneIntel(execIcon)
     return result
   } catch (err) {
-    consoleElement.classList.add('error_line')
-    consoleEditor.setValue(err + ' ')
-    droneButton.classList.remove('shake')
-    droneButton.classList.add('shake')
-    droneIntel(errorIcon)
+    console.error(err)
   }
 }
 

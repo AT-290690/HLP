@@ -8,7 +8,7 @@ log ["Hello World"]`,{label:"help",detail:"starter help with the language",type:
 ;; that can run/interpret in the browser
 ;; and also compile to JavaScript
 
-;; It gets compressed to a tiny base64 encoded query paramter
+;; It gets compressed to a tiny base64 encoded query parameter
 ;; and concatinated to a link that when clicked
 ;; loads a page that will 
 ;; decompress & compile the code in the query paramter

@@ -67,10 +67,14 @@ tokens['~*'] = (args, env) => {
     const callback = evaluate(args.pop(), env);
     if (typeof callback !== 'function')
         throw new TypeError('Second argument of ~* must be an -> []');
-    Promise.all(args.map((arg) => fetch(evaluate(arg, env)).then((r) => r.text()))).then((encodes) => {
+    Promise.all(args.map((arg) => fetch(evaluate(arg, env)).then((r) => r.text())))
+        .then((encodes) => {
+        if (encodes.some((x) => x[3] === ':'))
+            throw new Error(encodes.find((x) => x[3] === ':'));
         const signals = Inventory.from(encodes.map((encode) => runFromInterpreted(decodeBase64(decodeURIComponent(encode.trim())))));
         callback(signals);
-    });
+    })
+        .catch((err) => console.error(err));
     return 0;
 };
 const shortDefinitionsCounter = (index = 0, count = -1) => {
