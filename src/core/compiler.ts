@@ -2,7 +2,9 @@ import { Expression, Word } from '.'
 import { unreachable } from './interpreter.js'
 import { VOID, tokens } from './tokeniser.js'
 import { Token } from './tokens'
-
+const CAST_BOOLEAN_TO_NUMBER = true
+const handleBoolean = (source: string) =>
+  CAST_BOOLEAN_TO_NUMBER ? `+${source}` : source
 const semiColumnEdgeCases = new Set([
   ';)',
   ';-',
@@ -236,34 +238,31 @@ const compile: Compiler = (tree, locals) => {
       case '~':
         return '(' + parseArgs(treeArgs, locals, '+') + ');'
       case '==':
-        return '(' + parseArgs(treeArgs, locals, '===') + ');'
+        return handleBoolean(`(${parseArgs(treeArgs, locals, '===')});`)
       case '!=':
-        return '(' + parseArgs(treeArgs, locals, '!==') + ');'
+        return handleBoolean(`(${parseArgs(treeArgs, locals, '!==')});`)
       case '/':
-        return (
-          '(' +
-          treeArgs.map((x) => `1 / ${compile(x, locals)}`).join('*') +
-          ');'
-        )
-      case '+':
-      case '-':
-      case '*':
+        return `(${treeArgs
+          .map((x) => `1 / ${compile(x, locals)}`)
+          .join('*')});`
+
       case '>=':
       case '<=':
       case '>':
       case '<':
-        return '(' + parseArgs(treeArgs, locals, token) + ');'
+        return handleBoolean(`(${parseArgs(treeArgs, locals, token)});`)
+
+      case '+':
+      case '-':
+      case '*':
       case '&&':
       case '||':
-        return '(' + parseArgs(treeArgs, locals, token) + ');'
+        return `(${parseArgs(treeArgs, locals, token)});`
       case '%':
-        return (
-          '(' +
-          compile(treeArgs[0], locals) +
-          '%' +
-          compile(treeArgs[1], locals) +
-          ');'
-        )
+        return `(${compile(treeArgs[0], locals)}%${compile(
+          treeArgs[1],
+          locals
+        )});`
       case '|':
         return `(${compile(treeArgs[0], locals)}.toFixed(
         ${treeArgs.length === 1 ? 0 : compile(treeArgs[1], locals)}
@@ -281,8 +280,7 @@ const compile: Compiler = (tree, locals) => {
           treeArgs[1] != undefined ? compile(treeArgs[1], locals) : 1
         });`
       case '!':
-        return '!' + compile(treeArgs[0], locals)
-
+        return handleBoolean(`!${compile(treeArgs[0], locals)}`)
       case '?': {
         const conditionStack = []
         treeArgs
@@ -293,7 +291,7 @@ const compile: Compiler = (tree, locals) => {
               : conditionStack.push(x, ':')
           )
         conditionStack.pop()
-        if (conditionStack.length === 3) conditionStack.push(':', 'null;')
+        if (conditionStack.length === 3) conditionStack.push(':', 0, ';')
         return `(${conditionStack.join('')});`
       }
 
@@ -301,23 +299,27 @@ const compile: Compiler = (tree, locals) => {
         return `Inventory._repeat(${parseArgs(treeArgs, locals)});`
       case '===': {
         const [first, ...rest] = treeArgs
-        return `Inventory.of(${parseArgs(
-          rest,
-          locals
-        )}).every(x => Inventory.of(${compile(
-          first,
-          locals
-        )}).isEqual(Inventory.of(x)));`
+        return handleBoolean(
+          `Inventory.of(${parseArgs(
+            rest,
+            locals
+          )}).every(x => Inventory.of(${compile(
+            first,
+            locals
+          )}).isEqual(Inventory.of(x)));`
+        )
       }
       case '!==': {
         const [first, ...rest] = treeArgs
-        return `Inventory.of(${parseArgs(
-          rest,
-          locals
-        )}).every(x => !Inventory.of(${compile(
-          first,
-          locals
-        )}).isEqual(Inventory.of(x)));`
+        return handleBoolean(
+          `Inventory.of(${parseArgs(
+            rest,
+            locals
+          )}).every(x => !Inventory.of(${compile(
+            first,
+            locals
+          )}).isEqual(Inventory.of(x)));`
+        )
       }
 
       case '.:find>>':
@@ -331,15 +333,19 @@ const compile: Compiler = (tree, locals) => {
           locals
         )});`
       case '.:every':
-        return `${compile(treeArgs[0], locals)}.every(${compile(
-          treeArgs[1],
-          locals
-        )});`
+        return handleBoolean(
+          `${compile(treeArgs[0], locals)}.every(${compile(
+            treeArgs[1],
+            locals
+          )});`
+        )
       case '.:some':
-        return `${compile(treeArgs[0], locals)}.some(${compile(
-          treeArgs[1],
-          locals
-        )});`
+        return handleBoolean(
+          `${compile(treeArgs[0], locals)}.some(${compile(
+            treeArgs[1],
+            locals
+          )});`
+        )
       case '.:find_index>>':
         return `${compile(treeArgs[0], locals)}.findIndex(${compile(
           treeArgs[1],
@@ -360,10 +366,12 @@ const compile: Compiler = (tree, locals) => {
           locals
         )});`
       case '.:is_in_bounds':
-        return `${compile(treeArgs[0], locals)}.isInBounds(${compile(
-          treeArgs[1],
-          locals
-        )});`
+        return handleBoolean(
+          `${compile(treeArgs[0], locals)}.isInBounds(${compile(
+            treeArgs[1],
+            locals
+          )});`
+        )
       case '.:matrix':
         return `Inventory.matrix(${treeArgs
           .map((x) => compile(x, locals))
@@ -460,10 +468,12 @@ const compile: Compiler = (tree, locals) => {
         return `((${names.join(',')}),${words[words.length - 1].name});`
       }
       case '::.?':
-        return `${compile(treeArgs[0], locals)}.has(${compile(
-          treeArgs[1],
-          locals
-        )});`
+        return handleBoolean(
+          `${compile(treeArgs[0], locals)}.has(${compile(
+            treeArgs[1],
+            locals
+          )});`
+        )
       case '::.':
         return `${compile(treeArgs[0], locals)}.get(${compile(
           treeArgs[1],
@@ -570,10 +580,12 @@ const compile: Compiler = (tree, locals) => {
         return 'new Set([' + parseArgs(treeArgs, locals) + ']);'
 
       case ':..?':
-        return `${compile(treeArgs[0], locals)}.has(${compile(
-          treeArgs[1],
-          locals
-        )});`
+        return handleBoolean(
+          `${compile(treeArgs[0], locals)}.has(${compile(
+            treeArgs[1],
+            locals
+          )});`
+        )
       case ':.size':
         return `${compile(treeArgs[0], locals)}.size(${compile(
           treeArgs[1],

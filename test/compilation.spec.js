@@ -1,4 +1,4 @@
-import { equal, strictEqual, deepEqual, deepStrictEqual } from 'assert'
+import { equal, strictEqual, deepStrictEqual, deepEqual } from 'assert'
 import { runFromInterpreted, runFromCompiled } from '../dist/misc/utils.js'
 describe('compilation should work as expected', () => {
   it('definitions', () =>
@@ -404,7 +404,10 @@ describe('compilation should work as expected', () => {
     ]`,
       `:= [obj; :: ["x"; 3; "y"; 4]]; .: [::.? [obj; "z"]; ::.? [obj; "x"]; ::size [obj]]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it(':= should work', () =>
     [
@@ -590,7 +593,10 @@ describe('compilation should work as expected', () => {
 
       .: [is_even[.:<[out]]; is_odd[.:>[out]]]`,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source).items, runFromCompiled(source).items)
+      deepStrictEqual(
+        runFromInterpreted(source).items,
+        runFromCompiled(source).items
+      )
     ))
   it(':[] should work', () =>
     [
@@ -642,14 +648,15 @@ describe('compilation should work as expected', () => {
     ].forEach((source) =>
       strictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
-  it(`=== and !== should work`, () =>
-    [
-      '===[.: [1;2;3]; .: [1;2;3]]',
-      '!== [.: [1;2;3]; .: [1;2;3]]',
-      '.: quick_sort [.: [10; 23; 1; 4; 0; 1; 3]; -1]',
-    ].forEach((source) =>
+  it(`=== and !== should work`, () => {
+    ;['=== [.: [1;2;3]; .: [1;2;3]]', '!== [.: [1;2;3]; .: [1;2;3]]'].forEach(
+      (source) =>
+        deepStrictEqual(runFromInterpreted(source), runFromCompiled(source))
+    )
+    ;['.: quick_sort [.: [10; 23; 1; 4; 0; 1; 3]; -1]'].forEach((source) =>
       deepEqual(runFromInterpreted(source), runFromCompiled(source))
-    ))
+    )
+  })
   it(`/ should work`, () =>
     [
       '* [4; / [2]]',
@@ -657,7 +664,7 @@ describe('compilation should work as expected', () => {
       '* [8; / [2]]',
       '* [4; / [4; 2]]',
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepStrictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
   it('logic operations should work', () =>
     [
@@ -665,7 +672,7 @@ describe('compilation should work as expected', () => {
     == [&& [|| [0; 0; 1]; 10]; 10]
     `,
     ].forEach((source) =>
-      deepEqual(runFromInterpreted(source), runFromCompiled(source))
+      deepStrictEqual(runFromInterpreted(source), runFromCompiled(source))
     ))
   it(':. should work', () =>
     [
