@@ -573,9 +573,8 @@ const compile: Compiler = (tree, locals) => {
         const [array, callback, out] = parse(treeArgs, locals)
         return `${array}.reduceRight(${callback}, ${out});`
       }
-      case '=>': {
+      case '=>':
         return `${register[token]}(${parseArgs(treeArgs, locals)});`
-      }
       case ':.':
         return 'new Set([' + parseArgs(treeArgs, locals) + ']);'
 

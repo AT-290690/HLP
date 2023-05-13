@@ -10,7 +10,7 @@ const format = (tree: Expression[], level = 0, out = '') => {
     else if (node.type === 'apply') {
       out += '\n'
       if (node.operator.type === 'word') {
-        out += '\t'.repeat(level)
+        out += ' '.repeat(level)
         if (
           node.operator.name == undefined &&
           node.operator.args[0].type === 'word'

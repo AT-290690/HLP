@@ -1,4 +1,2 @@
-import { makeRunes, runes, symbol } from './shortRunes.js'
-
-runes.push([symbol(), ']['], [symbol(), ']];'], [symbol(), '];'])
+import { makeRunes, runes } from './shortRunes.js'
 export const shortRunes = makeRunes(runes)

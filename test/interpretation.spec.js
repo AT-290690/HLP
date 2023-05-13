@@ -212,8 +212,8 @@ describe('interpretation should work as expected', () => {
       runFromInterpreted(`
         |> [
           10;
-          => [-> [x; * [x; 3]]];
-          => [-> [x; * [x; 10]]]
+          -> [x; * [x; 3]][];
+          -> [x; * [x; 10]][]
         ]`),
       300
     )
@@ -623,9 +623,9 @@ describe('interpretation should work as expected', () => {
     |> [x; 
         + [y; 23; 4];
         * [2];
-        => [-> [x;
+        -> [x;
           * [x; x]
-        ]];
+        ][];
        ];
     `),
       14884
@@ -633,7 +633,7 @@ describe('interpretation should work as expected', () => {
     strictEqual(
       runFromInterpreted(`|> [0; 
         + [2];
-        => [-> [x; * [x; x]]]];`),
+        -> [x; * [x; x]][]];`),
       4
     )
   })
@@ -763,8 +763,8 @@ describe('interpretation should work as expected', () => {
         .:map>> [-> [x; |> [x;
          + [2; 4];
         * [10000; first_element];
-        => [-> [x;
-            |> [x; - [232321]]]]]]];
+        -> [x;
+            |> [x; - [232321]]][]]]];
         .: map << [-> [x; math_abs[x]]];
       ]];
 

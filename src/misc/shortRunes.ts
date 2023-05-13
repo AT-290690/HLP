@@ -235,6 +235,9 @@ export const runes = [
   [symbol(), '=>'],
   [symbol(), ':.'],
   [symbol(), '~*'],
+  [symbol(), ']['],
+  [symbol(), ']];'],
+  [symbol(), '];'],
 ]
 export const makeRunes = (compressed: Array<Array<string>>) => ({
   compressed: new Map(compressed as Iterable<readonly [string, string]>),

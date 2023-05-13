@@ -45,6 +45,8 @@ export const logWarningMessage = (msg: string) =>
  * runFromInterpreted('+[1;2]') // 3
  * runFromInterpreted('|>[.:[1;2;3];.:map>>[->[x;*[x;2]]];.:reduce>>[->[a;x;+[a;x]];0]]')
  * // 12
+ * runFromInterpreted('|>[.: [1; 2; 3]; .:map>>[->[x; * [x; 2]]];.:reduce>>[->[a;x;+[a;x]];0]]' | '|>[.: [1; 2; 3]; .:map>>[->[x; * [x; 4]]];.:reduce>>[->[a;x;+[a;x]];0]]' | '|>[.: [1; 2; 3]; .:map>>[->[x; * [x; 0]]];.:reduce>>[->[a;x;+[a;x]];0]]'; {} | undefined)
+ * // 12 | 24 | 0 | 12 | 24 | 0
  */
 export const runFromInterpreted = (source: string, env?: object) =>
   exe(handleUnbalancedParens(removeNoCode(source.toString().trim())), env)
