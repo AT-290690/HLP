@@ -9,7 +9,7 @@ export const formatErrors = (results) => {
 const files = ['./dist/misc/utils.js', './dist/core/parser.js']
 ;(async () => {
   const raw = await Promise.all(
-    files.map((f) => cli(['-file', f, '-logging', 'none']))
+    files.map((f) => cli({ argv: ['-file', f, '-logging', 'none'] }))
   )
   const results = formatErrors(raw)
   if (results)

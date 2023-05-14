@@ -235,6 +235,15 @@ export const runes = [
     [symbol(), '=>'],
     [symbol(), ':.'],
     [symbol(), '~*'],
+    [symbol(), ']['],
+    [symbol(), ']];'],
+    [symbol(), '];'],
+    [symbol(), '.:chunks_if'],
+    [symbol(), '.:cartesian_product'],
+    [symbol(), '.:zip'],
+    [symbol(), '.:~zip'],
+    [symbol(), '.:unzip'],
+    [symbol(), '.:0'],
 ];
 export const makeRunes = (compressed) => ({
     compressed: new Map(compressed),

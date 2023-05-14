@@ -202,6 +202,22 @@ export default class Inventory {
     return Inventory.from(new Array(size).fill(1))
   }
 
+  static ofSize(N = 0) {
+    const out = new Inventory()
+    const half = (N / 2) | 0.5
+    for (let i = half - 1; i >= 0; --i) out.#addToLeft(0)
+    for (let i = half; i < N; ++i) out.#addToRight(0)
+    return out
+  }
+
+  static range(end = 0, start = 0) {
+    const out = new Inventory()
+    const half = (end / 2) | 0.5
+    for (let i = half - 1; i >= 0; --i) out.#addToLeft(start + i)
+    for (let i = half; i < end; ++i) out.#addToRight(start + i)
+    return out
+  }
+
   at(index) {
     if (index < 0) return this.get(this.length + index)
     else return this.get(index)
@@ -770,6 +786,44 @@ export default class Inventory {
     }, new Inventory())
     res.balance()
     return res
+  }
+
+  partitionIf(predicate = Inventory._Identity) {
+    const out = this.reduce((acc, x, i, a) => {
+      acc.at(predicate(x, i, a) ? 0 : 1).#addToRight(x)
+      return acc
+    }, Inventory.of(new Inventory(), new Inventory()))
+    out.at(0).balance()
+    out.at(1).balance()
+    return out
+  }
+
+  zip(other) {
+    return this.map((item, index) => Inventory.of(item, other.get(index)))
+  }
+
+  unzip() {
+    const unzipped = this.at(0).map(() => new Inventory())
+    for (let j = 0; j < unzipped.length; ++j)
+      for (let i = 0; i < this.length; ++i)
+        unzipped.get(j).#addToRight(this.get(i).get(j))
+    return unzipped
+  }
+
+  zipVary() {
+    return Inventory.ofSize(Math.max(...this.map((a) => a.length))).map(
+      (_, index) => this.map((a) => a.get(index))
+    )
+  }
+
+  cartesianProduct() {
+    return this.reduce(
+      (a, b) =>
+        a
+          .map((x) => b.map((y) => x.concat(Inventory.of(y))))
+          .reduce((a, b) => a.concat(b), new Inventory()),
+      Inventory.of(new Inventory())
+    )
   }
 
   unique() {

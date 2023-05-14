@@ -949,14 +949,20 @@ const tokens = {
         return array.toBits(callback);
     },
     ['.:...']: (args, env) => {
-        if (args.length !== 1)
+        if (args.length > 2 || args.length < 1)
             throw new RangeError('Invalid number of arguments to .: ... []');
         const n = evaluate(args[0], env);
         if (typeof n !== 'number')
             throw new TypeError('Second argument of .: ... [] must be an number');
-        return Inventory.from(Array.from({ length: n })
-            .fill(null)
-            .map((_, i) => i));
+        return Inventory.range(n, evaluate(args[1], env));
+    },
+    ['.:0']: (args, env) => {
+        if (args.length !== 1)
+            throw new RangeError('Invalid number of arguments to .: 0 []');
+        const n = evaluate(args[0], env);
+        if (typeof n !== 'number')
+            throw new TypeError('Second argument of .: 0 [] must be an number');
+        return Inventory.ofSize(n);
     },
     ['.:from_string']: (args, env) => {
         if (args.length !== 2)
@@ -990,6 +996,52 @@ const tokens = {
         if (typeof n !== 'number')
             throw new TypeError('Second argument of .: chunks [] must be an number');
         return array.partition(n);
+    },
+    ['.:chunks_if']: (args, env) => {
+        if (args.length !== 2)
+            throw new RangeError('Invalid number of arguments to .: chunks_if []');
+        const array = evaluate(args[0], env);
+        if (!Inventory.isBrrr(array))
+            throw new TypeError('First argument of .: chunks_if [] must be an .: []');
+        const callback = evaluate(args[1], env);
+        if (typeof callback !== 'function')
+            throw new TypeError('Second argument of .: chunks_if [] must be an -> []');
+        return array.partitionIf(callback);
+    },
+    ['.:zip']: (args, env) => {
+        if (args.length !== 2)
+            throw new RangeError('Invalid number of arguments to .: zip []');
+        const array = evaluate(args[0], env);
+        if (!Inventory.isBrrr(array))
+            throw new TypeError('First argument of .: zip [] must be an .: []');
+        const other = evaluate(args[1], env);
+        if (!Inventory.isBrrr(other))
+            throw new TypeError('Second argument of .: zip [] must be an .: []');
+        return array.zip(other);
+    },
+    ['.:unzip']: (args, env) => {
+        if (args.length !== 1)
+            throw new RangeError('Invalid number of arguments to .: unzip []');
+        const array = evaluate(args[0], env);
+        if (!Inventory.isBrrr(array))
+            throw new TypeError('First argument of .: unzip [] must be an .: []');
+        return array.unzip();
+    },
+    ['.:~zip']: (args, env) => {
+        if (args.length !== 1)
+            throw new RangeError('Invalid number of arguments to .: ~ zip []');
+        const array = evaluate(args[0], env);
+        if (!Inventory.isBrrr(array))
+            throw new TypeError('First argument of .:~zip [] must be an .: []');
+        return array.zipVary();
+    },
+    ['.:cartesian_product']: (args, env) => {
+        if (args.length !== 1)
+            throw new RangeError('Invalid number of arguments to .: cartesian_product []');
+        const array = evaluate(args[0], env);
+        if (!Inventory.isBrrr(array))
+            throw new TypeError('First argument of .: cartesian_product [] must be an .: []');
+        return array.cartesianProduct();
     },
     ['.:matrix']: (args, env) => {
         if (args.length < 1)

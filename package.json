@@ -17,7 +17,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "jsdoc-spec": "^1.2.6",
+    "jsdoc-spec": "^1.2.8",
     "mocha": "^10.2.0",
     "tsc-watch": "^6.0.0",
     "typescript": "^5.0.3"

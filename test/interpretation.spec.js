@@ -156,7 +156,7 @@ describe('interpretation should work as expected', () => {
   it('sum median', () => {
     strictEqual(
       runFromInterpreted(`
-  := [NUMBERS; .: map >> [.: ... [100]; -> [x; + [x; 1]]]];
+  := [NUMBERS; .: ... [100; 1]];
   := [first; .: . [NUMBERS; 0]];
   := [last; .: . [NUMBERS; - [.:length [NUMBERS]; 1]]];
   := [median; + [first;
@@ -835,6 +835,31 @@ describe('interpretation should work as expected', () => {
     )
   })
   it('comples examples should work', () => {
+    strictEqual(
+      runFromInterpreted(`:= [f; -> [arg; ? [< [arg; 100]; |> [arg; 
+      + [1; 2; 3]; 
+      * [2]; 
+      f []]; arg]]]; 
+  f [10];`),
+      164
+    )
+    deepStrictEqual(
+      runFromInterpreted(`|> [.: [1; 2; 3; 4; 5; 6]; 
+    .:chunks_if [-> [x; 
+      % [x; 2]]]; 
+    .:cartesian_product []];`).items,
+      [
+        [1, 2],
+        [1, 4],
+        [1, 6],
+        [3, 2],
+        [3, 4],
+        [3, 6],
+        [5, 2],
+        [5, 4],
+        [5, 6],
+      ]
+    )
     deepStrictEqual(
       runFromInterpreted(`:= [crates; .: [:: ["22"; 
       .: [.: ["1000_2000_3000__4000__5000_6000__7000_8000_9000__10000"; 24000; 45000]]]]; 

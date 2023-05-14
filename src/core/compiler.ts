@@ -569,6 +569,23 @@ const compile: Compiler = (tree, locals) => {
         const [array, callback, out] = parse(treeArgs, locals)
         return `${array}.reduce(${callback}, ${out});`
       }
+      case '.:~zip':
+        return `${parse(treeArgs, locals)}.zipVary();`
+      case '.:zip': {
+        const [array, other] = parse(treeArgs, locals)
+        return `${array}.zip(${other});`
+      }
+      case '.:unzip':
+        return `${parse(treeArgs, locals)}.unzip();`
+      case '.:0': {
+        const [array, n] = parse(treeArgs, locals)
+        return `${array}.range(${n});`
+      }
+      case '.:cartesian_product':
+        return `${parse(treeArgs, locals)}.cartesianProduct();`
+      case '.:chunks_if':
+        const [array, callback] = parse(treeArgs, locals)
+        return `${array}.partitionIf(${callback});`
       case '.:reduce<<': {
         const [array, callback, out] = parse(treeArgs, locals)
         return `${array}.reduceRight(${callback}, ${out});`

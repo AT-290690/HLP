@@ -193,7 +193,7 @@ describe('compression should work as expected', () => {
       ))
   it('sum median', () =>
     [
-      `:= [NUMBERS; .: map >> [.: ... [100]; -> [x; + [x; 1]]]];
+      `:= [NUMBERS; .: ... [100; 1]];
       := [first; .: . [NUMBERS; 0]];
       := [last; .: . [NUMBERS; - [.:length [NUMBERS]; 1]]];
       := [median; + [first;
@@ -1027,6 +1027,11 @@ describe('compression should work as expected', () => {
   })
   it('complex examples should work', () =>
     [
+      `:= [f; -> [arg; ? [< [arg; 100]; |> [arg; 
+        + [1; 2; 3]; 
+        * [2]; 
+        f []]; arg]]]; 
+    f [10];`,
       `:= [crates; .: [:: ["22"; 
     .: [.: ["1000_2000_3000__4000__5000_6000__7000_8000_9000__10000"; 24000; 45000]]]]; 
 aoc; .:< [crates]; 
@@ -1054,6 +1059,11 @@ input; |> [sample;
   .:reduce>> [-> [a; x; 
       + [a; x]]; 0]; 
   == [part2]]];`,
+      ,
+      `|> [.: [1; 2; 3; 4; 5; 6]; 
+    .:chunks_if [-> [x; 
+      % [x; 2]]]; 
+    .:cartesian_product []];`,
     ]
       .map((source) => {
         const COMP = compress(source)
