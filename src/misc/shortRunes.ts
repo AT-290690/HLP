@@ -2,8 +2,9 @@ const symbolGenerator = () => {
   let count = 0
   return () => String.fromCharCode(++count + 191)
 }
+type Runes = ReadonlyArray<ReadonlyArray<string>>
 export const symbol = symbolGenerator()
-export const runes = [
+export const runes: Runes = [
   [symbol(), 'canvas_quadratic_curve_to'],
   [symbol(), 'canvas_is_point_in_stroke'],
   [symbol(), 'math_permutations_array'],
@@ -244,11 +245,18 @@ export const runes = [
   [symbol(), '.:~zip'],
   [symbol(), '.:unzip'],
   [symbol(), '.:0'],
+  [symbol(), '.:adjacent_difference>>'],
+  [symbol(), '.:adjacent_difference<<'],
+  [symbol(), '.:adjacent_find>>'],
+  [symbol(), '.:adjacent_find<<'],
+  [symbol(), '.:adjacent_find_index>>'],
+  [symbol(), '.:adjacent_find_index<<'],
 ]
-export const makeRunes = (compressed: Array<Array<string>>) => ({
+
+export const makeRunes = (compressed: Runes) => ({
   compressed: new Map(compressed as Iterable<readonly [string, string]>),
   decompressed: new Map(
-    compressed.reduce<Array<Array<string>>>(
+    compressed.reduce<Runes>(
       (acc, [a, b]) => acc.concat([[b, a]]),
       []
     ) as Iterable<readonly [string, string]>

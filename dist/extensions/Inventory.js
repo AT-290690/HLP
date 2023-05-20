@@ -826,6 +826,55 @@ export default class Inventory {
     )
   }
 
+  adjacentDifference(callback = (a, b) => b - a) {
+    const len = this.length
+    if (len === 1) return this
+    const result = Inventory.of(this.get(0))
+    for (let i = 1; i < len; ++i)
+      result.set(i, callback(this.get(i - 1), this.get(i), i, this))
+    return result
+  }
+
+  adjacentDifferenceRight(callback = (a, b) => b - a) {
+    const len = this.length
+    if (len === 1) return this
+    const result = new Inventory()
+    for (let i = len - 2; i >= 0; --i)
+      result.set(i, callback(this.get(i + 1), this.get(i), i, this))
+    result.set(len - 1, this.get(len - 1))
+    return result
+  }
+
+  adjacentFind(callback = Inventory._BinaryIdentity) {
+    const len = this.length
+    if (len === 1) return this.get(0)
+    for (let i = 1; i < len; ++i)
+      if (callback(this.get(i - 1), this.get(i), i, this)) return this.get(i)
+  }
+
+  adjacentFindLast(callback = Inventory._BinaryIdentity) {
+    const len = this.length
+    if (len === 1) return this.get(len - 1)
+    for (let i = len - 2; i >= 0; --i)
+      if (callback(this.get(i + 1), this.get(i), i, this)) return this.get(i)
+  }
+
+  adjacentFindIndex(callback = Inventory._BinaryIdentity) {
+    const len = this.length
+    if (len === 1) return this.get(0)
+    for (let i = 1; i < len; ++i)
+      if (callback(this.get(i - 1), this.get(i), i, this)) return i - 1
+    return -1
+  }
+
+  adjacentFindLastIndex(callback = Inventory._BinaryIdentity) {
+    const len = this.length
+    if (len === 1) return this.get(len - 1)
+    for (let i = len - 2; i >= 0; --i)
+      if (callback(this.get(i + 1), this.get(i), i, this)) return i + 1
+    return -1
+  }
+
   unique() {
     const set = new Set()
     return Inventory.from(
@@ -1112,6 +1161,9 @@ export default class Inventory {
   }
   static _Identity(current) {
     return current
+  }
+  static _BinaryIdentity(a, b) {
+    return a === b
   }
   static _isEqual(a, b) {
     if (a === b) return true

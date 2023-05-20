@@ -1,10 +1,10 @@
-import { Interpration } from '../core/index.js'
+import { Interpretion } from '../core/index.js'
 import { evaluate } from '../core/interpreter.js'
 import { VOID } from '../core/tokeniser.js'
 import Inventory from './Inventory.js'
+import { collections } from './collections.js'
 
-type Extension = Record<string, Record<string, Interpration>>
-
+type Extension = Record<string, Record<string, Interpretion>>
 const TimeExtension: Extension = {
   time_: {
     set_timeout: (args, env) =>
@@ -531,7 +531,7 @@ const Extensions = {
   ...UnitsExtension,
   ...CanvasExtension,
 }
-const extensions = {}
+const extensions: Record<string, Interpretion> = collections
 for (const ext in Extensions)
   for (const sub in Extensions[ext])
     extensions[`${ext}${sub}`] = Extensions[ext][sub]

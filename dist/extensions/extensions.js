@@ -1,6 +1,7 @@
 import { evaluate } from '../core/interpreter.js';
 import { VOID } from '../core/tokeniser.js';
 import Inventory from './Inventory.js';
+import { collections } from './collections.js';
 const TimeExtension = {
     time_: {
         set_timeout: (args, env) => setTimeout(evaluate(args[0], env), evaluate(args[1], env)),
@@ -463,7 +464,7 @@ const Extensions = {
     ...UnitsExtension,
     ...CanvasExtension,
 };
-const extensions = {};
+const extensions = collections;
 for (const ext in Extensions)
     for (const sub in Extensions[ext])
         extensions[`${ext}${sub}`] = Extensions[ext][sub];

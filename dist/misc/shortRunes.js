@@ -244,6 +244,12 @@ export const runes = [
     [symbol(), '.:~zip'],
     [symbol(), '.:unzip'],
     [symbol(), '.:0'],
+    [symbol(), '.:adjacent_difference>>'],
+    [symbol(), '.:adjacent_difference<<'],
+    [symbol(), '.:adjacent_find>>'],
+    [symbol(), '.:adjacent_find<<'],
+    [symbol(), '.:adjacent_find_index>>'],
+    [symbol(), '.:adjacent_find_index<<'],
 ];
 export const makeRunes = (compressed) => ({
     compressed: new Map(compressed),

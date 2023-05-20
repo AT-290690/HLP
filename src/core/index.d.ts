@@ -15,7 +15,7 @@ export interface Apply {
   args: Expression[]
 }
 export type Expression = Apply | Value | Word
-export type Interpration =
+export type Interpretion =
   | ((args: Expression[], env: Expression) => unknown)
   | number
   | string

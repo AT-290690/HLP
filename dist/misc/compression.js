@@ -201,7 +201,7 @@ export const pruneTree = (tree, memo = new Map()) => {
                 tree[i] = VOID_CODE;
             }
             else if (node.operator.type === 'word' &&
-                node.operator.name === 'void:') {
+                (node.operator.name === 'void:' || node.operator.name === 'assert:')) {
                 tree[i] = VOID_CODE;
             }
             else {

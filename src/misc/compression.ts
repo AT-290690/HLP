@@ -224,7 +224,7 @@ export const pruneTree = (
         tree[i] = VOID_CODE
       } else if (
         node.operator.type === 'word' &&
-        node.operator.name === 'void:'
+        (node.operator.name === 'void:' || node.operator.name === 'assert:')
       ) {
         tree[i] = VOID_CODE
       } else {

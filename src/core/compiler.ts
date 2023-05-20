@@ -225,6 +225,7 @@ const compile: Compiler = (tree, locals) => {
         const arg = treeArgs[0]
         if (arg.type === 'word') return `((${arg.name}=${res}),${arg.name});`
       }
+      case '=>':
       case '->': {
         const args = treeArgs
         const body = args.pop()
@@ -410,6 +411,36 @@ const compile: Compiler = (tree, locals) => {
         )});`
       case '.:chunks':
         return `${compile(treeArgs[0], locals)}.partition(${compile(
+          treeArgs[1],
+          locals
+        )});`
+      case '.:adjacent_difference>>':
+        return `${compile(treeArgs[0], locals)}.adjacentDifference(${compile(
+          treeArgs[1],
+          locals
+        )});`
+      case '.:adjacent_difference<<':
+        return `${compile(
+          treeArgs[0],
+          locals
+        )}.adjacentDifferenceRight(${compile(treeArgs[1], locals)});`
+      case '.:adjacent_find>>':
+        return `${compile(treeArgs[0], locals)}.adjacentFind(${compile(
+          treeArgs[1],
+          locals
+        )});`
+      case '.:adjacent_find<<':
+        return `${compile(treeArgs[0], locals)}.adjacentFindLast(${compile(
+          treeArgs[1],
+          locals
+        )});`
+      case '.:adjacent_find_index>>':
+        return `${compile(treeArgs[0], locals)}.adjacentFindIndex(${compile(
+          treeArgs[1],
+          locals
+        )});`
+      case '.:adjacent_find_index<<':
+        return `${compile(treeArgs[0], locals)}.adjacentFindLastIndex(${compile(
           treeArgs[1],
           locals
         )});`
@@ -886,6 +917,7 @@ const compile: Compiler = (tree, locals) => {
       // dead code
       case 'aliases=':
       case 'void:':
+      case 'assert:':
       case '|>':
         return ''
       case 'void':

@@ -575,6 +575,8 @@ describe('compilation should work as expected', () => {
 
   it('complex expressions should work', () =>
     [
+      `|> [.: [4; 6; 9; 13; 18; 19; 19; 15; 10]; 
+      .: map >> [-> [x; i; c; ? [> [i; 0]; - [.: . [c; i]; .: . [c; - [i; 1]]]; x]]]]`,
       `:= [is_odd; -> [x; == [% [x; 2]; 0]]];
       := [is_even; -> [x; % [x; 2]]];
       := [first_element; .: < [.: [1; 2; 3; 4]]];
@@ -689,6 +691,19 @@ describe('compilation should work as expected', () => {
 
   it('complex examples should work', () =>
     [
+      `:= [arr; .:... [10; 1]]; 
+      .:. [arr; 
+       |> [arr; 
+        .:adjacent_difference<< [-> [a; b; 
+          * [b; a]]]; 
+        .:adjacent_find_index>> [-> [a; b; 
+          == [- [b; a]; 6]]]]];
+      `,
+      `:= [abs; -> [x; 
+      - [bit_xor [x; 
+        bit_right_shift [x; 31]]; 
+        bit_right_shift [x; 31]]]]; 
+    abs [- [1; 2]];`,
       `:= [f; -> [arg; ? [< [arg; 100]; |> [arg; 
         + [1; 2; 3]; 
         * [2]; 

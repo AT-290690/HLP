@@ -836,6 +836,31 @@ describe('interpretation should work as expected', () => {
   })
   it('comples examples should work', () => {
     strictEqual(
+      runFromInterpreted(`:= [arr; .:... [10; 1]]; 
+    .:. [arr; 
+     |> [arr; 
+      .:adjacent_difference<< [-> [a; b; 
+        * [b; a]]]; 
+      .:adjacent_find_index>> [-> [a; b; 
+        == [- [b; a]; 6]]]]];`),
+      2
+    )
+    strictEqual(
+      runFromInterpreted(`aliases= [xor; bit_xor; shift; bit_right_shift]; 
+    := [abs; -> [x; 
+      - [xor [x; 
+        shift [x; 31]]; 
+       shift [x; 31]]]]; 
+    abs [- [1; 2]];`),
+      1
+    )
+    deepStrictEqual(
+      runFromInterpreted(`|> [.: [4; 6; 9; 13; 18; 19; 19; 15; 10]; 
+    .: map >> [-> [x; i; c; ? [> [i; 0]; - [.: . [c; i]; .: . [c; - [i; 1]]]; x]]]]`)
+        .items,
+      [4, 2, 3, 4, 5, 1, 0, -4, -5]
+    )
+    strictEqual(
       runFromInterpreted(`:= [f; -> [arg; ? [< [arg; 100]; |> [arg; 
       + [1; 2; 3]; 
       * [2]; 
