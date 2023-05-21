@@ -172,14 +172,10 @@ const compile = (tree, locals) => {
         switch (token) {
             case ':': {
                 if (treeArgs.length > 1) {
-                    return `(()=>{${treeArgs
-                        .map((x, i) => {
-                        const res = compile(x, locals);
-                        return res !== undefined && i === treeArgs.length - 1
-                            ? ';return ' + res.toString().trimStart()
-                            : res;
-                    })
-                        .join('')}})();`;
+                    return `(${treeArgs
+                        .map((x) => compile(x, locals).toString().trimStart())
+                        .filter(Boolean)
+                        .join(',')});`;
                 }
                 else {
                     const res = compile(treeArgs[0], locals);
